@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520">
+<defs>
+  <linearGradient id="xGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#7CC242"/>
+    <stop offset="45%" stop-color="#55e6c1"/>
+    <stop offset="55%" stop-color="#38d6ef"/>
+    <stop offset="100%" stop-color="#009FE3"/>
+  </linearGradient>
+  <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
+    <feGaussianBlur stdDeviation="10" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="maxGlow" x="-120%" y="-120%" width="340%" height="340%">
+    <feGaussianBlur stdDeviation="18" result="b1"/>
+    <feGaussianBlur stdDeviation="7" result="b2"/>
+    <feMerge>
+      <feMergeNode in="b1"/><feMergeNode in="b2"/><feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+  <radialGradient id="flare" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+    <stop offset="18%" stop-color="#d9ffff" stop-opacity=".95"/>
+    <stop offset="45%" stop-color="#67efe3" stop-opacity=".65"/>
+    <stop offset="100%" stop-color="#58bfff" stop-opacity="0"/>
+  </radialGradient>
+  
+</defs>
+<g id="x" filter="url(#softGlow)">
+  <polygon points="706.0,82.0 742.0,82.0 820.0,193.0 796.0,217.0" fill="#7CC242"/>
+  <polygon points="706.0,348.0 742.0,348.0 820.0,237.0 796.0,213.0" fill="#6fd153"/>
+  <polygon points="894.0,82.0 858.0,82.0 780.0,193.0 804.0,217.0" fill="#009FE3"/>
+  <polygon points="894.0,348.0 858.0,348.0 780.0,237.0 804.0,213.0" fill="#1A7BFF"/>
+  <circle cx="800" cy="215" r="55" fill="url(#flare)" opacity="0.42"/>
+  <circle cx="800" cy="215" r="13" fill="#ffffff"/>
+</g></svg>
