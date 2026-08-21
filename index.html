@@ -1,36 +1,380 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>NEXO — La Convergencia</title>
-
-    <link
-        rel="stylesheet"
-        href="./css/style.css"
-    >
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXO — La Convergencia</title>
+  <link rel="stylesheet" href="./css/style.css">
 </head>
-
 <body>
 
-    <h1>NEXO</h1>
+  <!-- ============================================================
+       PANTALLA 1: INICIO
+       Portada definitiva: logo, lema y botón JUGAR
+  ============================================================ -->
+  <section id="pantalla-inicio" class="pantalla activa">
+    <div class="fondo-inicio"></div>
 
-    <p>La Convergencia</p>
+    <div class="contenido-inicio">
+      <img
+        class="logo-inicio"
+        src="./assets/images/Logo_NEXO_compacto.svg"
+        alt="NEXO — La Convergencia"
+      >
 
-    <script
-        type="module"
-        src="./dist/main.js"
-    ></script>
+      <p class="lema-juego">
+        Compite. Converge. Decide qué quieres ser antes de que no
+        quede mundo donde serlo.
+      </p>
 
+      <button
+        id="btn-jugar"
+        class="boton-jugar-imagen"
+        type="button"
+        aria-label="Jugar"
+      >
+        <img
+          src="./assets/images/boton-jugar-prismatico-transparente.png"
+          alt="JUGAR"
+        >
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PANTALLA 2: INTRODUCCIÓN
+       Historia del juego y explicación de las tres barras
+  ============================================================ -->
+  <section id="pantalla-introduccion" class="pantalla">
+    <div class="fondo-introduccion"></div>
+    <img
+      class="nodo-convergencia"
+      src="./assets/images/nodo-nexo.svg"
+      alt=""
+      aria-hidden="true"
+    >
+
+    <div class="contenido-introduccion">
+      <header class="cabecera-introduccion">
+        <p class="sobrelinea-introduccion">PROTOCOLO DE SUPERVIVENCIA · SIGLO XXII</p>
+        <h2>El Protocolo NEXO</h2>
+      </header>
+
+      <div class="relato-introduccion">
+        <p>
+          Las crisis ecológicas amenazan la supervivencia del planeta.
+          Humanidad e Inteligencia Artificial deben responder juntas.
+        </p>
+
+        <p>
+          Cuando una acierta y la otra falla, la vencedora absorbe una
+          capacidad rival. Cada ronda obliga a elegir: imponerte o converger
+          mientras el planeta pierde tiempo.
+        </p>
+      </div>
+
+      <section class="sistema-indicadores" aria-labelledby="titulo-indicadores">
+        <h3 id="titulo-indicadores">El equilibrio de la partida</h3>
+        <p class="entradilla-indicadores">Tres indicadores registran cada decisión.</p>
+
+        <div class="explicacion-barras">
+          <article class="explicacion-barra indicador-humano">
+            <span class="numero-indicador">01</span>
+            <span class="icono-indicador" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="8" r="4.2"></circle>
+                <path d="M5.8 20c.5-4.1 2.6-6.2 6.2-6.2s5.7 2.1 6.2 6.2z"></path>
+              </svg>
+            </span>
+            <span class="texto-indicador">
+              <strong>Evolución Humana</strong>
+              <span>Avanza cuando solo acierta el jugador.</span>
+            </span>
+            <span class="barra-indicador" aria-hidden="true"><span></span></span>
+          </article>
+
+          <article class="explicacion-barra indicador-planeta">
+            <span class="numero-indicador">02</span>
+            <span class="icono-indicador" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 21V9"></path>
+                <path d="M12 14c-4.5-.2-7-2.4-7-6.4 4.3.1 6.7 2.1 7 6.4Z"></path>
+                <path d="M12 11.5c.3-4 2.6-6 7-6.2 0 4-2.5 6-7 6.2Z"></path>
+              </svg>
+            </span>
+            <span class="texto-indicador">
+              <strong>Salud del Planeta</strong>
+              <span>Se recupera cuando ambos convergen. A cero, todo colapsa.</span>
+            </span>
+            <span class="barra-indicador" aria-hidden="true"><span></span></span>
+          </article>
+
+          <article class="explicacion-barra indicador-ia">
+            <span class="numero-indicador">03</span>
+            <span class="icono-indicador" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M9.5 4.1A3 3 0 0 0 5.2 7a3.2 3.2 0 0 0-1 5.7A3.1 3.1 0 0 0 7 17.8 3 3 0 0 0 12 20V5.8a2.7 2.7 0 0 0-2.5-1.7Z"></path>
+                <path d="M14.5 4.1A3 3 0 0 1 18.8 7a3.2 3.2 0 0 1 1 5.7 3.1 3.1 0 0 1-2.8 5.1 3 3 0 0 1-5 2.2V5.8a2.7 2.7 0 0 1 2.5-1.7Z"></path>
+                <path d="M7.2 9.2h2.1M14.7 8.2h2.2M7.8 14.3h1.8M14.5 13.8h2.1"></path>
+              </svg>
+            </span>
+            <span class="texto-indicador">
+              <strong>Evolución IA</strong>
+              <span>Avanza cuando solo acierta la inteligencia artificial.</span>
+            </span>
+            <span class="barra-indicador" aria-hidden="true"><span></span></span>
+          </article>
+        </div>
+      </section>
+
+      <!-- Acción final de la introducción: conduce a la configuración. -->
+      <button
+        id="btn-ir-configuracion"
+        class="boton-continuar-imagen"
+        type="button"
+        aria-label="Continuar a la configuración de partida"
+      >
+        <img
+          class="boton-continuar-estado boton-continuar-normal"
+          src="./assets/images/boton-continuar-normal.webp"
+          alt=""
+          aria-hidden="true"
+        >
+        <img
+          class="boton-continuar-estado boton-continuar-hover"
+          src="./assets/images/boton-continuar-hover.webp"
+          alt=""
+          aria-hidden="true"
+        >
+        <span class="texto-solo-lectores">Continuar</span>
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PANTALLA 3: CONFIGURACIÓN
+       Elección de avatar y número de rondas
+  ============================================================ -->
+  <section id="pantalla-configuracion" class="pantalla">
+    <div class="fondo-configuracion"></div>
+
+    <div class="contenido-configuracion">
+      <header class="cabecera-configuracion">
+        <p class="sobrelinea-configuracion">PROTOCOLO DE SINCRONIZACIÓN</p>
+        <h2>Configura tu partida</h2>
+        <p>Elige tu identidad y la duración del protocolo.</p>
+      </header>
+
+      <div class="grupo-configuracion grupo-avatar">
+        <h3 id="titulo-identidad">Identidad</h3>
+        <div class="opciones-avatar" role="group" aria-labelledby="titulo-identidad">
+          <button
+            class="boton-avatar boton-avatar-activo"
+            type="button"
+            data-avatar="nexo-01"
+            aria-pressed="true"
+          >
+            <span class="silhueta-avatar" aria-hidden="true"></span>
+            <span>
+              <strong>NEXO 01</strong>
+              <small>Equilibrio y adaptación</small>
+            </span>
+          </button>
+
+          <button
+            class="boton-avatar"
+            type="button"
+            data-avatar="nexo-02"
+            aria-pressed="false"
+          >
+            <span class="silhueta-avatar silhueta-alterna" aria-hidden="true"></span>
+            <span>
+              <strong>NEXO 02</strong>
+              <small>Análisis y precisión</small>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grupo-configuracion grupo-rondas">
+        <h3 id="titulo-duracion">Duración</h3>
+        <div class="opciones-rondas" role="group" aria-labelledby="titulo-duracion">
+          <button class="boton boton-opcion" type="button" data-rondas="8" aria-pressed="false">8</button>
+          <button class="boton boton-opcion boton-opcion-activa" type="button" data-rondas="12" aria-pressed="true">12</button>
+          <button class="boton boton-opcion" type="button" data-rondas="16" aria-pressed="false">16</button>
+          <button class="boton boton-opcion" type="button" data-rondas="infinito" aria-pressed="false">∞</button>
+        </div>
+      </div>
+
+      <!-- Marcador provisional: define posición y tamaño, no el diseño final. -->
+      <button
+        id="btn-iniciar-partida"
+        class="boton-protocolo-principal boton-protocolo-pendiente"
+        type="button"
+        disabled
+        aria-disabled="true"
+      >
+        <span>INICIAR PROTOCOLO</span>
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PANTALLA 4: JUEGO
+       Pantalla principal — avatares, barras, crisis, mano de cartas
+  ============================================================ -->
+  <section id="pantalla-juego" class="pantalla">
+
+    <!-- Cabecera con las tres barras -->
+    <header class="cabecera-juego">
+      <div class="marcador marcador-humano">
+        <span class="etiqueta-marcador">Evolución Humana</span>
+        <div class="barra-progreso">
+          <div id="barra-evolucion-humana" class="relleno-barra relleno-humano"></div>
+        </div>
+      </div>
+
+      <div class="marcador marcador-planeta">
+        <span class="etiqueta-marcador">Salud del Planeta</span>
+        <div class="barra-progreso">
+          <div id="barra-salud-planeta" class="relleno-barra relleno-planeta"></div>
+        </div>
+      </div>
+
+      <div class="marcador marcador-ia">
+        <span class="etiqueta-marcador">Evolución IA</span>
+        <div class="barra-progreso">
+          <div id="barra-evolucion-ia" class="relleno-barra relleno-ia"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contador de ronda -->
+    <p id="contador-ronda" class="contador-ronda">Ronda 1 / 12</p>
+
+    <!-- Zona central: avatares + crisis -->
+    <div class="zona-juego">
+
+      <div class="avatar-lateral avatar-humano-lateral">
+        <img id="imagen-avatar-humano" src="./assets/avatares/humano-0.png" alt="Avatar Humano">
+      </div>
+
+      <div class="zona-central">
+        <div id="tarjeta-crisis" class="tarjeta-crisis">
+          <p class="etiqueta-crisis">Crisis de la ronda</p>
+          <h3 id="nombre-crisis">Sequía prolongada</h3>
+        </div>
+
+        <div id="tarjeta-carta-crisis" class="tarjeta-carta-crisis oculta">
+          <p class="etiqueta-crisis">Carta de crisis</p>
+          <h4 id="nombre-carta-crisis"></h4>
+          <p id="descripcion-carta-crisis"></p>
+        </div>
+
+        <!-- ============================================================
+             PANTALLA 5 (integrada): RESOLUCIÓN DE RONDA
+             Zona que muestra las cartas reveladas, la suma y el resultado
+        ============================================================ -->
+        <div id="zona-resolucion" class="zona-resolucion oculta">
+          <div class="cartas-reveladas">
+            <div class="carta-revelada">
+              <p>Tu carta</p>
+              <span id="valor-carta-jugador">-</span>
+            </div>
+            <span class="signo-suma">+</span>
+            <div class="carta-revelada">
+              <p>Carta IA</p>
+              <span id="valor-carta-ia">-</span>
+            </div>
+            <span class="signo-suma">=</span>
+            <div class="carta-revelada">
+              <p>Suma</p>
+              <span id="valor-suma">-</span>
+            </div>
+          </div>
+          <p id="resultado-ronda" class="resultado-ronda">Convergencia</p>
+        </div>
+      </div>
+
+      <div class="avatar-lateral avatar-ia-lateral">
+        <img id="imagen-avatar-ia" src="./assets/avatares/ia-0.png" alt="Avatar IA">
+      </div>
+    </div>
+
+    <!-- Zona inferior: apuesta PAR/IMPAR + mano de cartas -->
+    <footer class="pie-juego">
+      <div class="zona-apuesta">
+        <p>¿PAR o IMPAR?</p>
+        <button class="boton boton-apuesta" data-apuesta="par">PAR</button>
+        <button class="boton boton-apuesta" data-apuesta="impar">IMPAR</button>
+      </div>
+
+      <div class="mano-cartas" id="mano-cartas">
+        <!-- Las 5 cartas del jugador se generan aquí por JavaScript -->
+        <button class="carta-mano" data-valor="1">1</button>
+        <button class="carta-mano" data-valor="2">2</button>
+        <button class="carta-mano" data-valor="3">3</button>
+        <button class="carta-mano" data-valor="4">4</button>
+        <button class="carta-mano" data-valor="5">5</button>
+      </div>
+
+      <button id="btn-confirmar-jugada" class="boton boton-principal" disabled>Confirmar</button>
+    </footer>
+  </section>
+
+
+  <!-- ============================================================
+       PANTALLA 6: EVENTO ESPECIAL
+       Tarjeta superpuesta cuando se dispara un evento (cada 4 rondas)
+  ============================================================ -->
+  <div id="superposicion-evento" class="superposicion oculta">
+    <div class="tarjeta-evento">
+      <p class="etiqueta-crisis">Evento Especial</p>
+      <h3 id="nombre-evento">Tormenta Solar</h3>
+      <p id="descripcion-evento">
+        Ninguno de los dos puede usar las capacidades conquistadas esta ronda.
+      </p>
+      <button id="btn-cerrar-evento" class="boton boton-principal">Continuar</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       PANTALLA 7: FINAL
+       Desenlace, perfil, porcentajes y capacidades conquistadas
+  ============================================================ -->
+  <section id="pantalla-final" class="pantalla">
+    <div class="contenido-final">
+      <h2 id="titulo-desenlace">Convergencia Total</h2>
+      <p id="mensaje-desenlace">
+        Se ha salvado el mundo sin que ninguno dominase al otro.
+      </p>
+
+      <div class="perfil-final">
+        <h3 id="nombre-perfil">El Estratega</h3>
+        <p id="descripcion-perfil">Combina intuición humana con análisis artificial.</p>
+      </div>
+
+      <div class="porcentajes-final">
+        <div class="barra-progreso barra-porcentaje">
+          <div id="barra-porcentaje-humano" class="relleno-barra relleno-humano"></div>
+        </div>
+        <p><span id="texto-porcentaje-humano">50%</span> Humano / <span id="texto-porcentaje-ia">50%</span> IA</p>
+      </div>
+
+      <div class="capacidades-conquistadas">
+        <h3>Capacidades conquistadas</h3>
+        <ul id="lista-capacidades"></ul>
+      </div>
+
+      <button id="btn-volver-jugar" class="boton boton-principal">Volver a jugar</button>
+    </div>
+  </section>
+
+  <!-- Navegación provisional para revisar las pantallas. -->
+  <script type="module" src="./src/main.js"></script>
 </body>
-
 </html>
