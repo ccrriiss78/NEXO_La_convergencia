@@ -287,11 +287,12 @@ h1, h2, h3, h4 {
 }
 
 .contenido-introduccion {
+
   position: relative;
   z-index: 2;
-  width: min(35vw, 650px);
+  width: min(44vw, 740px);
   margin-left: auto;
-  margin-right: clamp(7rem, 12vw, 14rem);
+  margin-right: clamp(2rem, 4.5vw, 5.5rem);
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -325,20 +326,13 @@ h1, h2, h3, h4 {
   letter-spacing: 0.025em;
 }
 
-.cabecera-introduccion h2::after {
-  content: "";
-  display: block;
-  width: min(18%, 112px);
-  height: 1px;
-  margin-top: 0.5rem;
-  background: linear-gradient(90deg, #8bd34f, rgba(139, 211, 79, 0.10));
-  box-shadow: 0 0 12px rgba(69, 211, 198, 0.56);
-}
-
 .relato-introduccion {
-  display: grid;
-  gap: 0.75rem;
-  margin-top: 1rem;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(190px, 23vh, 245px);
+  margin-top: clamp(0.35rem, 0.8vh, 0.6rem);
 }
 
 .relato-introduccion p {
@@ -346,6 +340,223 @@ h1, h2, h3, h4 {
   color: #e4ece9;
   font-size: clamp(0.95rem, 0.94vw, 1.06rem);
   line-height: 1.52;
+}
+
+
+/* ---------------------------------------------------------------------
+   INTRO NARRATIVA POR BLOQUES
+   La animación es solo visual. El usuario decide cuándo avanzar.
+   --------------------------------------------------------------------- */
+.cabecera-intro-fila {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn-saltar-intro {
+  margin-top: 0.95rem;
+  padding: 0.45rem 0.2rem;
+  border: 0;
+  border-bottom: 1px solid rgba(156, 224, 214, 0.34);
+  color: rgba(210, 231, 228, 0.72);
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, text-shadow 160ms ease;
+}
+
+.btn-saltar-intro:hover,
+.btn-saltar-intro:focus-visible {
+  color: #dff9f4;
+  border-color: rgba(126, 228, 208, 0.78);
+  text-shadow: 0 0 10px rgba(80, 222, 201, 0.42);
+}
+
+.relato-introduccion {
+  position: relative;
+  display: block;
+  min-height: clamp(220px, 27vh, 290px);
+  margin-top: clamp(1.2rem, 2.7vh, 1.8rem);
+}
+
+.bloque-intro {
+
+  width: 100%;
+  min-height: clamp(180px, 21vh, 230px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 clamp(0.15rem, 0.4vw, 0.35rem);
+}
+
+.bloque-intro.activo {
+  animation: entradaBloqueNexo 0.58s ease both;
+}
+
+.bloque-intro p {
+
+  width: 100%;
+  max-width: none;
+  margin: 0 0 clamp(0.4rem, 0.75vh, 0.62rem);
+  color: #dce8e5;
+  font-size: clamp(0.90rem, 0.94vw, 1.02rem);
+  line-height: 1.45;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
+.bloque-intro p:first-child {
+
+  color: #f5fbf8;
+  font-size: clamp(1rem, 1.05vw, 1.16rem);
+  font-weight: 700;
+  text-align: left;
+  letter-spacing: 0.01em;
+}
+
+.bloque-intro strong {
+  color: #b9f1e3;
+  font-weight: 750;
+  text-shadow: 0 0 12px rgba(74, 218, 191, 0.18);
+}
+
+@keyframes entradaBloqueNexo {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Ruta NEXO: cuatro mini-X conectadas por una línea de convergencia.
+   Se inspira en la X y en el nexo central del logotipo sin repetirlo literalmente. */
+.progreso-intro {
+
+  position: relative;
+  width: min(58%, 320px);
+  height: 28px;
+  margin: clamp(0.1rem, 0.35vh, 0.3rem) auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linea-progreso-intro {
+  position: absolute;
+  z-index: 0;
+  left: 10px;
+  right: 10px;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgba(104, 223, 166, 0.52),
+    rgba(221, 203, 72, 0.36) 48%,
+    rgba(70, 188, 239, 0.52));
+  box-shadow: 0 0 8px rgba(80, 211, 208, 0.16);
+}
+
+.paso-nexo {
+  position: relative;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border-radius: 50%;
+  background: #071216;
+  box-shadow: 0 0 0 1px rgba(149, 209, 207, 0.28);
+  opacity: 0.46;
+  transition: opacity 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.paso-nexo::before,
+.paso-nexo::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  transform-origin: center;
+}
+
+.paso-nexo::before {
+  background: #77dfa8;
+  transform: rotate(45deg);
+}
+
+.paso-nexo::after {
+  background: #55c6f4;
+  transform: rotate(-45deg);
+}
+
+.paso-nexo.completado {
+  opacity: 0.78;
+}
+
+.paso-nexo.activo {
+  opacity: 1;
+  transform: scale(1.16);
+  box-shadow:
+    0 0 0 1px rgba(188, 244, 234, 0.72),
+    0 0 11px rgba(87, 224, 179, 0.34),
+    0 0 16px rgba(73, 188, 242, 0.24);
+}
+
+.controles-intro {
+
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) auto minmax(90px, 1fr);
+  align-items: center;
+  gap: clamp(0.55rem, 1.2vw, 0.9rem);
+  width: min(84%, 540px);
+  margin: clamp(0.35rem, 0.7vh, 0.55rem) auto 0;
+}
+
+.controles-intro .boton-continuar-imagen {
+  grid-column: 2;
+  margin: 0;
+}
+
+.btn-intro-atras {
+  grid-column: 1;
+  justify-self: end;
+  min-width: 86px;
+  padding: 0.58rem 0.75rem;
+  border: 1px solid rgba(133, 207, 211, 0.22);
+  border-radius: 8px;
+  color: #a9c8c6;
+  background: rgba(3, 13, 17, 0.42);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.btn-intro-atras:hover:not(:disabled),
+.btn-intro-atras:focus-visible:not(:disabled) {
+  color: #e0f3ef;
+  border-color: rgba(124, 223, 210, 0.58);
+  background: rgba(7, 27, 31, 0.62);
+}
+
+.btn-intro-atras:disabled {
+  opacity: 0.28;
+  cursor: default;
 }
 
 .sistema-indicadores {
@@ -573,10 +784,6 @@ h1, h2, h3, h4 {
     font-size: 1.8rem;
   }
 
-  .cabecera-introduccion h2::after {
-    margin-top: 0.42rem;
-  }
-
   .relato-introduccion {
     gap: 0.32rem;
     margin-top: 0.48rem;
@@ -663,12 +870,46 @@ h1, h2, h3, h4 {
     min-width: 205px;
     align-self: center;
   }
+
+  .cabecera-intro-fila {
+    display: block;
+  }
+
+  .btn-saltar-intro {
+    margin-top: 0.35rem;
+  }
+
+  .relato-introduccion {
+    min-height: 0;
+  }
+
+  .controles-intro {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .controles-intro .boton-continuar-imagen,
+  .btn-intro-atras {
+    grid-column: 1;
+  }
+
+  .btn-intro-atras {
+    grid-row: 2;
+    justify-self: center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .boton-continuar-imagen,
-  .boton-continuar-estado {
+  .boton-continuar-estado,
+  .paso-nexo,
+  .btn-saltar-intro,
+  .btn-intro-atras {
     transition: none;
+  }
+
+  .bloque-intro.activo {
+    animation: none;
   }
 }
 
@@ -1629,5 +1870,1854 @@ h1, h2, h3, h4 {
 
   .pantalla {
     padding: var(--espacio-md) 1rem;
+  }
+}
+
+/* =====================================================================
+   PRUEBA DE INTEGRACIÓN VISUAL + LÓGICA · 2026-08-20
+   Este bloque se añade al final: conserva todo el CSS anterior y solo
+   adapta la configuración y los controles nuevos que necesita la partida.
+   ===================================================================== */
+
+/* Configuración: instrucciones contextualizadas y perfiles fuera del marco. */
+.cabecera-configuracion h2::after {
+  margin-bottom: 0;
+}
+
+.opciones-avatar {
+  width: 100%;
+  justify-content: stretch;
+}
+
+.boton-avatar {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(2.8rem, 3.4vw, 3.2rem) minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(0.7rem, 0.9vw, 0.9rem);
+  justify-self: stretch;
+  padding: 0.58rem clamp(1rem, 1.3vw, 1.3rem) 0.58rem 0.3rem;
+  background-image: none;
+}
+
+.boton-avatar::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: clamp(3.35rem, 4.1vw, 3.8rem);
+  background: center / 100% 100% no-repeat url("../assets/images/boton-avatar-normal.svg");
+  pointer-events: none;
+}
+
+.boton-avatar:hover,
+.boton-avatar:focus-visible,
+.boton-avatar-activo {
+  background-image: none;
+}
+
+.boton-avatar:hover::before,
+.boton-avatar:focus-visible::before,
+.boton-avatar-activo::before {
+  background-image: url("../assets/images/boton-avatar-activo.svg");
+}
+
+.texto-avatar {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-width: 0;
+  padding-left: 0.45rem;
+}
+
+.silhueta-avatar {
+  position: relative;
+  z-index: 1;
+  top: auto;
+  left: auto;
+  justify-self: center;
+  width: clamp(34px, 2.4vw, 38px);
+  height: clamp(34px, 2.4vw, 38px);
+  margin: 0;
+  transform: none;
+  background: rgba(4, 18, 24, 0.68);
+  box-shadow: 0 0 10px rgba(73, 205, 219, 0.12);
+}
+
+.silhueta-avatar::before {
+  width: 8px;
+  height: 8px;
+  top: 6px;
+}
+
+.silhueta-avatar::after {
+  width: 16px;
+  height: 8px;
+  bottom: 5px;
+}
+
+.boton-protocolo-integrado {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.2rem, 3vh, 2.1rem);
+  width: min(25vw, 360px);
+  min-width: 310px;
+  height: clamp(58px, 6.7vh, 64px);
+  margin: 0;
+  padding: 0 2rem;
+  transform: translateX(-50%);
+}
+
+.boton-protocolo-integrado:hover,
+.boton-protocolo-integrado:focus-visible {
+  transform: translateX(-50%) translateY(-3px) scale(1.02);
+}
+
+.boton-protocolo-integrado:active {
+  transform: translateX(-50%) translateY(-1px) scale(1.01);
+}
+
+/* Pantalla de juego funcional: usa la paleta existente del proyecto. */
+#pantalla-juego.activa {
+  min-height: 100svh;
+  height: auto;
+  overflow-y: auto;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  background:
+    radial-gradient(circle at 50% 18%, rgba(47, 159, 164, 0.13), transparent 36%),
+    linear-gradient(180deg, #07131a 0%, #09141c 55%, #050b11 100%);
+}
+
+.valor-marcador {
+  display: block;
+  margin-top: 0.32rem;
+  color: var(--color-texto);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.tablero-integrado {
+  align-items: flex-start;
+  max-width: 1200px;
+  gap: clamp(1rem, 2.2vw, 2rem);
+}
+
+.lado {
+  flex: 1 1 170px;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.zona-central {
+  flex: 2 1 520px;
+  width: 100%;
+  max-width: 650px;
+  padding: clamp(0.85rem, 1.8vw, 1.3rem);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  background: rgba(5, 17, 23, 0.78);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+.avatar {
+  width: 104px;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-borde);
+  background: rgba(4, 16, 22, 0.88);
+  color: var(--color-texto);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  transition: border-radius 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+.avatar-humano {
+  border-radius: 50%;
+  border-color: var(--color-humano);
+  box-shadow: 0 0 18px rgba(155, 218, 107, 0.18);
+}
+
+.avatar-ia {
+  border-radius: 8px;
+  border-color: var(--color-ia);
+  box-shadow: 0 0 18px rgba(48, 178, 224, 0.18);
+}
+
+.avatar-humano.nivel-0::after { content: "HU"; }
+.avatar-humano.nivel-1::after { content: "HU+"; }
+.avatar-humano.nivel-2::after { content: "H/IA"; }
+.avatar-humano.nivel-3::after { content: "NEXO"; }
+.avatar-ia.nivel-0::after { content: "IA"; }
+.avatar-ia.nivel-1::after { content: "IA+"; }
+.avatar-ia.nivel-2::after { content: "IA/H"; }
+.avatar-ia.nivel-3::after { content: "NEXO"; }
+
+.avatar-humano.nivel-1,
+.avatar-ia.nivel-2 { border-radius: 34%; }
+
+.avatar-humano.nivel-2,
+.avatar-ia.nivel-1 { border-radius: 20%; }
+
+.avatar-humano.nivel-3,
+.avatar-ia.nivel-3 {
+  border-radius: 10px;
+  border-color: #7ee2c9;
+  box-shadow: 0 0 24px rgba(94, 224, 198, 0.34);
+}
+
+.tipo-nexo-01 { border-color: var(--color-humano-claro); }
+.tipo-nexo-02 { border-color: var(--color-ia-claro); }
+
+.titulo-lista,
+.instruccion {
+  color: var(--color-texto-secundario);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lista-capacidades {
+  width: 100%;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.lista-capacidades li {
+  padding: 0.38rem 0.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+  color: var(--color-texto-secundario);
+}
+
+.capacidad-vacia {
+  opacity: 0.62;
+  font-style: italic;
+}
+
+.panel-memoria {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-borde);
+}
+
+.panel-memoria ul {
+  margin-top: 0.4rem;
+  list-style: none;
+  color: var(--color-texto-secundario);
+  font-size: 0.74rem;
+}
+
+.pista {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.55rem 0.7rem;
+  border-left: 3px solid #a98bd3;
+  color: #d7c5f0;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.cartas-ia,
+.declaracion-ia,
+.zona-apuesta,
+.zona-mano,
+.zona-velocidad {
+  width: 100%;
+  margin-top: 0.85rem;
+}
+
+.cartas-ia {
+  padding: 0.65rem;
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-borde);
+}
+
+.mano-pequena {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.carta-pequena {
+  width: 28px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-ia);
+  border-radius: 4px;
+  background: rgba(9, 30, 40, 0.88);
+  color: var(--color-ia-claro);
+  font-weight: 750;
+}
+
+.declaracion-ia {
+  padding: 0.7rem;
+  border: 1px solid rgba(74, 202, 231, 0.62);
+  border-radius: var(--radio-borde);
+  background: rgba(33, 137, 176, 0.11);
+}
+
+.declaracion-ia h3 {
+  margin-top: 0.2rem;
+  color: var(--color-ia-claro);
+  font-size: 1.65rem;
+  letter-spacing: 0.14em;
+}
+
+.zona-apuesta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.zona-apuesta .instruccion,
+.zona-apuesta .consecuencia {
+  flex: 1 0 100%;
+}
+
+.consecuencia {
+  color: var(--color-texto-secundario);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.boton-apuesta.seleccionada {
+  border-color: var(--color-humano-claro);
+  color: var(--color-humano-claro);
+  box-shadow: 0 0 14px rgba(133, 219, 146, 0.2);
+}
+
+.zona-mano {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.carta-mano.descartada {
+  opacity: 0.24;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.acciones,
+.opciones-velocidad {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 0.9rem;
+}
+
+.boton-poder {
+  border-color: #a98bd3;
+  color: #e2d4f5;
+}
+
+.zona-resolucion {
+  width: 100%;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-borde);
+}
+
+.carta-revelada small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--color-texto-secundario);
+  font-size: 0.66rem;
+}
+
+.resultado-convergencia { color: var(--color-exito); }
+.resultado-rivalidad { color: #f1c75b; }
+.resultado-fracaso { color: #ef7d78; }
+
+.detalle-ronda {
+  margin-top: 0.65rem;
+  color: var(--color-texto-secundario);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.planeta-critico { background-color: #1b0b0d; }
+.planeta-deteriorado { background-color: #17130b; }
+.planeta-estable { background-color: #07131a; }
+.planeta-recuperado { background-color: #071811; }
+
+/* Resumen final ampliado sin eliminar el diseño que ya existía. */
+.contenido-final {
+  width: min(94vw, 850px);
+}
+
+.resumen-final,
+.columnas-capacidades-finales {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: var(--espacio-md) 0;
+}
+
+.dato-final {
+  padding: 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  background: var(--color-fondo-panel);
+}
+
+.dato-final span,
+.dato-final strong {
+  display: block;
+}
+
+.dato-final span {
+  color: var(--color-texto-secundario);
+  font-size: 0.74rem;
+}
+
+.dato-final strong {
+  margin-top: 0.25rem;
+  font-size: 1.2rem;
+}
+
+.coleccion-perfiles {
+  margin: 1rem 0;
+  color: var(--color-texto-secundario);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+  .tablero-integrado {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lado {
+    max-width: 420px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .boton-protocolo-integrado {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: min(100%, 360px);
+    min-width: 0;
+    margin-top: auto;
+    transform: none;
+  }
+
+  .boton-protocolo-integrado:hover,
+  .boton-protocolo-integrado:focus-visible,
+  .boton-protocolo-integrado:active {
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 600px) {
+  .resumen-final,
+  .columnas-capacidades-finales {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================================
+   AJUSTE UX — PANTALLA DE JUEGO SIN SCROLL EN ESCRITORIO + AJUSTES
+   ===================================================================== */
+@media (min-width: 901px) {
+  #pantalla-juego.activa {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    padding: clamp(0.55rem, 1.2vh, 0.9rem) clamp(1rem, 2vw, 1.6rem);
+    gap: clamp(0.45rem, 1vh, 0.75rem);
+  }
+
+  #pantalla-juego .cabecera-juego {
+    flex: 0 0 auto;
+    max-width: 1040px;
+    gap: 1rem;
+  }
+
+  #pantalla-juego .zona-juego {
+    min-height: 0;
+    flex: 1 1 auto;
+    max-width: 1120px;
+    gap: clamp(0.75rem, 1.5vw, 1.35rem);
+    align-items: stretch;
+  }
+
+  #pantalla-juego .zona-central {
+    min-height: 0;
+    max-width: 590px;
+    padding: clamp(0.55rem, 1vh, 0.8rem);
+    overflow: hidden;
+  }
+
+  #pantalla-juego .lado {
+    min-height: 0;
+    max-width: 190px;
+    gap: 0.35rem;
+    justify-content: flex-start;
+  }
+
+  #pantalla-juego .avatar {
+    width: clamp(72px, 9vh, 92px);
+    height: clamp(72px, 9vh, 92px);
+  }
+
+  #pantalla-juego .tarjeta-crisis,
+  #pantalla-juego .tarjeta-carta-crisis {
+    padding: 0.55rem 0.7rem;
+    margin-bottom: 0.45rem;
+  }
+
+  #pantalla-juego .cartas-ia,
+  #pantalla-juego .declaracion-ia,
+  #pantalla-juego .zona-apuesta,
+  #pantalla-juego .zona-mano,
+  #pantalla-juego .zona-velocidad {
+    margin-top: 0.42rem;
+  }
+
+  #pantalla-juego .cartas-ia,
+  #pantalla-juego .declaracion-ia {
+    padding: 0.42rem 0.55rem;
+  }
+
+  #pantalla-juego .declaracion-ia h3 {
+    font-size: clamp(1.1rem, 2.4vh, 1.4rem);
+  }
+
+  #pantalla-juego .zona-mano {
+    gap: 0.35rem;
+  }
+
+  #pantalla-juego .mano-cartas {
+    margin-bottom: 0.35rem;
+  }
+
+  #pantalla-juego .carta-mano {
+    width: clamp(42px, 5.4vh, 50px);
+    height: clamp(58px, 7.3vh, 68px);
+    font-size: 1.15rem;
+  }
+
+  #pantalla-juego .acciones,
+  #pantalla-juego .opciones-velocidad {
+    margin-top: 0.4rem;
+    gap: 0.5rem;
+  }
+
+  #pantalla-juego .acciones .boton,
+  #pantalla-juego .zona-apuesta .boton {
+    padding: 0.58rem 1.2rem;
+    font-size: 0.88rem;
+  }
+
+  #pantalla-juego .lista-capacidades {
+    gap: 0.22rem;
+    font-size: 0.72rem;
+  }
+
+  #pantalla-juego .lista-capacidades li {
+    padding: 0.25rem 0.4rem;
+  }
+
+  #pantalla-juego .titulo-lista,
+  #pantalla-juego .instruccion {
+    font-size: 0.66rem;
+  }
+}
+
+.controles-sistema-juego {
+  position: fixed;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.85rem, env(safe-area-inset-right));
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.boton-icono-ajustes {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(126, 196, 242, 0.34);
+  border-radius: 50%;
+  background: rgba(5, 17, 23, 0.72);
+  color: var(--color-texto-secundario);
+  font-size: 1.05rem;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.boton-icono-ajustes:hover,
+.boton-icono-ajustes:focus-visible {
+  color: var(--color-ia-claro);
+  border-color: var(--color-ia);
+  background: rgba(8, 29, 39, 0.9);
+  transform: rotate(18deg);
+  outline: none;
+}
+
+.boton-abandonar-juego {
+  padding: 0.48rem 0.82rem;
+  border: 1px solid rgba(217, 83, 79, 0.32);
+  background: rgba(31, 13, 15, 0.62);
+  color: #d8a19f;
+  font-size: 0.75rem;
+  backdrop-filter: blur(8px);
+}
+
+.boton-abandonar-juego:hover,
+.boton-abandonar-juego:focus-visible {
+  color: #ffd0ce;
+  border-color: rgba(217, 83, 79, 0.72);
+  background: rgba(58, 20, 22, 0.88);
+  outline: none;
+}
+
+.superposicion-ajustes {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 4.2rem 1rem 1rem;
+  background: rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(3px);
+}
+
+.superposicion-ajustes.oculta {
+  display: none;
+}
+
+.panel-ajustes {
+  width: min(92vw, 330px);
+  padding: 1rem;
+  border: 1px solid rgba(126, 196, 242, 0.34);
+  border-radius: 12px;
+  background: rgba(5, 17, 23, 0.96);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+
+.cabecera-ajustes {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.boton-cerrar-ajustes {
+  border: 0;
+  background: transparent;
+  color: var(--color-texto-secundario);
+  font-size: 1.65rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.boton-cerrar-ajustes:hover,
+.boton-cerrar-ajustes:focus-visible {
+  color: var(--color-texto);
+  outline: none;
+}
+
+.fila-ajuste {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--color-borde);
+  color: var(--color-texto);
+  font-size: 0.88rem;
+}
+
+.fila-ajuste input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-ia);
+  cursor: pointer;
+}
+
+.fila-volumen {
+  flex-wrap: wrap;
+}
+
+.fila-volumen input[type="range"] {
+  width: 100%;
+  accent-color: var(--color-ia);
+}
+
+.nota-ajustes {
+  margin-top: 0.55rem;
+  color: var(--color-texto-secundario);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  #pantalla-juego.activa {
+    height: auto;
+    min-height: 100svh;
+    overflow-y: auto;
+    padding-top: 4.2rem;
+  }
+
+  .controles-sistema-juego {
+    position: absolute;
+  }
+}
+
+/* =====================================================================
+   AJUSTE UX v3 — PANTALLA FINAL COMPLETA SIN SCROLL EN ESCRITORIO
+   El resumen y la acción principal deben permanecer visibles a la vez.
+   Si las capacidades crecen mucho, solo se desplaza su lista interna.
+   ===================================================================== */
+@media (min-width: 901px) {
+  #pantalla-final.activa {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    justify-content: center;
+    padding: clamp(0.55rem, 1.1vh, 0.85rem) clamp(1rem, 2vw, 1.5rem);
+  }
+
+  #pantalla-final .contenido-final {
+    width: min(92vw, 760px);
+    max-height: calc(100dvh - 1.2rem);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #pantalla-final #titulo-desenlace {
+    font-size: clamp(1.35rem, 2.7vh, 1.75rem);
+    line-height: 1.1;
+  }
+
+  #pantalla-final #mensaje-desenlace {
+    margin-top: clamp(0.2rem, 0.55vh, 0.4rem);
+    font-size: clamp(0.82rem, 1.7vh, 0.98rem);
+    line-height: 1.3;
+  }
+
+  #pantalla-final .perfil-final {
+    padding: clamp(0.5rem, 1vh, 0.75rem) 0.9rem;
+    margin: clamp(0.45rem, 1vh, 0.7rem) 0;
+  }
+
+  #pantalla-final .perfil-final .etiqueta-crisis {
+    font-size: clamp(0.66rem, 1.4vh, 0.78rem);
+    margin: 0;
+  }
+
+  #pantalla-final .perfil-final h3 {
+    margin-top: 0.2rem;
+    font-size: clamp(0.95rem, 2vh, 1.15rem);
+  }
+
+  #pantalla-final .perfil-final p:not(.etiqueta-crisis) {
+    margin-top: 0.28rem;
+    font-size: clamp(0.76rem, 1.6vh, 0.9rem);
+    line-height: 1.3;
+  }
+
+  #pantalla-final .resumen-final {
+    gap: clamp(0.35rem, 0.8vh, 0.55rem);
+    margin: 0;
+  }
+
+  #pantalla-final .dato-final {
+    padding: clamp(0.35rem, 0.75vh, 0.52rem) 0.65rem;
+  }
+
+  #pantalla-final .dato-final span {
+    font-size: clamp(0.65rem, 1.3vh, 0.74rem);
+  }
+
+  #pantalla-final .dato-final strong {
+    margin-top: 0.12rem;
+    font-size: clamp(0.95rem, 2vh, 1.14rem);
+  }
+
+  #pantalla-final .porcentajes-final {
+    margin: clamp(0.4rem, 0.9vh, 0.6rem) 0;
+  }
+
+  #pantalla-final .porcentajes-final p {
+    margin-top: 0.25rem;
+    font-size: clamp(0.76rem, 1.6vh, 0.9rem);
+  }
+
+  #pantalla-final .columnas-capacidades-finales {
+    gap: 0.65rem;
+    margin: clamp(0.35rem, 0.8vh, 0.55rem) 0 0;
+  }
+
+  #pantalla-final .capacidades-conquistadas {
+    margin: 0;
+    min-height: 0;
+  }
+
+  #pantalla-final .capacidades-conquistadas h3 {
+    font-size: clamp(0.84rem, 1.75vh, 1rem);
+    line-height: 1.2;
+  }
+
+  #pantalla-final .capacidades-conquistadas ul {
+    max-height: clamp(42px, 8vh, 72px);
+    overflow-y: auto;
+    margin-top: 0.28rem;
+    padding-right: 0.25rem;
+    scrollbar-width: thin;
+  }
+
+  #pantalla-final .capacidades-conquistadas li {
+    padding: 0.18rem 0;
+    font-size: clamp(0.68rem, 1.35vh, 0.78rem);
+    line-height: 1.2;
+  }
+
+  #pantalla-final .coleccion-perfiles {
+    margin: clamp(0.28rem, 0.7vh, 0.45rem) 0;
+    font-size: clamp(0.65rem, 1.3vh, 0.75rem);
+    line-height: 1.2;
+  }
+
+  #pantalla-final #btn-volver-jugar {
+    align-self: center;
+    flex: 0 0 auto;
+    padding: clamp(0.5rem, 1vh, 0.65rem) 1.5rem;
+    font-size: clamp(0.82rem, 1.6vh, 0.94rem);
+  }
+}
+
+/* En equipos con poca altura reducimos un poco más el resumen,
+   conservando el botón principal siempre visible. */
+@media (min-width: 901px) and (max-height: 720px) {
+  #pantalla-final .contenido-final {
+    width: min(90vw, 720px);
+  }
+
+  #pantalla-final .perfil-final {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    margin: 0.35rem 0;
+  }
+
+  #pantalla-final .porcentajes-final,
+  #pantalla-final .columnas-capacidades-finales {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+  }
+
+  #pantalla-final .capacidades-conquistadas ul {
+    max-height: 46px;
+  }
+}
+
+
+/* =====================================================================
+   AJUSTE UX INTRO v6
+   La columna narrativa aprovecha mejor el espacio derecho y todos los
+   bloques ocupan la misma zona visual. No modifica HTML ni JavaScript.
+   ===================================================================== */
+.cabecera-introduccion {
+  width: 100%;
+}
+
+.cabecera-intro-fila {
+  width: 100%;
+}
+
+.bloque-intro p:last-child {
+  margin-bottom: 0;
+}
+
+/* En pantallas de escritorio algo menos anchas seguimos manteniendo
+   una caja de lectura cómoda y centrada en la mitad derecha. */
+@media (min-width: 901px) and (max-width: 1280px) {
+  .contenido-introduccion {
+    width: min(49vw, 690px);
+    margin-right: clamp(1.2rem, 3vw, 2.8rem);
+  }
+
+  .bloque-intro p {
+    font-size: clamp(0.92rem, 1.05vw, 1rem);
+    line-height: 1.5;
+  }
+
+  .relato-introduccion {
+    min-height: clamp(235px, 30vh, 300px);
+  }
+
+  .bloque-intro {
+    min-height: clamp(220px, 27vh, 280px);
+  }
+}
+
+
+/* ==========================================================
+   UX INTRO v7 — ajuste para mantener CONTINUAR siempre visible
+   ========================================================== */
+@media (min-width: 901px) and (max-height: 820px) {
+  .contenido-introduccion {
+    width: min(43vw, 700px);
+    margin-right: clamp(1.5rem, 4vw, 4.5rem);
+  }
+
+  .relato-introduccion {
+    min-height: 165px;
+    margin-top: 0.2rem;
+  }
+
+  .bloque-intro {
+    min-height: 155px;
+  }
+
+  .bloque-intro p {
+    font-size: 0.88rem;
+    line-height: 1.36;
+    margin-bottom: 0.38rem;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: 0.98rem;
+  }
+
+  .progreso-intro {
+    height: 24px;
+    margin-top: 0.1rem;
+  }
+
+  .controles-intro {
+    margin-top: 0.25rem;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 700px) {
+  .relato-introduccion {
+    min-height: 145px;
+  }
+
+  .bloque-intro {
+    min-height: 138px;
+  }
+
+  .bloque-intro p {
+    font-size: 0.83rem;
+    line-height: 1.3;
+    margin-bottom: 0.28rem;
+  }
+
+  .progreso-intro {
+    height: 22px;
+  }
+}
+
+
+/* ==========================================================
+   INTRO v8 — corrección de bloques y botón siempre accesible
+   ========================================================== */
+
+/* IMPORTANTE:
+   Cada bloque que lleva el atributo hidden debe desaparecer por completo.
+   Esto evita que los cuatro relatos se apilen y empujen los controles. */
+.bloque-intro[hidden] {
+  display: none !important;
+}
+
+/* Solo el bloque actual ocupa la caja de lectura. */
+.bloque-intro:not([hidden]) {
+  display: flex;
+}
+
+/* Caja narrativa compacta y estable en escritorio. */
+@media (min-width: 761px) {
+  #pantalla-introduccion.activa {
+    padding-top: clamp(1.4rem, 3.2vh, 2.5rem);
+    padding-bottom: 0.8rem;
+  }
+
+  .contenido-introduccion {
+    width: min(45vw, 720px);
+    margin-right: clamp(1.5rem, 4vw, 4.5rem);
+    max-height: calc(100svh - 2.2rem);
+  }
+
+  .sobrelinea-introduccion::after {
+    margin-top: 0.5rem;
+  }
+
+  .cabecera-introduccion h2 {
+    margin-top: 0.55rem;
+    font-size: clamp(1.8rem, 2.15vw, 2.45rem);
+  }
+
+  .btn-saltar-intro {
+    margin-top: 0.55rem;
+  }
+
+  .relato-introduccion {
+    min-height: clamp(190px, 24vh, 235px);
+    margin-top: clamp(0.45rem, 1vh, 0.75rem);
+    display: flex;
+    align-items: center;
+  }
+
+  .bloque-intro {
+    min-height: 0;
+    padding: 0 0.15rem;
+  }
+
+  .bloque-intro p {
+    margin-bottom: clamp(0.38rem, 0.7vh, 0.55rem);
+    font-size: clamp(0.88rem, 0.92vw, 0.99rem);
+    line-height: 1.42;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: clamp(0.98rem, 1.02vw, 1.12rem);
+  }
+
+  .progreso-intro {
+    height: 26px;
+    margin-top: 0.15rem;
+  }
+
+  .controles-intro {
+    margin-top: 0.3rem;
+  }
+
+  .controles-intro .boton-continuar-imagen {
+    width: clamp(205px, 16vw, 245px);
+    min-width: 0;
+  }
+}
+
+/* Alturas típicas de portátil: aún más compacto, sin perder lectura. */
+@media (min-width: 761px) and (max-height: 760px) {
+  #pantalla-introduccion.activa {
+    padding-top: 0.7rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .contenido-introduccion {
+    max-height: calc(100svh - 1.15rem);
+  }
+
+  .sobrelinea-introduccion {
+    font-size: 0.62rem;
+  }
+
+  .sobrelinea-introduccion::after {
+    margin-top: 0.32rem;
+  }
+
+  .cabecera-introduccion h2 {
+    margin-top: 0.4rem;
+    font-size: 1.72rem;
+  }
+
+  .relato-introduccion {
+    min-height: 160px;
+    margin-top: 0.25rem;
+  }
+
+  .bloque-intro p {
+    font-size: 0.84rem;
+    line-height: 1.34;
+    margin-bottom: 0.3rem;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: 0.94rem;
+  }
+
+  .progreso-intro {
+    height: 22px;
+  }
+
+  .controles-intro {
+    margin-top: 0.18rem;
+  }
+
+  .controles-intro .boton-continuar-imagen {
+    width: 205px;
+  }
+}
+
+
+/* ==========================================================
+   INTRO v9 — REEQUILIBRIO VISUAL DE LA COLUMNA DERECHA
+   Objetivo:
+   - Todo el contenido funciona como una única composición.
+   - Centrado vertical dentro de la mitad derecha.
+   - Márgenes visuales similares y moderados.
+   - Texto, progreso y botones comparten el mismo eje.
+   ========================================================== */
+
+@media (min-width: 901px) {
+
+  #pantalla-introduccion.activa {
+    position: relative;
+    display: block;
+    min-height: 100vh;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .contenido-introduccion {
+    position: absolute;
+    top: 50%;
+    right: clamp(2.2rem, 4vw, 4.8rem);
+    transform: translateY(-50%);
+
+    width: min(43vw, 700px);
+    max-height: 90vh;
+
+    margin: 0;
+    padding: clamp(0.45rem, 1vh, 0.8rem) 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+
+    text-align: left;
+  }
+
+  /* Cabecera alineada con todo el cuerpo narrativo */
+  .cabecera-introduccion,
+  .cabecera-intro-fila {
+    width: 100%;
+  }
+
+  .sobrelinea-introduccion {
+    margin: 0;
+  }
+
+  .sobrelinea-introduccion::after {
+    margin-top: 0.45rem;
+  }
+
+  .cabecera-introduccion h2 {
+    margin-top: 0.55rem;
+    margin-bottom: 0;
+    font-size: clamp(2rem, 2.35vw, 2.65rem);
+    line-height: 1.05;
+  }
+
+  /* Saltar intro se mantiene arriba, pero integrado en la misma columna */
+  .btn-saltar-intro {
+    margin-top: 0.35rem;
+  }
+
+  /* Una caja de lectura compacta y estable */
+  .relato-introduccion {
+    width: 100%;
+    min-height: clamp(190px, 23vh, 235px);
+    margin-top: clamp(0.75rem, 1.6vh, 1.05rem);
+
+    display: flex;
+    align-items: center;
+  }
+
+  .bloque-intro {
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .bloque-intro[hidden] {
+    display: none !important;
+  }
+
+  .bloque-intro:not([hidden]) {
+    display: flex;
+  }
+
+  .bloque-intro p {
+    width: 100%;
+    margin: 0 0 clamp(0.48rem, 0.9vh, 0.68rem);
+    font-size: clamp(0.92rem, 0.98vw, 1.04rem);
+    line-height: 1.48;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+
+  .bloque-intro p:first-child {
+    margin-bottom: clamp(0.55rem, 1vh, 0.75rem);
+    font-size: clamp(1.03rem, 1.08vw, 1.16rem);
+    line-height: 1.35;
+    text-align: left;
+  }
+
+  .bloque-intro p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Ruta de convergencia centrada respecto al texto */
+  .progreso-intro {
+    width: min(56%, 330px);
+    height: 30px;
+    margin: clamp(0.5rem, 1vh, 0.75rem) auto 0;
+  }
+
+  /* Botonera como pie del mismo bloque */
+  .controles-intro {
+    width: min(82%, 540px);
+    margin: clamp(0.55rem, 1.1vh, 0.8rem) auto 0;
+
+    display: grid;
+    grid-template-columns: minmax(92px, 1fr) auto minmax(92px, 1fr);
+    align-items: center;
+    gap: clamp(0.7rem, 1.35vw, 1rem);
+  }
+
+  .controles-intro .boton-continuar-imagen {
+    width: clamp(210px, 15.5vw, 245px);
+    min-width: 0;
+  }
+}
+
+/* Portátiles con menos altura: reducimos solo lo necesario,
+   pero mantenemos el conjunto centrado verticalmente. */
+@media (min-width: 901px) and (max-height: 760px) {
+
+  .contenido-introduccion {
+    width: min(44vw, 680px);
+    max-height: 94vh;
+    right: clamp(1.6rem, 3.4vw, 3.8rem);
+  }
+
+  .cabecera-introduccion h2 {
+    font-size: clamp(1.72rem, 2vw, 2.1rem);
+  }
+
+  .relato-introduccion {
+    min-height: 155px;
+    margin-top: 0.45rem;
+  }
+
+  .bloque-intro p {
+    font-size: 0.84rem;
+    line-height: 1.34;
+    margin-bottom: 0.34rem;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .progreso-intro {
+    width: min(54%, 300px);
+    height: 24px;
+    margin-top: 0.3rem;
+  }
+
+  .controles-intro {
+    margin-top: 0.35rem;
+  }
+
+  .controles-intro .boton-continuar-imagen {
+    width: 205px;
+  }
+}
+
+/* En móvil/tablet volvemos al flujo normal para no bloquear contenido. */
+@media (max-width: 900px) {
+  .contenido-introduccion {
+    position: relative;
+    top: auto;
+    right: auto;
+    transform: none;
+    width: auto;
+    max-height: none;
+    margin: 0 auto;
+  }
+}
+
+
+/* ==========================================================
+   INTRO v10 — LECTURA + EQUILIBRIO + PULSO HOLOGRÁFICO
+   ========================================================== */
+
+/* Pulso visual sutil del holograma central.
+   Solo CSS: imita un latido suave sin convertirse en foco principal. */
+.nodo-convergencia {
+  transform-origin: center;
+  animation: pulso-nexo 1.2s ease-in-out infinite;
+  will-change: filter, opacity, transform;
+}
+
+@keyframes pulso-nexo {
+  0%, 100% {
+    opacity: 0.88;
+    transform: scale(1);
+    filter:
+      brightness(0.98)
+      drop-shadow(0 0 9px rgba(113, 232, 199, 0.34))
+      drop-shadow(0 0 20px rgba(71, 184, 228, 0.18));
+  }
+
+  12% {
+    opacity: 0.98;
+    transform: scale(1.012);
+    filter:
+      brightness(1.14)
+      drop-shadow(0 0 13px rgba(113, 232, 199, 0.48))
+      drop-shadow(0 0 28px rgba(71, 184, 228, 0.28));
+  }
+
+  24% {
+    opacity: 0.93;
+    transform: scale(1.006);
+    filter:
+      brightness(1.06)
+      drop-shadow(0 0 11px rgba(113, 232, 199, 0.42))
+      drop-shadow(0 0 24px rgba(71, 184, 228, 0.23));
+  }
+
+  42%, 88% {
+    opacity: 0.88;
+    transform: scale(1);
+    filter:
+      brightness(0.98)
+      drop-shadow(0 0 9px rgba(113, 232, 199, 0.34))
+      drop-shadow(0 0 20px rgba(71, 184, 228, 0.18));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nodo-convergencia {
+    animation: none;
+  }
+}
+
+/* Escritorio: la composición sigue en la mitad derecha, pero utiliza
+   mejor su ancho y deja márgenes laterales similares y contenidos. */
+@media (min-width: 901px) {
+
+  .contenido-introduccion {
+    left: 52%;
+    right: auto;
+    width: 46%;
+    max-width: none;
+    transform: translateY(-50%);
+  }
+
+  .relato-introduccion {
+    min-height: clamp(205px, 24vh, 255px);
+  }
+
+  .bloque-intro p {
+    font-size: clamp(1.04rem, 1.08vw, 1.16rem);
+    line-height: 1.52;
+    margin-bottom: clamp(0.52rem, 0.9vh, 0.72rem);
+  }
+
+  .bloque-intro p:first-child {
+    font-size: clamp(1.14rem, 1.18vw, 1.28rem);
+    line-height: 1.38;
+    margin-bottom: clamp(0.58rem, 1vh, 0.78rem);
+  }
+
+  .cabecera-introduccion h2 {
+    font-size: clamp(2.05rem, 2.4vw, 2.72rem);
+  }
+
+  .progreso-intro {
+    width: min(52%, 350px);
+  }
+
+  .controles-intro {
+    width: min(76%, 560px);
+  }
+}
+
+/* Portátiles de poca altura: mantenemos una lectura cómoda sin
+   empujar el botón fuera del viewport. */
+@media (min-width: 901px) and (max-height: 760px) {
+
+  .contenido-introduccion {
+    left: 51.5%;
+    width: 47%;
+  }
+
+  .relato-introduccion {
+    min-height: 175px;
+    margin-top: 0.45rem;
+  }
+
+  .bloque-intro p {
+    font-size: 0.94rem;
+    line-height: 1.4;
+    margin-bottom: 0.36rem;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: 1.04rem;
+    line-height: 1.34;
+  }
+
+  .cabecera-introduccion h2 {
+    font-size: clamp(1.82rem, 2.05vw, 2.18rem);
+  }
+
+  .progreso-intro {
+    width: min(50%, 320px);
+  }
+
+  .controles-intro {
+    width: min(74%, 520px);
+  }
+}
+
+.cabecera-introduccion h2 {
+  border-bottom: 1px solid rgba(112, 236, 191, 0.42);
+  padding-bottom: 0.42rem;
+}
+
+
+/* ==========================================================
+   INTRO v11 — X HOLOGRÁFICA JUNTO A “EL PROTOCOLO NEXO”
+   Solo CSS. No requiere cambios en HTML.
+   ========================================================== */
+
+/* Convertimos el título en un bloque con espacio para el símbolo */
+.cabecera-introduccion h2 {
+  position: relative;
+  padding-left: clamp(4.2rem, 4.7vw, 5.2rem);
+}
+
+/* X holográfica construida con pseudo-elemento */
+.cabecera-introduccion h2::before {
+  content: "X";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: clamp(3.5rem, 4vw, 4.5rem);
+  height: clamp(3.5rem, 4vw, 4.5rem);
+
+  display: grid;
+  place-items: center;
+
+  font-size: clamp(2.7rem, 3.2vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1;
+
+  color: transparent;
+  background:
+    linear-gradient(
+      135deg,
+      #79f28b 0%,
+      #6ef0cc 42%,
+      #58d8f5 58%,
+      #56a9ff 100%
+    );
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  text-shadow:
+    0 0 6px rgba(113, 242, 181, 0.25),
+    0 0 12px rgba(94, 224, 225, 0.22),
+    0 0 20px rgba(74, 169, 255, 0.18);
+
+  opacity: 0.78;
+  transform-origin: center;
+  animation: pulso-x-nexo 1.2s ease-in-out infinite;
+
+  pointer-events: none;
+}
+
+/* Halo holográfico muy ligero detrás de la X */
+.cabecera-introduccion h2::after {
+  content: "";
+  position: absolute;
+  left: clamp(0.2rem, 0.25vw, 0.3rem);
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: clamp(3.15rem, 3.7vw, 4.15rem);
+  height: clamp(3.15rem, 3.7vw, 4.15rem);
+
+  border: 1px solid rgba(103, 224, 221, 0.2);
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 10px rgba(108, 237, 194, 0.12),
+    0 0 18px rgba(82, 182, 255, 0.10),
+    inset 0 0 8px rgba(98, 224, 232, 0.08);
+
+  opacity: 0.42;
+  animation: halo-x-nexo 1.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Reponemos la línea decorativa inferior del título con otro selector,
+   porque ::after se usa ahora como halo de la X. */
+.cabecera-introduccion h2 + .linea-titulo-intro,
+.cabecera-introduccion .linea-titulo-intro {
+  display: block;
+}
+
+/* Pulso sutil: más brillo que movimiento */
+@keyframes pulso-x-nexo {
+  0%, 100% {
+    opacity: 0.72;
+    transform: translateY(-50%) scale(1);
+    filter: brightness(1);
+  }
+
+  13% {
+    opacity: 0.96;
+    transform: translateY(-50%) scale(1.025);
+    filter: brightness(1.22)
+            drop-shadow(0 0 7px rgba(103, 237, 194, 0.32))
+            drop-shadow(0 0 11px rgba(78, 177, 255, 0.24));
+  }
+
+  27% {
+    opacity: 0.84;
+    transform: translateY(-50%) scale(1.01);
+    filter: brightness(1.08);
+  }
+
+  45%, 88% {
+    opacity: 0.72;
+    transform: translateY(-50%) scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes halo-x-nexo {
+  0%, 100% {
+    opacity: 0.30;
+    transform: translateY(-50%) scale(0.98);
+  }
+
+  13% {
+    opacity: 0.54;
+    transform: translateY(-50%) scale(1.025);
+  }
+
+  27% {
+    opacity: 0.40;
+    transform: translateY(-50%) scale(1.01);
+  }
+
+  45%, 88% {
+    opacity: 0.30;
+    transform: translateY(-50%) scale(0.98);
+  }
+}
+
+/* En portátiles bajos reducimos un poco el símbolo */
+@media (min-width: 901px) and (max-height: 760px) {
+  .cabecera-introduccion h2 {
+    padding-left: 3.7rem;
+  }
+
+  .cabecera-introduccion h2::before {
+    width: 3.2rem;
+    height: 3.2rem;
+    font-size: 2.5rem;
+  }
+
+  .cabecera-introduccion h2::after {
+    width: 2.9rem;
+    height: 2.9rem;
+  }
+}
+
+/* En móvil, la X sigue presente pero más discreta */
+@media (max-width: 900px) {
+  .cabecera-introduccion h2 {
+    padding-left: 3.25rem;
+  }
+
+  .cabecera-introduccion h2::before {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 2.2rem;
+  }
+
+  .cabecera-introduccion h2::after {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cabecera-introduccion h2::before,
+  .cabecera-introduccion h2::after {
+    animation: none;
+  }
+}
+
+
+
+/* =====================================================================
+   PORTADA — LOGO NEXO ANIMADO · VERSIÓN INLINE FINAL
+   =====================================================================
+   Esta versión NO depende de archivos SVG externos.
+   Todo el logo está dibujado dentro del index.html.
+
+   VENTAJAS:
+   - No puede aparecer el icono de imagen rota.
+   - Solo existe una X.
+   - El estado de expansión se consigue con CSS.
+   - N, E, O y "LA CONVERGENCIA" permanecen quietos.
+   ===================================================================== */
+
+/* Contenedor general del logo */
+#pantalla-inicio .logo-nexo-animado {
+  position: relative;
+  width: min(76vw, 820px);
+  min-width: 350px;
+  aspect-ratio: 1600 / 520;
+  margin: 0 auto;
+  flex: 0 0 auto;
+
+  /* El contenedor no necesita borde ni fondo. */
+  border: 0;
+  background: transparent;
+}
+
+/* El SVG ocupa siempre exactamente el tamaño de su contenedor. */
+#pantalla-inicio .logo-nexo-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---------------------------------------------------------------------
+   X ANIMADA
+   ---------------------------------------------------------------------
+   transform-box: fill-box hace que la X crezca alrededor de sí misma,
+   no alrededor de toda la página.
+   transform-origin: center fija el centro del pulso.
+   --------------------------------------------------------------------- */
+#pantalla-inicio .logo-x-pulso {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: latido-x-nexo-inline 1.2s ease-in-out infinite;
+}
+
+/* El punto central aumenta algo más de brillo en el pico del latido. */
+#pantalla-inicio .centro-x-nexo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: brillo-centro-x 1.2s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------
+   NODOS ANIMADOS
+   ---------------------------------------------------------------------
+   Cada nodo viaja por su propia línea.
+   Los dos llegan cerca de "LA CONVERGENCIA" al 76% del ciclo,
+   justo cuando la X alcanza su máxima expansión.
+   --------------------------------------------------------------------- */
+#pantalla-inicio .nodo-logo-svg {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Nodo verde: recorre 280 px hacia la derecha. */
+#pantalla-inicio .nodo-logo-svg-verde {
+  animation: viaje-nodo-verde-inline 1.2s linear infinite;
+}
+
+/* Nodo azul: recorre 280 px hacia la izquierda. */
+#pantalla-inicio .nodo-logo-svg-azul {
+  animation: viaje-nodo-azul-inline 1.2s linear infinite;
+}
+
+/* ---------------------------------------------------------------------
+   LATIDO DE LA X
+   ---------------------------------------------------------------------
+   Reposo -> concentración -> máximo -> reposo.
+
+   La expansión máxima es 4,5%.
+   Esto evita que parezca otra X distinta.
+   --------------------------------------------------------------------- */
+@keyframes latido-x-nexo-inline {
+  0%,
+  18%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter:
+      brightness(1)
+      drop-shadow(0 0 7px rgba(70, 220, 205, 0.18));
+  }
+
+  58% {
+    transform: scale(1.015);
+    filter:
+      brightness(1.08)
+      drop-shadow(0 0 10px rgba(80, 225, 205, 0.24));
+  }
+
+  /* PICO DEL LATIDO */
+  76% {
+    transform: scale(1.045);
+    filter:
+      brightness(1.32)
+      drop-shadow(0 0 14px rgba(135, 245, 85, 0.36))
+      drop-shadow(0 0 21px rgba(35, 175, 255, 0.34));
+  }
+
+  88% {
+    transform: scale(1.012);
+    filter:
+      brightness(1.06)
+      drop-shadow(0 0 8px rgba(65, 220, 210, 0.18));
+  }
+}
+
+/* Brillo del punto central de la X */
+@keyframes brillo-centro-x {
+  0%,
+  18%,
+  100% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+
+  76% {
+    transform: scale(1.35);
+    opacity: 1;
+    filter:
+      brightness(1.55)
+      drop-shadow(0 0 12px rgba(255, 255, 255, 0.82))
+      drop-shadow(0 0 23px rgba(95, 235, 220, 0.50));
+  }
+
+  88% {
+    transform: scale(1.08);
+    opacity: 0.96;
+  }
+}
+
+/* Nodo verde */
+@keyframes viaje-nodo-verde-inline {
+  0%,
+  18% {
+    transform: translateX(0);
+    opacity: 0.42;
+  }
+
+  68% {
+    opacity: 0.80;
+  }
+
+  76% {
+    transform: translateX(280px);
+    opacity: 1;
+  }
+
+  82% {
+    transform: translateX(280px);
+    opacity: 0;
+  }
+
+  83% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 0.42;
+  }
+}
+
+/* Nodo azul */
+@keyframes viaje-nodo-azul-inline {
+  0%,
+  18% {
+    transform: translateX(0);
+    opacity: 0.42;
+  }
+
+  68% {
+    opacity: 0.80;
+  }
+
+  76% {
+    transform: translateX(-280px);
+    opacity: 1;
+  }
+
+  82% {
+    transform: translateX(-280px);
+    opacity: 0;
+  }
+
+  83% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 0.42;
+  }
+}
+
+/* En móvil reducimos el logo, pero no cambiamos su funcionamiento. */
+@media (max-width: 760px) {
+  #pantalla-inicio .logo-nexo-animado {
+    width: min(93vw, 590px);
+    min-width: 0;
+  }
+}
+
+/* Accesibilidad:
+   si el usuario ha pedido reducir movimiento, dejamos el logo estático. */
+@media (prefers-reduced-motion: reduce) {
+  #pantalla-inicio .logo-x-pulso,
+  #pantalla-inicio .centro-x-nexo,
+  #pantalla-inicio .nodo-logo-svg-verde,
+  #pantalla-inicio .nodo-logo-svg-azul {
+    animation: none;
   }
 }
