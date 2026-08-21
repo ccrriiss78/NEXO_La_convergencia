@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 86" role="img" aria-label="Marco normal para selector de avatar">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#07151c" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#061017" stop-opacity="0.48"/>
+    </linearGradient>
+    <linearGradient id="borde" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#8ab9c4" stop-opacity="0.72"/>
+      <stop offset="0.55" stop-color="#c9e5e6" stop-opacity="0.46"/>
+      <stop offset="1" stop-color="#5aaac1" stop-opacity="0.62"/>
+    </linearGradient>
+  </defs>
+  <path d="M17 7H363L373 17V69L363 79H17L7 69V17Z" fill="url(#fondo)" stroke="url(#borde)" stroke-width="1.4"/>
+  <path d="M21 11H359M11 21V65M369 21V65M21 75H359" fill="none" stroke="#c7e8e8" stroke-opacity="0.13"/>
+</svg>
