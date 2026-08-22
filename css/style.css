@@ -3494,230 +3494,677 @@ h1, h2, h3, h4 {
 
 
 /* =====================================================================
-   PORTADA — LOGO NEXO ANIMADO · VERSIÓN INLINE FINAL
+   PORTADA — LOGO NEXO · TIPOGRAFÍA ORIGINAL HD + UN SOLO PULSO · v11
    =====================================================================
-   Esta versión NO depende de archivos SVG externos.
-   Todo el logo está dibujado dentro del index.html.
-
-   VENTAJAS:
-   - No puede aparecer el icono de imagen rota.
-   - Solo existe una X.
-   - El estado de expansión se consigue con CSS.
-   - N, E, O y "LA CONVERGENCIA" permanecen quietos.
+   CAMBIOS PRINCIPALES:
+   1. El logo se ha recentrado ópticamente dentro de su propio lienzo.
+   2. Se han eliminado de la imagen las dos bolitas FIJAS junto a
+      "LA CONVERGENCIA".
+   3. La expansión de la X ya no utiliza un segundo dibujo desalineado:
+      se genera desde la MISMA X y crece desde su centro hacia sus extremos.
+      Por tanto, la X no puede desplazarse lateralmente.
+   4. Los nodos empiezan pequeños y tenues en los extremos exteriores.
+      Aumentan progresivamente tamaño, brillo y halo mientras avanzan.
+   5. Alcanzan su máximo justo al lado de las letras del subtítulo.
+   6. Un solo pulso por ciclo de 1.2 s, manteniendo la cadencia general.
    ===================================================================== */
 
-/* Contenedor general del logo */
+
+/* ---------------------------------------------------------------------
+   1. CONTENEDOR DEL LOGO
+   --------------------------------------------------------------------- */
 #pantalla-inicio .logo-nexo-animado {
   position: relative;
-  width: min(76vw, 820px);
-  min-width: 350px;
-  aspect-ratio: 1600 / 520;
-  margin: 0 auto;
+
+  width: min(82vw, 900px);
+  min-width: 360px;
+  aspect-ratio: 428 / 128;
+
+  margin:
+    clamp(0.25rem, 1vh, 0.7rem)
+    auto
+    clamp(0.15rem, 0.6vh, 0.4rem);
+
   flex: 0 0 auto;
-
-  /* El contenedor no necesita borde ni fondo. */
-  border: 0;
-  background: transparent;
-}
-
-/* El SVG ocupa siempre exactamente el tamaño de su contenedor. */
-#pantalla-inicio .logo-nexo-svg {
-  display: block;
-  width: 100%;
-  height: 100%;
   overflow: visible;
+  border: 0;
+  isolation: isolate;
+
+  /*
+     El asset base ya está recentrado ópticamente.
+     Las cuatro primeras capas son los dos nodos:
+       núcleo verde + halo verde
+       núcleo azul  + halo azul
+  */
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(247, 255, 225, 1) 0 22%,
+      rgba(175, 255, 90, 1) 23% 50%,
+      transparent 72%
+    ),
+    radial-gradient(
+      circle,
+      rgba(133, 255, 77, 0.38) 0 20%,
+      rgba(90, 255, 60, 0.13) 42%,
+      transparent 74%
+    ),
+    radial-gradient(
+      circle,
+      rgba(236, 253, 255, 1) 0 22%,
+      rgba(75, 219, 255, 1) 23% 50%,
+      transparent 72%
+    ),
+    radial-gradient(
+      circle,
+      rgba(64, 205, 255, 0.40) 0 20%,
+      rgba(38, 174, 255, 0.13) 42%,
+      transparent 74%
+    ),
+    url("../assets/images/nexo_logo_base_tipografia_original_hd.webp");
+
+  background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat;
+
+  /*
+     POSICIONES CORREGIDAS TRAS RECENTRAR EL ASSET:
+     verde: extremo exterior 7.5% -> extremo interior 25.5%
+     azul:  extremo exterior 90.4% -> extremo interior 75.5%
+  */
+  background-position:
+    7.5% 77.3%,
+    7.5% 77.3%,
+    90.4% 77.3%,
+    90.4% 77.3%,
+    center;
+
+  /* Inicio mucho más discreto. */
+  background-size:
+    2px 2px,
+    5px 5px,
+    2px 2px,
+    5px 5px,
+    100% 100%;
+
+  animation:
+    nexo-nodos-v8 1.2s linear infinite;
 }
+
+
+/* El SVG antiguo queda fuera de la composición visual. */
+#pantalla-inicio .logo-nexo-svg {
+  opacity: 0;
+  pointer-events: none;
+}
+
 
 /* ---------------------------------------------------------------------
-   X ANIMADA
+   2. X BASE
    ---------------------------------------------------------------------
-   transform-box: fill-box hace que la X crezca alrededor de sí misma,
-   no alrededor de toda la página.
-   transform-origin: center fija el centro del pulso.
+   El mismo asset se utiliza en ambas capas de la X.
+   El centro visual de la X, una vez recentrada, está aprox. en:
+      x = 57.8%
+      y = 34.8%
    --------------------------------------------------------------------- */
-#pantalla-inicio .logo-x-pulso {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: latido-x-nexo-inline 1.2s ease-in-out infinite;
+#pantalla-inicio .logo-nexo-animado::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+  pointer-events: none;
+
+  background:
+    center / 100% 100%
+    no-repeat
+    url("../assets/images/nexo_x_estatica_centrada.webp");
+
+  opacity: 1;
+
+  transform: scale(1);
+  transform-origin: 57.8% 34.8%;
+
+  animation:
+    nexo-x-base-v8 1.2s cubic-bezier(.36, 0, .28, 1) infinite;
+
+  will-change:
+    opacity,
+    filter;
 }
 
-/* El punto central aumenta algo más de brillo en el pico del latido. */
-#pantalla-inicio .centro-x-nexo {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: brillo-centro-x 1.2s ease-in-out infinite;
-}
 
 /* ---------------------------------------------------------------------
-   NODOS ANIMADOS
+   3. X EN EXPANSIÓN
    ---------------------------------------------------------------------
-   Cada nodo viaja por su propia línea.
-   Los dos llegan cerca de "LA CONVERGENCIA" al 76% del ciclo,
-   justo cuando la X alcanza su máxima expansión.
+   MUY IMPORTANTE:
+   NO cargamos una segunda X distinta.
+   Es exactamente la misma X duplicada y escalada desde el mismo centro.
+
+   Esto elimina:
+   - desplazamiento lateral;
+   - salto entre dos dibujos;
+   - caja rectangular;
+   - desalineación entre estado inicial y expandido.
    --------------------------------------------------------------------- */
-#pantalla-inicio .nodo-logo-svg {
-  transform-box: fill-box;
-  transform-origin: center;
+#pantalla-inicio .logo-nexo-animado::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 3;
+  pointer-events: none;
+
+  background:
+    center / 100% 100%
+    no-repeat
+    url("../assets/images/nexo_x_estatica_centrada.webp");
+
+  opacity: 0;
+
+  transform:
+    scaleX(1)
+    scaleY(1);
+
+  transform-origin: 57.8% 34.8%;
+
+  animation:
+    nexo-x-expansion-v8 1.2s cubic-bezier(.36, 0, .28, 1) infinite;
+
+  will-change:
+    opacity,
+    transform,
+    filter;
 }
 
-/* Nodo verde: recorre 280 px hacia la derecha. */
-#pantalla-inicio .nodo-logo-svg-verde {
-  animation: viaje-nodo-verde-inline 1.2s linear infinite;
-}
 
-/* Nodo azul: recorre 280 px hacia la izquierda. */
-#pantalla-inicio .nodo-logo-svg-azul {
-  animation: viaje-nodo-azul-inline 1.2s linear infinite;
-}
+/* X de reposo: desaparece únicamente durante el pico. */
+@keyframes nexo-x-base-v8 {
 
-/* ---------------------------------------------------------------------
-   LATIDO DE LA X
-   ---------------------------------------------------------------------
-   Reposo -> concentración -> máximo -> reposo.
+  /*
+     UN SOLO PULSO POR CICLO:
+     la X de reposo se mantiene estable, cede progresivamente a la X
+     expandida y vuelve una sola vez. El ciclo completo sigue durando 1.2 s.
+  */
 
-   La expansión máxima es 4,5%.
-   Esto evita que parezca otra X distinta.
-   --------------------------------------------------------------------- */
-@keyframes latido-x-nexo-inline {
   0%,
-  18%,
+  42%,
   100% {
-    transform: scale(1);
     opacity: 1;
-    filter:
-      brightness(1)
-      drop-shadow(0 0 7px rgba(70, 220, 205, 0.18));
+    filter: brightness(1);
+  }
+
+  50% {
+    opacity: 0.82;
   }
 
   58% {
-    transform: scale(1.015);
-    filter:
-      brightness(1.08)
-      drop-shadow(0 0 10px rgba(80, 225, 205, 0.24));
+    opacity: 0.46;
   }
 
-  /* PICO DEL LATIDO */
-  76% {
-    transform: scale(1.045);
-    filter:
-      brightness(1.32)
-      drop-shadow(0 0 14px rgba(135, 245, 85, 0.36))
-      drop-shadow(0 0 21px rgba(35, 175, 255, 0.34));
+  66% {
+    opacity: 0.12;
   }
 
-  88% {
-    transform: scale(1.012);
-    filter:
-      brightness(1.06)
-      drop-shadow(0 0 8px rgba(65, 220, 210, 0.18));
-  }
-}
-
-/* Brillo del punto central de la X */
-@keyframes brillo-centro-x {
-  0%,
-  18%,
-  100% {
-    transform: scale(1);
-    opacity: 0.92;
+  /* Pico único */
+  70% {
+    opacity: 0;
   }
 
-  76% {
-    transform: scale(1.35);
-    opacity: 1;
-    filter:
-      brightness(1.55)
-      drop-shadow(0 0 12px rgba(255, 255, 255, 0.82))
-      drop-shadow(0 0 23px rgba(95, 235, 220, 0.50));
+  78% {
+    opacity: 0.38;
   }
 
-  88% {
-    transform: scale(1.08);
-    opacity: 0.96;
-  }
-}
-
-/* Nodo verde */
-@keyframes viaje-nodo-verde-inline {
-  0%,
-  18% {
-    transform: translateX(0);
-    opacity: 0.42;
+  86% {
+    opacity: 0.76;
   }
 
-  68% {
-    opacity: 0.80;
-  }
-
-  76% {
-    transform: translateX(280px);
+  92% {
     opacity: 1;
   }
-
-  82% {
-    transform: translateX(280px);
-    opacity: 0;
-  }
-
-  83% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translateX(0);
-    opacity: 0.42;
-  }
 }
 
-/* Nodo azul */
-@keyframes viaje-nodo-azul-inline {
+
+/* ---------------------------------------------------------------------
+   EXPANSIÓN SIMÉTRICA:
+   crece DESDE EL CENTRO hacia los cuatro extremos.
+   No existe ningún translate ni cambio de left/top.
+   --------------------------------------------------------------------- */
+@keyframes nexo-x-expansion-v8 {
+
+  /*
+     EXPANSIÓN ÚNICA "PUM":
+     desde la X normal hasta el máximo de expansión en una sola subida.
+     No hay segundo golpe.
+  */
+
   0%,
-  18% {
-    transform: translateX(0);
-    opacity: 0.42;
-  }
-
-  68% {
-    opacity: 0.80;
-  }
-
-  76% {
-    transform: translateX(-280px);
-    opacity: 1;
-  }
-
-  82% {
-    transform: translateX(-280px);
-    opacity: 0;
-  }
-
-  83% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-
+  42%,
   100% {
-    transform: translateX(0);
-    opacity: 0.42;
+    opacity: 0;
+
+    transform:
+      scaleX(1)
+      scaleY(1);
+
+    filter:
+      brightness(1)
+      saturate(1);
+  }
+
+  /* Comienza el crecimiento */
+  48% {
+    opacity: 0.12;
+
+    transform:
+      scaleX(1.025)
+      scaleY(1.015);
+  }
+
+  54% {
+    opacity: 0.28;
+
+    transform:
+      scaleX(1.07)
+      scaleY(1.045);
+  }
+
+  60% {
+    opacity: 0.50;
+
+    transform:
+      scaleX(1.13)
+      scaleY(1.08);
+  }
+
+  65% {
+    opacity: 0.75;
+
+    transform:
+      scaleX(1.20)
+      scaleY(1.12);
+  }
+
+  /* ÚNICO PICO — máximo brillo y expansión */
+  70% {
+    opacity: 1;
+
+    transform:
+      scaleX(1.28)
+      scaleY(1.17);
+
+    filter:
+      brightness(1.45)
+      saturate(1.18)
+
+      drop-shadow(
+        0 0 9px
+        rgba(255, 255, 255, 0.70)
+      )
+
+      drop-shadow(
+        0 0 17px
+        rgba(135, 255, 63, 0.48)
+      )
+
+      drop-shadow(
+        0 0 23px
+        rgba(38, 189, 255, 0.52)
+      )
+
+      drop-shadow(
+        0 0 34px
+        rgba(63, 215, 236, 0.22)
+      );
+  }
+
+  /* Descenso único, sin segundo golpe */
+  77% {
+    opacity: 0.68;
+
+    transform:
+      scaleX(1.17)
+      scaleY(1.10);
+
+    filter:
+      brightness(1.18)
+      saturate(1.08);
+  }
+
+  84% {
+    opacity: 0.35;
+
+    transform:
+      scaleX(1.08)
+      scaleY(1.05);
+
+    filter:
+      brightness(1.08);
+  }
+
+  90% {
+    opacity: 0.10;
+
+    transform:
+      scaleX(1.025)
+      scaleY(1.015);
+  }
+
+  94% {
+    opacity: 0;
+
+    transform:
+      scaleX(1)
+      scaleY(1);
   }
 }
 
-/* En móvil reducimos el logo, pero no cambiamos su funcionamiento. */
-@media (max-width: 760px) {
+
+/* ---------------------------------------------------------------------
+   4. NODOS
+   ---------------------------------------------------------------------
+   El contraste entre inicio y final se ha aumentado claramente.
+
+   INICIO:
+   - 2 px de núcleo;
+   - halo casi imperceptible;
+   - poco brillo.
+
+   FINAL:
+   - núcleo de 11 px;
+   - halo de 35 px;
+   - máximo resplandor justo al lado del texto.
+   --------------------------------------------------------------------- */
+@keyframes nexo-nodos-v8 {
+
+  /* EXTERIOR: mínimo tamaño y brillo */
+  0%,
+  15% {
+    background-position:
+      7.5% 77.3%,
+      7.5% 77.3%,
+      90.4% 77.3%,
+      90.4% 77.3%,
+      center;
+
+    background-size:
+      2px 2px,
+      5px 5px,
+      2px 2px,
+      5px 5px,
+      100% 100%;
+  }
+
+
+  /* Empiezan a adquirir energía */
+  30% {
+    background-position:
+      12.5% 77.3%,
+      12.5% 77.3%,
+      86.2% 77.3%,
+      86.2% 77.3%,
+      center;
+
+    background-size:
+      3px 3px,
+      8px 8px,
+      3px 3px,
+      8px 8px,
+      100% 100%;
+  }
+
+
+  /* Mitad del recorrido */
+  44% {
+    background-position:
+      18% 77.3%,
+      18% 77.3%,
+      81.7% 77.3%,
+      81.7% 77.3%,
+      center;
+
+    background-size:
+      5px 5px,
+      14px 14px,
+      5px 5px,
+      14px 14px,
+      100% 100%;
+  }
+
+
+  /* Cerca de LA CONVERGENCIA */
+  56% {
+    background-position:
+      23% 77.3%,
+      23% 77.3%,
+      77.5% 77.3%,
+      77.5% 77.3%,
+      center;
+
+    background-size:
+      7px 7px,
+      22px 22px,
+      7px 7px,
+      22px 22px,
+      100% 100%;
+  }
+
+
+  /* MÁXIMO justo al lado de las letras */
+  70%,
+  74% {
+    background-position:
+      25.5% 77.3%,
+      25.5% 77.3%,
+      75.5% 77.3%,
+      75.5% 77.3%,
+      center;
+
+    background-size:
+      11px 11px,
+      35px 35px,
+      11px 11px,
+      35px 35px,
+      100% 100%;
+  }
+
+
+  /*
+     Tras el pico desaparecen.
+     Como las bolitas fijas se han eliminado del asset,
+     no queda ningún círculo visible en reposo.
+  */
+  78% {
+    background-position:
+      25.5% 77.3%,
+      25.5% 77.3%,
+      75.5% 77.3%,
+      75.5% 77.3%,
+      center;
+
+    background-size:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      100% 100%;
+  }
+
+
+  79%,
+  98% {
+    background-position:
+      7.5% 77.3%,
+      7.5% 77.3%,
+      90.4% 77.3%,
+      90.4% 77.3%,
+      center;
+
+    background-size:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      100% 100%;
+  }
+
+
+  100% {
+    background-position:
+      7.5% 77.3%,
+      7.5% 77.3%,
+      90.4% 77.3%,
+      90.4% 77.3%,
+      center;
+
+    background-size:
+      2px 2px,
+      5px 5px,
+      2px 2px,
+      5px 5px,
+      100% 100%;
+  }
+}
+
+
+/* ---------------------------------------------------------------------
+   5. BOTÓN JUGAR
+   --------------------------------------------------------------------- */
+#pantalla-inicio .boton-jugar-imagen {
+  width: min(19vw, 245px);
+  min-width: 185px;
+
+  margin-top: 0.1rem;
+
+  opacity: 0.92;
+
+  transform-origin: center;
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    opacity 180ms ease;
+}
+
+#pantalla-inicio .boton-jugar-imagen img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  opacity: 0.88;
+
+  filter:
+    brightness(0.85)
+    saturate(0.91)
+    contrast(0.99);
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    opacity 180ms ease;
+}
+
+#pantalla-inicio .boton-jugar-imagen:hover img,
+#pantalla-inicio .boton-jugar-imagen:focus-visible img {
+  opacity: 1;
+
+  transform:
+    translateY(-2px)
+    scale(1.02);
+
+  filter:
+    brightness(1.08)
+    saturate(1.04)
+    drop-shadow(0 0 8px rgba(124, 194, 66, 0.30))
+    drop-shadow(0 0 11px rgba(0, 159, 227, 0.31));
+}
+
+
+/* ---------------------------------------------------------------------
+   6. LEMA
+   --------------------------------------------------------------------- */
+#pantalla-inicio .lema-juego {
+  max-width: 550px;
+
+  color: rgba(219, 233, 237, 0.88);
+
+  font-size:
+    clamp(0.90rem, 1.18vw, 1.04rem);
+
+  line-height: 1.5;
+
+  margin:
+    auto
+    auto
+    clamp(0.7rem, 1.5vh, 1rem);
+
+  text-shadow:
+    0 2px 12px
+    rgba(0, 0, 0, 0.86);
+}
+
+
+/* ---------------------------------------------------------------------
+   7. RESPONSIVE
+   --------------------------------------------------------------------- */
+@media (min-width: 761px) and (max-height: 760px) {
+
   #pantalla-inicio .logo-nexo-animado {
-    width: min(93vw, 590px);
+    width: min(73vw, 770px);
+  }
+
+  #pantalla-inicio .boton-jugar-imagen {
+    width: min(17vw, 220px);
+    min-width: 170px;
+  }
+}
+
+@media (max-width: 760px) {
+
+  #pantalla-inicio .logo-nexo-animado {
+    width: min(94vw, 620px);
     min-width: 0;
   }
-}
 
-/* Accesibilidad:
-   si el usuario ha pedido reducir movimiento, dejamos el logo estático. */
-@media (prefers-reduced-motion: reduce) {
-  #pantalla-inicio .logo-x-pulso,
-  #pantalla-inicio .centro-x-nexo,
-  #pantalla-inicio .nodo-logo-svg-verde,
-  #pantalla-inicio .nodo-logo-svg-azul {
-    animation: none;
+  #pantalla-inicio .boton-jugar-imagen {
+    width: min(48vw, 230px);
+    min-width: 165px;
   }
 }
+
+
+/* ---------------------------------------------------------------------
+   8. ACCESIBILIDAD
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+  #pantalla-inicio .logo-nexo-animado {
+    animation: none;
+
+    background-image:
+      url("../assets/images/nexo_logo_base_tipografia_original_hd.webp");
+
+    background-size:
+      100% 100%;
+
+    background-position:
+      center;
+  }
+
+  #pantalla-inicio .logo-nexo-animado::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  #pantalla-inicio .logo-nexo-animado::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
