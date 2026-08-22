@@ -1,14 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 92" role="img" aria-label="Marco normal para selector de rondas">
-  <defs>
-    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#07151c" stop-opacity="0.75"/>
-      <stop offset="1" stop-color="#071017" stop-opacity="0.52"/>
-    </linearGradient>
-    <linearGradient id="borde" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#9cc8d0" stop-opacity="0.70"/>
-      <stop offset="1" stop-color="#567c89" stop-opacity="0.58"/>
-    </linearGradient>
-  </defs>
-  <path d="M17 6H79L90 17V75L79 86H17L6 75V17Z" fill="url(#fondo)" stroke="url(#borde)" stroke-width="1.4"/>
-  <path d="M21 10H75M10 21V71M86 21V71M21 82H75" fill="none" stroke="#d7eeee" stroke-opacity="0.14"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+<defs>
+  <linearGradient id="g-main" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#9be84f"/>
+    <stop offset="48%" stop-color="#55d7b7"/>
+    <stop offset="100%" stop-color="#28b8f2"/>
+  </linearGradient>
+  <linearGradient id="g-dark" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#0b2028" stop-opacity=".94"/>
+    <stop offset="100%" stop-color="#061219" stop-opacity=".92"/>
+  </linearGradient>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="9" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<path d="M14 3 H106 L117 14 V106 L106 117 H14 L3 106 V14 Z" fill="#07141b" fill-opacity=".9" stroke="#7896a3" stroke-opacity=".72" stroke-width="1.5"/>
+<path d="M18 8 H102" stroke="#9db4bf" stroke-opacity=".35"/>
+
 </svg>
