@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO — La Convergencia</title>
-  <link rel="stylesheet" href="./css/style.css?v=logo-inline-final">
+  <link rel="stylesheet" href="./css/style.css?v=config-v12-botones-jugar">
 </head>
 <body>
 
@@ -170,7 +170,7 @@
         aria-label="Jugar"
       >
         <img
-          src="./assets/images/boton-jugar-prismatico-transparente.webp"
+          src="./assets/images/portada/botones/boton-jugar-prismatico-transparente.webp"
           alt="JUGAR"
         >
       </button>
@@ -189,7 +189,7 @@
     <div class="fondo-introduccion"></div>
     <img
       class="nodo-convergencia"
-      src="./assets/images/nodo-nexo.svg"
+      src="./assets/images/introduccion/decoracion/nodo-nexo.svg"
       alt=""
       aria-hidden="true"
     >
@@ -255,13 +255,13 @@
         >
           <img
             class="boton-continuar-estado boton-continuar-normal"
-            src="./assets/images/boton-continuar-normal.webp"
+            src="./assets/images/introduccion/botones/boton-continuar-normal.webp"
             alt=""
             aria-hidden="true"
           >
           <img
             class="boton-continuar-estado boton-continuar-hover"
-            src="./assets/images/boton-continuar-hover.webp"
+            src="./assets/images/introduccion/botones/boton-continuar-hover.webp"
             alt=""
             aria-hidden="true"
           >
@@ -274,10 +274,97 @@
 
   <!-- ============================================================
        PANTALLA 3: CONFIGURACIÓN
-       Elección de avatar y número de rondas
+       Composición: HUMANO izquierda · IA derecha · centro despejado
+       Rondas + inicio centrados en la zona inferior
   ============================================================ -->
   <section id="pantalla-configuracion" class="pantalla">
-    <div class="fondo-configuracion"></div>
+    <!-- NEXO V12 · CONFIGURACIÓN DEFINITIVA · POSICIÓN AVATARES V10 + BOTONES TIPO JUGAR -->
+    <div class="fondo-configuracion" aria-hidden="true"></div>
+
+    <!-- ============================================================
+         NEXO V10 · ESFERA ALINEADA MATEMÁTICAMENTE
+         ------------------------------------------------------------
+         IMPORTANTE:
+         - El fondo es 2560x1440.
+         - Este SVG usa EXACTAMENTE viewBox 0 0 2560 1440.
+         - background-size: cover y preserveAspectRatio="xMidYMid slice"
+           aplican el mismo recorte.
+         - La máscara de descargas usa la circunferencia REAL:
+           centro (1292, 569) · radio 403px.
+         - Así la animación no puede desplazarse respecto a la esfera.
+         ============================================================ -->
+    <div class="energia-esfera energia-esfera-v10" aria-hidden="true">
+      <svg
+        class="energia-esfera-svg"
+        viewBox="0 0 2560 1440"
+        preserveAspectRatio="xMidYMid slice"
+        focusable="false"
+      >
+        <defs>
+          <clipPath id="recorte-esfera-nexo-v10">
+            <circle cx="1292" cy="569" r="403"></circle>
+          </clipPath>
+
+          <radialGradient id="pulso-centro-nexo-v10">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="1"></stop>
+            <stop offset="38%" stop-color="#9dfaff" stop-opacity=".78"></stop>
+            <stop offset="100%" stop-color="#9dfaff" stop-opacity="0"></stop>
+          </radialGradient>
+        </defs>
+
+        <g class="red-energia-v10" clip-path="url(#recorte-esfera-nexo-v10)">
+          <!-- NEXO V10 · NODOS AJUSTADOS A PUNTOS LUMINOSOS DEL FONDO -->
+          <circle id="nh1" class="nodo-energia nodo-verde" cx="1110" cy="273" r="7"></circle>
+          <circle id="nh2" class="nodo-energia nodo-verde" cx="1131" cy="345" r="7"></circle>
+          <circle id="nh3" class="nodo-energia nodo-verde" cx="1260" cy="269" r="7"></circle>
+          <circle id="nh4" class="nodo-energia nodo-verde" cx="1046" cy="418" r="7"></circle>
+          <circle id="nh5" class="nodo-energia nodo-verde" cx="1175" cy="475" r="7"></circle>
+          <circle id="nh6" class="nodo-energia nodo-verde" cx="1206" cy="442" r="7"></circle>
+          <circle id="nh7" class="nodo-energia nodo-verde" cx="1034" cy="623" r="7"></circle>
+          <circle id="nh8" class="nodo-energia nodo-verde" cx="1133" cy="622" r="7"></circle>
+          <circle id="nh9" class="nodo-energia nodo-verde" cx="1191" cy="590" r="7"></circle>
+          <circle id="nh10" class="nodo-energia nodo-verde" cx="1186" cy="731" r="7"></circle>
+          <circle id="nh11" class="nodo-energia nodo-verde" cx="1225" cy="660" r="7"></circle>
+          <circle id="ni1" class="nodo-energia nodo-azul" cx="1470" cy="279" r="7"></circle>
+          <circle id="ni2" class="nodo-energia nodo-azul" cx="1385" cy="328" r="7"></circle>
+          <circle id="ni3" class="nodo-energia nodo-azul" cx="1348" cy="249" r="7"></circle>
+          <circle id="ni4" class="nodo-energia nodo-azul" cx="1531" cy="459" r="7"></circle>
+          <circle id="ni5" class="nodo-energia nodo-azul" cx="1469" cy="502" r="7"></circle>
+          <circle id="ni6" class="nodo-energia nodo-azul" cx="1327" cy="482" r="7"></circle>
+          <circle id="ni7" class="nodo-energia nodo-azul" cx="1563" cy="615" r="7"></circle>
+          <circle id="ni8" class="nodo-energia nodo-azul" cx="1443" cy="648" r="7"></circle>
+          <circle id="ni9" class="nodo-energia nodo-azul" cx="1373" cy="569" r="7"></circle>
+          <circle id="ni10" class="nodo-energia nodo-azul" cx="1401" cy="710" r="7"></circle>
+          <circle id="ni11" class="nodo-energia nodo-azul" cx="1353" cy="660" r="7"></circle>
+
+          <!-- NEXO V10 · DESCARGAS ENTRE NODOS -->
+          <polyline class="energia-ruta energia-verde energia-ruta-superior" data-zona="humano" data-nodos="nh1 nh2 nh3" pathLength="1" points="1110,273 1131,345 1260,269"></polyline>
+          <polyline class="energia-ruta energia-verde energia-ruta-superior" data-zona="humano" data-nodos="nh4 nh2 nh6" pathLength="1" points="1046,418 1131,345 1206,442"></polyline>
+          <polyline class="energia-ruta energia-verde energia-ruta-superior" data-zona="humano" data-nodos="nh1 nh5 nh6" pathLength="1" points="1110,273 1175,475 1206,442"></polyline>
+          <polyline class="energia-ruta energia-azul energia-ruta-superior" data-zona="ia" data-nodos="ni1 ni2 ni3" pathLength="1" points="1470,279 1385,328 1348,249"></polyline>
+          <polyline class="energia-ruta energia-azul energia-ruta-superior" data-zona="ia" data-nodos="ni4 ni2 ni6" pathLength="1" points="1531,459 1385,328 1327,482"></polyline>
+          <polyline class="energia-ruta energia-azul energia-ruta-superior" data-zona="ia" data-nodos="ni1 ni5 ni6" pathLength="1" points="1470,279 1469,502 1327,482"></polyline>
+          <polyline class="energia-ruta energia-verde" data-zona="humano" data-nodos="nh4 nh5 nh6 nh9" pathLength="1" points="1046,418 1175,475 1206,442 1191,590"></polyline>
+          <polyline class="energia-ruta energia-verde" data-zona="humano" data-nodos="nh7 nh8 nh9 nh6" pathLength="1" points="1034,623 1133,622 1191,590 1206,442"></polyline>
+          <polyline class="energia-ruta energia-verde" data-zona="humano" data-nodos="nh5 nh9 nh11" pathLength="1" points="1175,475 1191,590 1225,660"></polyline>
+          <polyline class="energia-ruta energia-azul" data-zona="ia" data-nodos="ni4 ni5 ni6 ni9" pathLength="1" points="1531,459 1469,502 1327,482 1373,569"></polyline>
+          <polyline class="energia-ruta energia-azul" data-zona="ia" data-nodos="ni7 ni8 ni9 ni6" pathLength="1" points="1563,615 1443,648 1373,569 1327,482"></polyline>
+          <polyline class="energia-ruta energia-azul" data-zona="ia" data-nodos="ni5 ni9 ni11" pathLength="1" points="1469,502 1373,569 1353,660"></polyline>
+          <polyline class="energia-ruta energia-verde" data-zona="humano" data-nodos="nh8 nh10 nh11" pathLength="1" points="1133,622 1186,731 1225,660"></polyline>
+          <polyline class="energia-ruta energia-azul" data-zona="ia" data-nodos="ni8 ni10 ni11" pathLength="1" points="1443,648 1401,710 1353,660"></polyline>
+          <polyline class="energia-ruta energia-convergencia energia-verde" data-zona="convergencia" data-nodos="nh5 nh6 centro" pathLength="1" points="1175,475 1206,442 1292,569"></polyline>
+          <polyline class="energia-ruta energia-convergencia energia-azul" data-zona="convergencia" data-nodos="ni5 ni6 centro" pathLength="1" points="1469,502 1327,482 1292,569"></polyline>
+          <polyline class="energia-ruta energia-convergencia energia-cian" data-zona="convergencia" data-nodos="nh9 centro ni9" pathLength="1" points="1191,590 1292,569 1373,569"></polyline>
+
+          <circle id="centro" class="nodo-energia nodo-centro"
+                  cx="1292" cy="569" r="9"></circle>
+        </g>
+
+        <circle class="energia-pulso-centro"
+                cx="1292" cy="569" r="92"
+                fill="url(#pulso-centro-nexo-v10)"></circle>
+      </svg>
+    </div>
 
     <div class="contenido-configuracion">
       <header class="cabecera-configuracion">
@@ -285,54 +372,56 @@
         <h2>Configura tu partida</h2>
       </header>
 
-      <div class="grupo-configuracion grupo-avatar">
-        <h3 id="titulo-identidad">Elige tu identidad</h3>
-        <div class="opciones-avatar" role="group" aria-labelledby="titulo-identidad">
-          <button
-            class="boton-avatar boton-avatar-activo"
-            type="button"
-            data-avatar="nexo-01"
-            aria-pressed="true"
-          >
-            <span class="silhueta-avatar" aria-hidden="true"></span>
-            <span class="texto-avatar">
-              <strong>NEXO 01</strong>
-              <small>Equilibrio y adaptación</small>
-            </span>
-          </button>
-
-          <button
-            class="boton-avatar"
-            type="button"
-            data-avatar="nexo-02"
-            aria-pressed="false"
-          >
-            <span class="silhueta-avatar silhueta-alterna" aria-hidden="true"></span>
-            <span class="texto-avatar">
-              <strong>NEXO 02</strong>
-              <small>Análisis y precisión</small>
-            </span>
-          </button>
+      <section class="panel-identidad panel-identidad-humano" aria-labelledby="titulo-avatar-humano">
+        <h3 id="titulo-avatar-humano">Elige un avatar para HUMANO</h3>
+        <div class="opciones-avatar" role="radiogroup" aria-labelledby="titulo-avatar-humano">
+          <label class="tarjeta-avatar tarjeta-humano">
+            <input type="radio" name="avatar-humano" value="humano-hombre" checked>
+            <span class="retrato-avatar avatar-humano-hombre" aria-hidden="true"></span>
+            <span class="texto-avatar"><strong>HOMBRE</strong><small>Intuición · adaptación</small></span>
+          </label>
+          <label class="tarjeta-avatar tarjeta-humano">
+            <input type="radio" name="avatar-humano" value="humano-mujer">
+            <span class="retrato-avatar avatar-humano-mujer" aria-hidden="true"></span>
+            <span class="texto-avatar"><strong>MUJER</strong><small>Empatía · equilibrio</small></span>
+          </label>
         </div>
-      </div>
+        <p class="info-grupo-avatar info-humano">Será tu representante durante la partida.</p>
+      </section>
 
-      <div class="grupo-configuracion grupo-rondas">
-        <h3 id="titulo-duracion">Elige la duración</h3>
-        <div class="opciones-rondas" role="group" aria-labelledby="titulo-duracion">
-          <button class="boton boton-opcion" type="button" data-rondas="8" aria-pressed="false">8</button>
-          <button class="boton boton-opcion boton-opcion-activa" type="button" data-rondas="12" aria-pressed="true">12</button>
-          <button class="boton boton-opcion" type="button" data-rondas="16" aria-pressed="false">16</button>
-          <button class="boton boton-opcion" type="button" data-rondas="0" aria-pressed="false" aria-label="Modo libre">∞</button>
+      <section class="panel-identidad panel-identidad-ia" aria-labelledby="titulo-avatar-ia">
+        <h3 id="titulo-avatar-ia">Elige un avatar para la IA</h3>
+        <div class="opciones-avatar" role="radiogroup" aria-labelledby="titulo-avatar-ia">
+          <label class="tarjeta-avatar tarjeta-ia">
+            <input type="radio" name="avatar-ia" value="ia-01" checked>
+            <span class="retrato-avatar avatar-ia-01" aria-hidden="true"></span>
+            <span class="texto-avatar"><strong>IA 01</strong><small>Lógica · cálculo</small></span>
+          </label>
+          <label class="tarjeta-avatar tarjeta-ia">
+            <input type="radio" name="avatar-ia" value="ia-02">
+            <span class="retrato-avatar avatar-ia-02" aria-hidden="true"></span>
+            <span class="texto-avatar"><strong>IA 02</strong><small>Precisión · análisis</small></span>
+          </label>
         </div>
-      </div>
+        <p class="info-grupo-avatar info-ia">Será tu oponente durante el protocolo.</p>
+      </section>
 
-      <button
-        id="btn-iniciar-partida"
-        class="boton-protocolo-principal boton-protocolo-integrado"
-        type="button"
-      >
-        <span>INICIAR PROTOCOLO</span>
-      </button>
+      <div class="configuracion-inferior">
+        <section class="grupo-rondas" aria-labelledby="titulo-duracion">
+          <h3 id="titulo-duracion">Número de rondas</h3>
+          <p class="microtexto-rondas">Elige la duración del protocolo.</p>
+          <div class="opciones-rondas" role="group" aria-labelledby="titulo-duracion">
+            <button class="boton boton-opcion" type="button" data-rondas="8" aria-pressed="false">8</button>
+            <button class="boton boton-opcion boton-opcion-activa" type="button" data-rondas="12" aria-pressed="true">12</button>
+            <button class="boton boton-opcion" type="button" data-rondas="16" aria-pressed="false">16</button>
+            <button class="boton boton-opcion" type="button" data-rondas="0" aria-pressed="false" aria-label="Modo libre">∞</button>
+          </div>
+        </section>
+
+        <button id="btn-iniciar-partida" class="boton-iniciar-nexo" type="button">
+          <span>INICIAR PROTOCOLO</span>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -554,6 +643,8 @@
     </div>
   </section>
 
+  <!-- NEXO V5 · efecto visual aislado de la lógica del juego -->
+  <script type="module" src="./src/efecto-energia-esfera.js?v=config-v10-esfera-alineada"></script>
   <script type="module" src="./dist/main.js?v=integracion-1"></script>
 </body>
 </html>

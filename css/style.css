@@ -121,18 +121,6 @@ h1, h2, h3, h4 {
   margin-top: var(--espacio-md);
 }
 
-.boton-opcion {
-  background-color: var(--color-fondo-panel);
-  color: var(--color-texto);
-  border: 1px solid var(--color-borde);
-  margin: 0 0.4rem;
-}
-
-.boton-opcion-activa {
-  border-color: var(--color-humano-claro);
-  color: var(--color-humano-claro);
-}
-
 .boton-apuesta {
   background-color: var(--color-fondo-panel);
   color: var(--color-texto);
@@ -158,7 +146,7 @@ h1, h2, h3, h4 {
     radial-gradient(ellipse 48% 42% at 50% 37%, rgba(112, 241, 211, 0.20), transparent 72%),
     radial-gradient(ellipse 75% 55% at 50% 100%, rgba(17, 139, 166, 0.17), transparent 70%),
     linear-gradient(to bottom, rgba(5, 11, 18, 0.16) 0%, rgba(5, 11, 18, 0.08) 42%, rgba(5, 11, 18, 0.58) 100%),
-    url("../assets/images/fondo-inicio-nexo.webp");
+    url("../assets/images/portada/fondos/fondo-inicio-nexo.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -265,7 +253,7 @@ h1, h2, h3, h4 {
     linear-gradient(90deg, transparent 0%, transparent 43%, rgba(2, 8, 11, 0.14) 54%, rgba(2, 8, 11, 0.50) 100%),
     radial-gradient(ellipse 44% 82% at 76% 42%, rgba(2, 8, 11, 0.20) 0%, rgba(2, 8, 11, 0.09) 58%, transparent 84%),
     linear-gradient(180deg, rgba(2, 8, 11, 0.04) 0%, transparent 56%, rgba(2, 8, 11, 0.40) 100%),
-    url("../assets/images/fondo-introduccion-nexo.webp");
+    url("../assets/images/introduccion/fondos/fondo-introduccion-nexo.webp");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -914,651 +902,288 @@ h1, h2, h3, h4 {
 }
 
 /* =====================================================================
-   PANTALLA 3 — CONFIGURACIÓN
+   PANTALLA 3 — CONFIGURACIÓN · REDISEÑO V4
+   Centro libre: esfera bicolor. Humano izquierda, IA derecha.
+   Rondas e iniciar protocolo apilados y centrados abajo.
    ===================================================================== */
 #pantalla-configuracion.activa {
   position: relative;
   isolation: isolate;
-  min-height: 100svh;
+  display: block;
+  width: 100%;
   height: 100svh;
-  padding: clamp(1.25rem, 3vh, 2.6rem) 1rem;
+  min-height: 620px;
   overflow: hidden;
+  background: #02080d;
 }
 
 .fondo-configuracion {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: -2;
+  /* NEXO V7 · fondo definitivo WebP 2560x1440 */
   background-image:
-    linear-gradient(180deg, rgba(2, 10, 16, 0.16) 0%, rgba(2, 10, 16, 0.05) 42%, rgba(2, 10, 16, 0.72) 100%),
-    radial-gradient(ellipse 52% 42% at 50% 54%, rgba(8, 24, 30, 0.04), rgba(3, 11, 17, 0.42) 100%),
-    url("../assets/images/fondo-configuracion-nexo.webp");
-  background-position: center;
+    linear-gradient(180deg, rgba(0, 7, 12, .10) 0%, rgba(0, 7, 12, 0) 50%, rgba(0, 7, 12, .24) 100%),
+    url("../assets/images/configuracion/fondos/fondo-configuracion-nexo-v10-web.webp");
+  background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.contenido-configuracion {
-  width: min(92vw, 770px);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
-}
-
-.cabecera-configuracion { margin-top: clamp(0.3rem, 2.4vh, 1.9rem); }
-
-.sobrelinea-configuracion {
-  color: #8fe2d8;
-  font-size: clamp(0.62rem, 0.82vw, 0.76rem);
-  letter-spacing: 0.24em;
-  font-weight: 700;
-  margin-bottom: 0.45rem;
-}
-
-.cabecera-configuracion h2 {
-  color: #f2f9f7;
-  font-size: clamp(1.7rem, 3.2vw, 2.6rem);
-  letter-spacing: 0.1em;
-  line-height: 1;
-}
-
-.cabecera-configuracion h2::after {
-  content: "";
-  display: block;
-  width: min(38vw, 250px);
-  height: 2px;
-  margin: 0.8rem auto 0.7rem;
-  background: linear-gradient(90deg, transparent, #82d451 24%, #e7f7ec 50%, #12a9e7 76%, transparent);
-  box-shadow: 0 0 12px rgba(71, 211, 190, 0.58);
-}
-
-.cabecera-configuracion p:last-child {
-  color: #d6e4e4;
-  font-size: clamp(0.84rem, 1.2vw, 1rem);
-}
-
-.grupo-configuracion { margin: clamp(1rem, 2.2vh, 1.7rem) 0 0; }
-
-.grupo-configuracion h3 {
-  color: #f2f8f6;
-  font-size: clamp(0.76rem, 1vw, 0.9rem);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-}
-
-.grupo-avatar { margin-top: clamp(1.5rem, 4.2vh, 3.3rem); }
-
-.opciones-avatar,
-.opciones-rondas {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-}
-
-.boton-avatar {
-  width: min(38vw, 185px);
-  min-width: 150px;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.48rem 0.85rem;
-  border: 1px solid rgba(199, 233, 232, 0.38);
-  border-radius: 9px;
-  background: rgba(5, 18, 24, 0.22);
-  color: #e9f4f2;
-  text-align: left;
-  cursor: pointer;
-  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
-}
-
-.boton-avatar:hover,
-.boton-avatar:focus-visible,
-.boton-avatar-activo {
-  transform: translateY(-2px);
-  border-color: #85db92;
-  background: rgba(23, 92, 72, 0.24);
-  box-shadow: inset 2px 0 0 #8bd34f, 0 0 15px rgba(112, 215, 112, 0.18);
-}
-
-.boton-avatar strong,
-.boton-avatar small { display: block; }
-
-.boton-avatar strong { font-size: 0.73rem; letter-spacing: 0.12em; }
-.boton-avatar small { color: #b8d0cf; font-size: 0.66rem; margin-top: 0.15rem; }
-
-.silhueta-avatar {
-  width: 28px;
-  height: 28px;
-  position: relative;
-  flex: 0 0 auto;
-  border: 1px solid #9edbe0;
-  border-radius: 50%;
-}
-
-.silhueta-avatar::before,
-.silhueta-avatar::after {
+.fondo-configuracion::after {
   content: "";
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 1px solid #9edbe0;
-}
-
-.silhueta-avatar::before { width: 7px; height: 7px; top: 5px; border-radius: 50%; }
-.silhueta-avatar::after { width: 13px; height: 7px; bottom: 4px; border-radius: 8px 8px 4px 4px; }
-.silhueta-alterna { border-color: #78c5ee; }
-.silhueta-alterna::before,
-.silhueta-alterna::after { border-color: #78c5ee; }
-
-#pantalla-configuracion .boton-opcion {
-  min-width: 94px;
-  margin: 0;
-  padding: 0.65rem 0.8rem;
-  background: rgba(4, 15, 21, 0.2);
-  border: 1px solid rgba(198, 231, 230, 0.4);
-  border-radius: 7px;
-  color: #ebf5f4;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-}
-
-#pantalla-configuracion .boton-opcion:hover,
-#pantalla-configuracion .boton-opcion:focus-visible,
-#pantalla-configuracion .boton-opcion-activa {
-  border-color: #75d8ca;
-  color: #effff8;
-  background: linear-gradient(90deg, rgba(112, 197, 70, 0.32), rgba(0, 154, 224, 0.32));
-  box-shadow: inset 0 1px 0 rgba(236, 255, 251, 0.32), 0 0 13px rgba(53, 191, 193, 0.2);
-}
-
-.boton-protocolo-principal {
-  position: relative;
-  margin-top: auto;
-  margin-bottom: clamp(0.25rem, 2.2vh, 1.8rem);
-  min-width: min(74vw, 315px);
-  padding: 0.82rem 2.1rem;
-  overflow: hidden;
-  border: 1px solid rgba(232, 252, 247, 0.82);
-  border-radius: 8px;
-  background: linear-gradient(90deg, rgba(106, 211, 82, 0.86), rgba(12, 161, 224, 0.9));
-  box-shadow: 0 0 0 3px rgba(5, 19, 25, 0.52), 0 0 18px rgba(35, 198, 184, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  color: #061015;
-  cursor: pointer;
-  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
-}
-
-.boton-protocolo-principal::before {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  border: 1px solid rgba(8, 33, 39, 0.58);
-  border-radius: 5px;
+  inset: 0;
   pointer-events: none;
-}
 
-.boton-protocolo-principal span {
-  position: relative;
-  z-index: 1;
-  font-size: clamp(0.75rem, 1.1vw, 0.9rem);
-  font-weight: 800;
-  letter-spacing: 0.16em;
-}
-
-.boton-protocolo-principal:hover,
-.boton-protocolo-principal:focus-visible {
-  transform: translateY(-3px) scale(1.025);
-  filter: brightness(1.17) saturate(1.12);
-  box-shadow: 0 0 0 3px rgba(5, 19, 25, 0.4), 0 0 26px rgba(87, 226, 205, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.72);
-}
-
-.boton-protocolo-principal:active { transform: translateY(-1px) scale(1.01); }
-
-@media (max-height: 760px) {
-  .grupo-avatar { margin-top: 1.1rem; }
-  .grupo-configuracion { margin-top: 0.8rem; }
-  .cabecera-configuracion h2::after { margin: 0.5rem auto; }
-  .boton-avatar { padding-top: 0.36rem; padding-bottom: 0.36rem; }
-}
-
-/* ---------------------------------------------------------------------
-   COMPOSICIÓN APROBADA · OPCIÓN 1 — TRAZO HOLOGRÁFICO
-   Los controles se anclan en los extremos inferiores para despejar el
-   holograma central. Los SVG aportan el marco; HTML conserva todo el texto.
---------------------------------------------------------------------- */
-#pantalla-configuracion.activa {
-  align-items: stretch;
-  justify-content: stretch;
-  padding: 0;
-}
-
-.fondo-configuracion {
-  background-image:
-    linear-gradient(180deg, rgba(2, 10, 16, 0.25) 0%, rgba(2, 10, 16, 0.02) 39%, rgba(2, 10, 16, 0.69) 100%),
-    radial-gradient(ellipse 42% 29% at 50% 9%, rgba(2, 7, 11, 0.48), transparent 80%),
-    radial-gradient(ellipse 66% 50% at 50% 55%, transparent 0%, rgba(3, 11, 17, 0.30) 100%),
-    url("../assets/images/fondo-configuracion-nexo.webp");
+  /* NEXO V7 · viñeta lateral muy suave.
+     Se elimina la antigua radial que hacía más visible el aro desplazado. */
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 8, 13, .22) 0%,
+      transparent 20%,
+      transparent 80%,
+      rgba(0, 8, 13, .22) 100%
+    );
 }
 
 .contenido-configuracion {
   position: relative;
   width: 100%;
-  max-width: none;
   height: 100%;
-  display: block;
+  color: #f4fbfa;
   text-align: center;
+  text-shadow: 0 2px 16px rgba(0,0,0,.82);
 }
 
 .cabecera-configuracion {
   position: absolute;
-  z-index: 2;
-  top: clamp(2.2rem, 5.2vh, 3.4rem);
+  z-index: 5;
+  top: clamp(1rem, 2.2vh, 1.75rem);
   left: 50%;
-  width: min(92vw, 980px);
-  margin: 0;
+  width: min(92vw, 720px);
   transform: translateX(-50%);
-}
-
-.cabecera-configuracion::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: -2rem -7rem -1.8rem;
-  background: radial-gradient(ellipse at center, rgba(2, 8, 12, 0.62) 0%, rgba(2, 8, 12, 0.24) 54%, transparent 78%);
-  pointer-events: none;
 }
 
 .sobrelinea-configuracion {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.8rem, 1.4vw, 1.4rem);
-  margin: 0 0 clamp(0.65rem, 1.25vh, 0.9rem);
+  gap: .8rem;
+  margin: 0 0 .32rem;
   color: #8fe8df;
-  font-size: clamp(0.78rem, 0.92vw, 1rem);
-  font-weight: 750;
-  letter-spacing: 0.20em;
-  line-height: 1.2;
+  font-size: clamp(.64rem, .78vw, .82rem);
+  font-weight: 800;
+  letter-spacing: .22em;
+  text-transform: uppercase;
 }
-
 .sobrelinea-configuracion::before,
 .sobrelinea-configuracion::after {
   content: "";
-  width: clamp(42px, 5vw, 78px);
+  width: clamp(38px, 5vw, 76px);
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(118, 229, 215, 0.68));
+  background: linear-gradient(90deg, transparent, #8dff45 46%, #27cfff 100%);
+  opacity: .78;
 }
-
-.sobrelinea-configuracion::after {
-  transform: scaleX(-1);
-}
+.sobrelinea-configuracion::after { transform: scaleX(-1); }
 
 .cabecera-configuracion h2 {
   margin: 0;
-  color: #f4faf8;
-  font-size: clamp(2.7rem, 3.25vw, 3.85rem);
-  font-weight: 760;
-  letter-spacing: 0.025em;
-  line-height: 0.98;
-  text-shadow: 0 3px 22px rgba(0, 0, 0, 0.92);
+  color: #fff;
+  font-size: clamp(1.8rem, 2.55vw, 2.9rem);
+  font-weight: 850;
+  letter-spacing: .055em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
-.cabecera-configuracion h2::after {
-  width: clamp(150px, 12vw, 215px);
-  height: 2px;
-  margin: clamp(0.85rem, 1.55vh, 1.1rem) auto clamp(0.68rem, 1.2vh, 0.9rem);
-  background: linear-gradient(90deg, transparent, #93dd5a 24%, #78e1b2 50%, #38c8f2 76%, transparent);
-  box-shadow: 0 0 14px rgba(71, 211, 190, 0.54);
-}
-
-.cabecera-configuracion p:last-child {
-  margin: 0;
-  color: #dcebea;
-  font-size: clamp(1rem, 1.08vw, 1.24rem);
-  line-height: 1.45;
-  text-shadow: 0 2px 13px rgba(0, 0, 0, 0.94);
-}
-
-.grupo-configuracion {
+.panel-identidad {
   position: absolute;
-  z-index: 2;
-  margin: 0;
-  text-align: left;
+  z-index: 4;
+  top: clamp(7.2rem, 14vh, 9.6rem);
+  width: min(26vw, 410px);
+  padding: clamp(.75rem, 1.3vw, 1.1rem);
+  border: 1px solid rgba(112, 216, 220, .34);
+  background: linear-gradient(180deg, rgba(3, 17, 24, .66), rgba(3, 14, 20, .42));
+  backdrop-filter: blur(2px);
+  clip-path: polygon(7% 0, 93% 0, 100% 12%, 100% 88%, 93% 100%, 7% 100%, 0 88%, 0 12%);
 }
+.panel-identidad-humano { left: clamp(1.4rem, 4.8vw, 5.8rem); box-shadow: inset 0 0 0 1px rgba(130,255,70,.08), 0 0 24px rgba(104,255,62,.05); }
+.panel-identidad-ia { right: clamp(1.4rem, 4.8vw, 5.8rem); box-shadow: inset 0 0 0 1px rgba(64,205,255,.08), 0 0 24px rgba(31,173,255,.06); }
 
-.grupo-configuracion h3 {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin: 0 0 0.78rem;
-  color: #8ce2dc;
-  font-size: clamp(0.76rem, 0.84vw, 0.92rem);
-  font-weight: 750;
-  letter-spacing: 0.22em;
-  line-height: 1.2;
+.panel-identidad h3 {
+  margin: 0 0 .72rem;
+  font-size: clamp(.75rem, .95vw, .98rem);
+  font-weight: 850;
+  letter-spacing: .16em;
+  text-transform: uppercase;
 }
-
-.grupo-configuracion h3::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(105, 225, 209, 0.55), transparent);
-}
-
-.grupo-avatar {
-  left: clamp(2.5rem, 7vw, 8rem);
-  bottom: clamp(5.4rem, 10.5vh, 7rem);
-  width: min(25vw, 350px);
-}
-
-.grupo-rondas {
-  right: clamp(2.5rem, 7vw, 8rem);
-  bottom: clamp(6.1rem, 11.5vh, 7.6rem);
-  width: min(28vw, 405px);
-}
+.panel-identidad-humano h3 { color: #b1ff55; }
+.panel-identidad-ia h3 { color: #5bdbff; }
 
 .opciones-avatar {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: clamp(0.5rem, 1vh, 0.78rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(.55rem, .8vw, .85rem);
 }
 
+.tarjeta-avatar {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-width: 0;
+  height: clamp(178px, 27vh, 285px);
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(2, 17, 24, .62) none center/100% 100% no-repeat;
+  transition: transform .18s ease, filter .18s ease;
+}
+.tarjeta-avatar input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.tarjeta-avatar:hover,
+.tarjeta-avatar:focus-within { transform: translateY(-3px) scale(1.012); }
+.tarjeta-humano:has(input:checked) {
+  background-image: none;
+  filter: drop-shadow(0 0 10px rgba(140,255,64,.36));
+}
+.tarjeta-ia:has(input:checked) {
+  background-image: none;
+  filter: drop-shadow(0 0 10px rgba(58,201,255,.38));
+}
+
+.retrato-avatar {
+  display: block;
+  width: calc(100% - 18px);
+  height: calc(100% - 52px);
+  margin: 9px auto 0;
+  background-position: center 18%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  clip-path: polygon(8% 0, 92% 0, 100% 8%, 100% 100%, 0 100%, 0 8%);
+}
+.avatar-humano-hombre { background-image: url("../assets/images/configuracion/avatares/avatar-humano-hombre.webp"); }
+.avatar-humano-mujer { background-image: url("../assets/images/configuracion/avatares/avatar-humano-mujer.webp"); }
+.avatar-ia-01 { background-image: url("../assets/images/configuracion/avatares/avatar-ia-01.webp"); }
+.avatar-ia-02 { background-image: url("../assets/images/configuracion/avatares/avatar-ia-02.webp"); }
+
+.texto-avatar {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 9px;
+  display: block;
+  padding: .36rem .25rem .18rem;
+  background: linear-gradient(180deg, transparent, rgba(1,12,18,.82) 36%);
+}
+.texto-avatar strong,
+.texto-avatar small { display: block; }
+.texto-avatar strong { color: #fff; font-size: clamp(.68rem, .8vw, .84rem); letter-spacing: .12em; }
+.texto-avatar small { margin-top: .14rem; color: #c7d9d8; font-size: clamp(.55rem, .63vw, .68rem); }
+
+.info-grupo-avatar {
+  margin: .58rem 0 0;
+  font-size: clamp(.58rem, .66vw, .72rem);
+}
+.info-humano { color: #b7ef8a; }
+.info-ia { color: #8bdcff; }
+
+.configuracion-inferior {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: clamp(.85rem, 2vh, 1.35rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(.42rem, .8vh, .7rem);
+  width: min(94vw, 600px);
+  transform: translateX(-50%);
+}
+
+.grupo-rondas {
+  width: 100%;
+  text-align: center;
+}
+.grupo-rondas h3 {
+  margin: 0;
+  color: #f4fffd;
+  font-size: clamp(.72rem, .9vw, .92rem);
+  font-weight: 850;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.microtexto-rondas {
+  margin: .18rem 0 .42rem;
+  color: #b9d7d6;
+  font-size: clamp(.58rem, .66vw, .7rem);
+}
 .opciones-rondas {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  gap: clamp(0.35rem, 0.7vw, 0.72rem);
+  justify-content: center;
+  gap: clamp(.45rem, .8vw, .72rem);
 }
 
-.boton-avatar {
-  width: 100%;
-  min-width: 0;
-  min-height: clamp(64px, 7.4vh, 74px);
-  display: flex;
-  align-items: center;
-  gap: clamp(0.75rem, 1vw, 1rem);
-  padding: 0.58rem clamp(1rem, 1.3vw, 1.3rem);
-  border: 0;
-  border-radius: 0;
-  background-color: transparent;
-  background-image: url("../assets/images/boton-avatar-normal.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  color: #edf7f5;
-  text-align: left;
-  transform: none;
-  box-shadow: none;
-  transition: transform 0.18s ease, filter 0.18s ease;
+@media (max-width: 1100px) {
+  .panel-identidad { width: min(31vw, 340px); }
+  .panel-identidad-humano { left: 1.2rem; }
+  .panel-identidad-ia { right: 1.2rem; }
+  .tarjeta-avatar { height: clamp(155px, 24vh, 230px); }
+  .configuracion-inferior { width: min(92vw, 520px); }
 }
 
-.boton-avatar:hover,
-.boton-avatar:focus-visible {
-  transform: translateY(-2px);
-}
-
-.boton-avatar:hover,
-.boton-avatar:focus-visible,
-.boton-avatar-activo {
-  border-color: transparent;
-  background-color: transparent;
-  background-image: url("../assets/images/boton-avatar-activo.svg");
-  box-shadow: none;
-  filter: drop-shadow(0 0 9px rgba(82, 220, 192, 0.16));
-}
-
-.boton-avatar:focus-visible,
-#pantalla-configuracion .boton-opcion:focus-visible {
-  outline: 2px solid rgba(140, 239, 224, 0.92);
-  outline-offset: 3px;
-}
-
-.boton-avatar strong {
-  color: #f3fbf9;
-  font-size: clamp(0.79rem, 0.9vw, 0.96rem);
-  font-weight: 780;
-  letter-spacing: 0.13em;
-  line-height: 1.1;
-}
-
-.boton-avatar small {
-  margin-top: 0.28rem;
-  color: #bcd1d1;
-  font-size: clamp(0.68rem, 0.74vw, 0.8rem);
-  line-height: 1.2;
-}
-
-.silhueta-avatar {
-  width: clamp(38px, 3vw, 46px);
-  height: clamp(38px, 3vw, 46px);
-  border-color: #95dfe2;
-}
-
-.silhueta-avatar::before {
-  width: 10px;
-  height: 10px;
-  top: 7px;
-}
-
-.silhueta-avatar::after {
-  width: 18px;
-  height: 10px;
-  bottom: 6px;
-}
-
-#pantalla-configuracion .boton-opcion {
-  width: clamp(66px, 4.8vw, 88px);
-  min-width: 0;
-  height: clamp(70px, 8.2vh, 82px);
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background-color: transparent;
-  background-image: url("../assets/images/boton-ronda-normal.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  color: #eaf5f4;
-  font-size: clamp(1rem, 1.2vw, 1.3rem);
-  font-weight: 760;
-  letter-spacing: 0.04em;
-  transform: none;
-  box-shadow: none;
-  transition: transform 0.18s ease, filter 0.18s ease;
-}
-
-#pantalla-configuracion .boton-opcion:hover,
-#pantalla-configuracion .boton-opcion:focus-visible {
-  transform: translateY(-2px);
-}
-
-#pantalla-configuracion .boton-opcion:hover,
-#pantalla-configuracion .boton-opcion:focus-visible,
-#pantalla-configuracion .boton-opcion-activa {
-  border-color: transparent;
-  color: #f3fff9;
-  background-color: transparent;
-  background-image: url("../assets/images/boton-ronda-activo.svg");
-  box-shadow: none;
-  filter: drop-shadow(0 0 10px rgba(82, 220, 192, 0.18));
-}
-
-.boton-protocolo-pendiente {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(1.2rem, 3vh, 2.1rem);
-  width: min(25vw, 360px);
-  min-width: 310px;
-  height: clamp(58px, 6.7vh, 64px);
-  margin: 0;
-  padding: 0 2rem;
-  overflow: hidden;
-  border: 1px solid rgba(141, 207, 207, 0.43);
-  border-radius: 4px;
-  background: rgba(4, 16, 22, 0.50);
-  box-shadow: inset 0 0 0 1px rgba(181, 232, 228, 0.06);
-  color: rgba(213, 232, 230, 0.72);
-  cursor: default;
-  transform: translateX(-50%);
-  filter: none;
-}
-
-.boton-protocolo-pendiente::before {
-  inset: 5px;
-  border-color: rgba(127, 190, 191, 0.18);
-  border-radius: 1px;
-}
-
-.boton-protocolo-pendiente span {
-  font-size: clamp(0.73rem, 0.86vw, 0.9rem);
-  letter-spacing: 0.19em;
-}
-
-.boton-protocolo-pendiente:hover,
-.boton-protocolo-pendiente:focus-visible,
-.boton-protocolo-pendiente:active {
-  transform: translateX(-50%);
-  filter: none;
-  box-shadow: inset 0 0 0 1px rgba(181, 232, 228, 0.06);
-}
-
-@media (min-width: 761px) and (max-width: 1050px) {
-  .grupo-avatar {
-    left: 3vw;
-    width: 31vw;
-  }
-
-  .grupo-rondas {
-    right: 3vw;
-    width: 37vw;
-  }
-
-  #pantalla-configuracion .boton-opcion {
-    width: clamp(62px, 7.5vw, 78px);
-  }
-}
-
-@media (min-width: 761px) and (max-height: 680px) {
-  .cabecera-configuracion {
-    top: 1.3rem;
-  }
-
-  .cabecera-configuracion h2 {
-    font-size: clamp(2.2rem, 3.1vw, 3rem);
-  }
-
-  .grupo-avatar,
-  .grupo-rondas {
-    bottom: 5.15rem;
-  }
-
-  .boton-avatar {
-    min-height: 58px;
-  }
-
-  #pantalla-configuracion .boton-opcion {
-    height: 66px;
-  }
-
-  .boton-protocolo-pendiente {
-    bottom: 1rem;
-    height: 54px;
-  }
+@media (max-height: 760px) and (min-width: 761px) {
+  #pantalla-configuracion.activa { min-height: 560px; }
+  .panel-identidad { top: 6.3rem; }
+  .tarjeta-avatar { height: clamp(145px, 23vh, 190px); }
+  .configuracion-inferior { bottom: .5rem; gap: .28rem; }
+  .microtexto-rondas { margin-bottom: .25rem; }
 }
 
 @media (max-width: 760px) {
   #pantalla-configuracion.activa {
     height: auto;
     min-height: 100svh;
-    padding: 1.4rem 1rem 2rem;
     overflow-y: auto;
+    padding: 1rem;
   }
-
-  .fondo-configuracion {
-    position: fixed;
-    background-position: 54% center;
-  }
-
+  .fondo-configuracion { position: fixed; background-position: center; }
   .contenido-configuracion {
     height: auto;
-    min-height: calc(100svh - 3.4rem);
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0 1.4rem;
   }
-
   .cabecera-configuracion,
-  .grupo-configuracion,
-  .boton-protocolo-pendiente {
+  .panel-identidad,
+  .configuracion-inferior {
     position: relative;
     top: auto;
+    left: auto;
     right: auto;
     bottom: auto;
-    left: auto;
+    width: min(100%, 460px);
+    margin: 0 auto;
     transform: none;
   }
-
-  .cabecera-configuracion {
-    width: 100%;
-  }
-
-  .cabecera-configuracion::before {
-    inset: -1rem -1rem -1.4rem;
-  }
-
-  .cabecera-configuracion h2 {
-    font-size: clamp(2.15rem, 10vw, 3rem);
-  }
-
-  .sobrelinea-configuracion {
-    font-size: 0.69rem;
-  }
-
-  .grupo-configuracion {
-    width: min(100%, 420px);
-  }
-
-  .grupo-avatar {
-    margin-top: clamp(3.5rem, 10vh, 5.5rem);
-  }
-
-  .grupo-rondas {
-    margin-top: 1.8rem;
-  }
-
-  .opciones-rondas {
-    justify-content: center;
-  }
-
-  #pantalla-configuracion .boton-opcion {
-    width: min(19vw, 78px);
-  }
-
-  .boton-protocolo-pendiente {
-    width: min(100%, 360px);
-    min-width: 0;
-    margin-top: auto;
-    transform: none;
-  }
-
-  .boton-protocolo-pendiente:hover,
-  .boton-protocolo-pendiente:focus-visible,
-  .boton-protocolo-pendiente:active {
-    transform: none;
-  }
+  .cabecera-configuracion { order: 1; }
+  .panel-identidad-humano { order: 2; }
+  .panel-identidad-ia { order: 3; }
+  .configuracion-inferior { order: 4; }
+  .tarjeta-avatar { height: 240px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .boton-avatar,
-  #pantalla-configuracion .boton-opcion {
-    transition: none;
-  }
+  .tarjeta-avatar { transition: none; }
 }
+
 
 /* =====================================================================
    PANTALLA 4 — JUEGO
@@ -1878,106 +1503,6 @@ h1, h2, h3, h4 {
    Este bloque se añade al final: conserva todo el CSS anterior y solo
    adapta la configuración y los controles nuevos que necesita la partida.
    ===================================================================== */
-
-/* Configuración: instrucciones contextualizadas y perfiles fuera del marco. */
-.cabecera-configuracion h2::after {
-  margin-bottom: 0;
-}
-
-.opciones-avatar {
-  width: 100%;
-  justify-content: stretch;
-}
-
-.boton-avatar {
-  position: relative;
-  display: grid;
-  grid-template-columns: clamp(2.8rem, 3.4vw, 3.2rem) minmax(0, 1fr);
-  align-items: center;
-  column-gap: clamp(0.7rem, 0.9vw, 0.9rem);
-  justify-self: stretch;
-  padding: 0.58rem clamp(1rem, 1.3vw, 1.3rem) 0.58rem 0.3rem;
-  background-image: none;
-}
-
-.boton-avatar::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: clamp(3.35rem, 4.1vw, 3.8rem);
-  background: center / 100% 100% no-repeat url("../assets/images/boton-avatar-normal.svg");
-  pointer-events: none;
-}
-
-.boton-avatar:hover,
-.boton-avatar:focus-visible,
-.boton-avatar-activo {
-  background-image: none;
-}
-
-.boton-avatar:hover::before,
-.boton-avatar:focus-visible::before,
-.boton-avatar-activo::before {
-  background-image: url("../assets/images/boton-avatar-activo.svg");
-}
-
-.texto-avatar {
-  position: relative;
-  z-index: 1;
-  display: block;
-  min-width: 0;
-  padding-left: 0.45rem;
-}
-
-.silhueta-avatar {
-  position: relative;
-  z-index: 1;
-  top: auto;
-  left: auto;
-  justify-self: center;
-  width: clamp(34px, 2.4vw, 38px);
-  height: clamp(34px, 2.4vw, 38px);
-  margin: 0;
-  transform: none;
-  background: rgba(4, 18, 24, 0.68);
-  box-shadow: 0 0 10px rgba(73, 205, 219, 0.12);
-}
-
-.silhueta-avatar::before {
-  width: 8px;
-  height: 8px;
-  top: 6px;
-}
-
-.silhueta-avatar::after {
-  width: 16px;
-  height: 8px;
-  bottom: 5px;
-}
-
-.boton-protocolo-integrado {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(1.2rem, 3vh, 2.1rem);
-  width: min(25vw, 360px);
-  min-width: 310px;
-  height: clamp(58px, 6.7vh, 64px);
-  margin: 0;
-  padding: 0 2rem;
-  transform: translateX(-50%);
-}
-
-.boton-protocolo-integrado:hover,
-.boton-protocolo-integrado:focus-visible {
-  transform: translateX(-50%) translateY(-3px) scale(1.02);
-}
-
-.boton-protocolo-integrado:active {
-  transform: translateX(-50%) translateY(-1px) scale(1.01);
-}
 
 /* Pantalla de juego funcional: usa la paleta existente del proyecto. */
 #pantalla-juego.activa {
@@ -3561,7 +3086,7 @@ h1, h2, h3, h4 {
       rgba(38, 174, 255, 0.13) 42%,
       transparent 74%
     ),
-    url("../assets/images/nexo_logo_base_tipografia_original_hd.webp");
+    url("../assets/images/portada/logo/nexo_logo_base_tipografia_original_hd.webp");
 
   background-repeat:
     no-repeat,
@@ -3622,7 +3147,7 @@ h1, h2, h3, h4 {
   background:
     center / 100% 100%
     no-repeat
-    url("../assets/images/nexo_x_estatica_centrada.webp");
+    url("../assets/images/portada/logo/nexo_x_estatica_centrada.webp");
 
   opacity: 1;
 
@@ -3663,7 +3188,7 @@ h1, h2, h3, h4 {
   background:
     center / 100% 100%
     no-repeat
-    url("../assets/images/nexo_x_estatica_centrada.webp");
+    url("../assets/images/portada/logo/nexo_x_estatica_centrada.webp");
 
   opacity: 0;
 
@@ -4148,7 +3673,7 @@ h1, h2, h3, h4 {
     animation: none;
 
     background-image:
-      url("../assets/images/nexo_logo_base_tipografia_original_hd.webp");
+      url("../assets/images/portada/logo/nexo_logo_base_tipografia_original_hd.webp");
 
     background-size:
       100% 100%;
@@ -4168,3 +3693,496 @@ h1, h2, h3, h4 {
   }
 }
 
+
+/* =====================================================================
+   NEXO V10 · CONFIGURACIÓN · ESFERA + PEDESTAL ALINEADOS DESDE ORIGEN
+   =====================================================================
+   REGLA CLAVE DE ALINEACIÓN:
+   - fondo: 2560x1440 + background-size: cover + center
+   - SVG:   viewBox 2560x1440 + preserveAspectRatio xMidYMid slice
+   Ambos usan el MISMO sistema de coordenadas.
+   Por tanto la circunferencia/máscara de la animación siempre coincide
+   con la esfera del fondo, incluso cuando el navegador recorta con cover.
+   ===================================================================== */
+
+#pantalla-configuracion .fondo-configuracion {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(0, 7, 12, .035) 0%,
+      rgba(0, 7, 12, 0) 52%,
+      rgba(0, 7, 12, .10) 100%
+    ),
+    url("../assets/images/configuracion/fondos/fondo-configuracion-nexo-v10-web.webp");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+#pantalla-configuracion .fondo-configuracion::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,7,11,.10) 0%,
+      transparent 15%,
+      transparent 85%,
+      rgba(0,7,11,.10) 100%
+    );
+}
+
+/* ---------- CABECERA ---------- */
+#pantalla-configuracion .cabecera-configuracion {
+  top: clamp(.55rem, 1vh, .9rem);
+  width: min(94vw, 900px);
+  padding: .18rem 1rem .5rem;
+  background: linear-gradient(
+    180deg,
+    rgba(1,10,16,.62),
+    rgba(1,10,16,.24) 72%,
+    transparent
+  );
+  border-radius: 10px;
+}
+
+#pantalla-configuracion .cabecera-configuracion h2 {
+  margin-top: .12rem;
+  font-size: clamp(1.75rem, 2.25vw, 2.62rem);
+}
+
+/* ---------- PANELES LATERALES ---------- */
+#pantalla-configuracion .panel-identidad {
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(25vw, 420px);
+  padding: clamp(.76rem, 1.05vw, 1rem);
+  background:
+    linear-gradient(180deg, rgba(3,17,24,.70), rgba(2,12,18,.50));
+  border: 1px solid rgba(121,213,213,.10);
+  backdrop-filter: blur(2px);
+}
+
+#pantalla-configuracion .panel-identidad-humano {
+  left: clamp(1.3rem, 4.7vw, 5.6rem);
+}
+
+#pantalla-configuracion .panel-identidad-ia {
+  right: clamp(1.3rem, 4.7vw, 5.6rem);
+}
+
+/* ---------- AVATARES: selección muy visible ---------- */
+#pantalla-configuracion .tarjeta-avatar {
+  position: relative;
+  height: clamp(180px, 25.5vh, 270px);
+  overflow: visible;
+  border: 1px solid rgba(177,214,218,.22);
+  background: rgba(1,13,19,.56);
+  clip-path: polygon(9% 0, 91% 0, 100% 9%, 100% 91%, 91% 100%, 9% 100%, 0 91%, 0 9%);
+  opacity: .70;
+  filter: saturate(.78) brightness(.84);
+  transform: scale(.98);
+  transition:
+    transform .20s ease,
+    opacity .20s ease,
+    filter .20s ease,
+    box-shadow .20s ease,
+    border-color .20s ease;
+}
+
+#pantalla-configuracion .tarjeta-humano:has(input:checked),
+#pantalla-configuracion .tarjeta-ia:has(input:checked) {
+  opacity: 1;
+  filter: saturate(1.16) brightness(1.08);
+  transform: translateY(-4px) scale(1.03);
+}
+
+#pantalla-configuracion .tarjeta-humano:has(input:checked) {
+  border-color: #b5ff4c;
+  box-shadow:
+    inset 0 0 0 2px rgba(181,255,76,.45),
+    0 0 12px rgba(176,255,67,.68),
+    0 0 30px rgba(87,255,50,.27);
+}
+
+#pantalla-configuracion .tarjeta-ia:has(input:checked) {
+  border-color: #55dfff;
+  box-shadow:
+    inset 0 0 0 2px rgba(85,223,255,.47),
+    0 0 12px rgba(66,219,255,.70),
+    0 0 30px rgba(29,175,255,.28);
+}
+
+#pantalla-configuracion .tarjeta-avatar::after {
+  content: "✓";
+  position: absolute;
+  z-index: 8;
+  top: -10px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 1000;
+  color: #061014;
+  opacity: 0;
+  transform: scale(.62);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+#pantalla-configuracion .tarjeta-humano:has(input:checked)::after {
+  opacity: 1;
+  transform: scale(1);
+  background: #b7ff45;
+  box-shadow: 0 0 15px rgba(161,255,61,.92);
+}
+
+#pantalla-configuracion .tarjeta-ia:has(input:checked)::after {
+  opacity: 1;
+  transform: scale(1);
+  background: #59dfff;
+  box-shadow: 0 0 15px rgba(73,218,255,.92);
+}
+
+/* ---------- SVG ENERGÍA: MISMO RECORTE QUE EL FONDO ---------- */
+#pantalla-configuracion .energia-esfera {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  pointer-events: none;
+  opacity: .78;
+  mix-blend-mode: screen;
+}
+
+#pantalla-configuracion .energia-esfera-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---------- NODOS ---------- */
+#pantalla-configuracion .nodo-energia {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: .38;
+  animation: nexo-pulso-nodo-v10 3.2s ease-in-out infinite;
+}
+
+#pantalla-configuracion .nodo-verde {
+  fill: #d9f5ac;
+  color: #aaff48;
+  filter:
+    drop-shadow(0 0 3px rgba(201,255,120,.72))
+    drop-shadow(0 0 7px rgba(133,255,61,.34));
+}
+
+#pantalla-configuracion .nodo-azul {
+  fill: #d5f6fb;
+  color: #50dcff;
+  filter:
+    drop-shadow(0 0 3px rgba(190,247,255,.74))
+    drop-shadow(0 0 7px rgba(51,202,255,.38));
+}
+
+#pantalla-configuracion .nodo-centro {
+  fill: #fff;
+  color: #bafcff;
+  opacity: .74;
+  filter:
+    drop-shadow(0 0 5px #fff)
+    drop-shadow(0 0 11px rgba(118,241,255,.68));
+}
+
+#pantalla-configuracion .nodo-energia.nodo-activo {
+  animation: nexo-nodo-recibe-energia-v10 470ms ease-out forwards;
+}
+
+/* ---------- DESCARGAS ---------- */
+#pantalla-configuracion .energia-ruta {
+  --duracion-descarga: 390ms;
+  fill: none;
+  stroke-width: 3.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  stroke-dasharray: .13 .87;
+  stroke-dashoffset: 1;
+}
+
+#pantalla-configuracion .energia-verde {
+  stroke: #d8ff90;
+  color: #a8ff47;
+}
+
+#pantalla-configuracion .energia-azul {
+  stroke: #a4f3ff;
+  color: #3ed3ff;
+}
+
+#pantalla-configuracion .energia-cian {
+  stroke: #fff;
+  color: #91f6ff;
+}
+
+#pantalla-configuracion .energia-ruta.activa {
+  animation:
+    nexo-descarga-esfera-v10
+    var(--duracion-descarga)
+    cubic-bezier(.15,.8,.22,1)
+    forwards;
+}
+
+#pantalla-configuracion .energia-pulso-centro {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+#pantalla-configuracion .energia-pulso-centro.activo {
+  animation: nexo-pulso-convergencia-v10 560ms ease-out forwards;
+}
+
+@keyframes nexo-pulso-nodo-v10 {
+  0%, 100% { opacity: .32; transform: scale(.82); }
+  48%      { opacity: .72; transform: scale(1.14); }
+  66%      { opacity: .50; transform: scale(.96); }
+}
+
+@keyframes nexo-nodo-recibe-energia-v10 {
+  0%   { opacity: .52; transform: scale(1); }
+  35%  {
+    opacity: 1;
+    transform: scale(1.75);
+    filter:
+      drop-shadow(0 0 5px #fff)
+      drop-shadow(0 0 12px currentColor)
+      drop-shadow(0 0 18px currentColor);
+  }
+  100% { opacity: .50; transform: scale(1); }
+}
+
+@keyframes nexo-descarga-esfera-v10 {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+  14% { opacity: .76; }
+  42% {
+    opacity: .94;
+    filter:
+      drop-shadow(0 0 3px #fff)
+      drop-shadow(0 0 7px currentColor);
+  }
+  58% {
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 4px #fff)
+      drop-shadow(0 0 10px currentColor)
+      drop-shadow(0 0 16px currentColor);
+  }
+  80% {
+    opacity: .56;
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+    filter: none;
+  }
+}
+
+@keyframes nexo-pulso-convergencia-v10 {
+  0%   { opacity: 0; transform: scale(.24); }
+  26%  { opacity: .72; }
+  100% { opacity: 0; transform: scale(1.16); }
+}
+
+#pantalla-configuracion .configuracion-inferior {
+  bottom: clamp(.62rem, 1.2vh, .95rem);
+  width: min(93vw, 630px);
+  gap: clamp(.36rem, .65vh, .56rem);
+}
+
+@media (max-height: 760px) and (min-width: 761px) {
+  #pantalla-configuracion .panel-identidad {
+    top: 50%;
+    width: min(24.5vw, 395px);
+  }
+
+  #pantalla-configuracion .tarjeta-avatar {
+    height: clamp(165px, 23.5vh, 225px);
+  }
+
+  #pantalla-configuracion .cabecera-configuracion h2 {
+    font-size: clamp(1.5rem, 2vw, 2.15rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pantalla-configuracion .energia-ruta,
+  #pantalla-configuracion .nodo-energia,
+  #pantalla-configuracion .energia-pulso-centro {
+    animation: none !important;
+  }
+}
+
+
+/* =====================================================================
+   NEXO V12 · BOTONES CONFIGURACIÓN · ASSETS INSPIRADOS EN JUGAR
+   ---------------------------------------------------------------------
+   Esta es la ÚNICA apariencia de los botones de Configuración.
+   Los marcos se cargan desde assets SVG vectoriales nuevos.
+   No quedan estilos de las versiones sustituidas.
+   ===================================================================== */
+
+/* --------------------- RONDAS --------------------- */
+#pantalla-configuracion .boton-opcion {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: clamp(88px, 6.4vw, 112px);
+  height: clamp(62px, 7.4vh, 82px);
+  padding: 0;
+  margin: 0;
+
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  background-image: url("../assets/images/configuracion/botones/boton-ronda-normal.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+
+  color: #ffffff;
+  font-size: clamp(1.05rem, 1.34vw, 1.46rem);
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, .95),
+    0 0 9px rgba(255, 255, 255, .12);
+
+  filter:
+    drop-shadow(0 5px 8px rgba(0, 0, 0, .42));
+
+  transition:
+    transform .18s ease,
+    filter .18s ease;
+}
+
+#pantalla-configuracion .boton-opcion:hover,
+#pantalla-configuracion .boton-opcion:focus-visible {
+  background-image: url("../assets/images/configuracion/botones/boton-ronda-hover.svg");
+  transform: translateY(-4px) scale(1.055);
+  filter:
+    brightness(1.08)
+    drop-shadow(0 6px 10px rgba(0, 0, 0, .48))
+    drop-shadow(0 0 8px rgba(68, 214, 245, .32));
+}
+
+#pantalla-configuracion .boton-opcion-activa {
+  background-image: url("../assets/images/configuracion/botones/boton-ronda-activo.svg");
+  transform: translateY(-4px) scale(1.075);
+  filter:
+    brightness(1.10)
+    drop-shadow(0 6px 10px rgba(0, 0, 0, .48))
+    drop-shadow(0 0 8px rgba(174, 255, 66, .42))
+    drop-shadow(0 0 13px rgba(58, 206, 246, .24));
+}
+
+/* ---------------- INICIAR PROTOCOLO ---------------- */
+#pantalla-configuracion .boton-iniciar-nexo {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: min(88vw, 570px);
+  height: clamp(108px, 12.2vh, 132px);
+  margin: 0;
+  padding: 0 4.3rem;
+
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  background-image: url("../assets/images/configuracion/botones/boton-iniciar-protocolo-normal.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+
+  color: #ffffff;
+  cursor: pointer;
+
+  filter:
+    drop-shadow(0 9px 12px rgba(0, 0, 0, .50));
+
+  transition:
+    transform .20s ease,
+    filter .20s ease;
+}
+
+#pantalla-configuracion .boton-iniciar-nexo span {
+  position: relative;
+  z-index: 2;
+
+  color: #ffffff;
+  font-size: clamp(1.06rem, 1.48vw, 1.40rem);
+  font-weight: 650;
+  letter-spacing: .21em;
+  line-height: 1;
+
+  text-shadow:
+    0 3px 10px rgba(0, 0, 0, .98),
+    0 0 8px rgba(255, 255, 255, .12);
+}
+
+#pantalla-configuracion .boton-iniciar-nexo:hover,
+#pantalla-configuracion .boton-iniciar-nexo:focus-visible {
+  background-image: url("../assets/images/configuracion/botones/boton-iniciar-protocolo-hover.svg");
+  transform: translateY(-5px) scale(1.035);
+
+  filter:
+    brightness(1.08)
+    drop-shadow(0 10px 15px rgba(0, 0, 0, .54))
+    drop-shadow(0 0 10px rgba(174, 255, 58, .27))
+    drop-shadow(0 0 17px rgba(48, 203, 255, .22));
+}
+
+#pantalla-configuracion .boton-iniciar-nexo:active {
+  transform: translateY(-1px) scale(1.012);
+}
+
+/* El bloque inferior conserva la composición estable de V10. */
+#pantalla-configuracion .configuracion-inferior {
+  gap: clamp(.28rem, .52vh, .44rem);
+}
+
+@media (max-width: 760px) {
+  #pantalla-configuracion .boton-opcion {
+    width: clamp(74px, 19vw, 102px);
+    height: 70px;
+  }
+
+  #pantalla-configuracion .boton-iniciar-nexo {
+    width: min(100%, 540px);
+    height: 116px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pantalla-configuracion .boton-opcion,
+  #pantalla-configuracion .boton-iniciar-nexo {
+    transition: none;
+  }
+}
