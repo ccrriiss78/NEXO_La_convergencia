@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 360">
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a4adb1"/>
+      <stop offset=".08" stop-color="#586268"/>
+      <stop offset=".20" stop-color="#171d21"/>
+      <stop offset=".78" stop-color="#0b1013"/>
+      <stop offset=".91" stop-color="#4d565a"/>
+      <stop offset="1" stop-color="#9ba5a9"/>
+    </linearGradient>
+
+    <linearGradient id="energy" x1="0" y1=".5" x2="1" y2=".5">
+      <stop offset="0" stop-color="#b8ff2d"/>
+      <stop offset=".24" stop-color="#a9f84d"/>
+      <stop offset=".46" stop-color="#6beaa5"/>
+      <stop offset=".55" stop-color="#52e3d7"/>
+      <stop offset=".72" stop-color="#34d8f5"/>
+      <stop offset="1" stop-color="#16b9ff"/>
+    </linearGradient>
+
+    <linearGradient id="inside" x1="0" y1="0" x2="1" y2=".2">
+      <stop offset="0" stop-color="#0a2219"/>
+      <stop offset=".46" stop-color="#04191c"/>
+      <stop offset="1" stop-color="#051a2b"/>
+    </linearGradient>
+
+    <filter id="glow" x="-30%" y="-100%" width="160%" height="300%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="spark" x="-400%" y="-400%" width="800%" height="800%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Marco metálico exterior -->
+  <path d="M90 34 H1310 L1360 80 V280 L1310 326 H90 L40 280 V80 Z"
+        fill="url(#metal)" stroke="#1b2328" stroke-width="5"/>
+
+  <!-- Rebaje oscuro del metal -->
+  <path d="M113 56 H1287 L1336 96 V264 L1287 304 H113 L64 264 V96 Z"
+        fill="#070d10" stroke="#5d686d" stroke-width="3" opacity=".98"/>
+
+  <!-- Carril energético -->
+  <path d="M126 67 H1274 L1324 107 V253 L1274 293 H126 L76 253 V107 Z"
+        fill="none" stroke="url(#energy)" stroke-width="12"
+        filter="url(#glow)" opacity="0.82"/>
+
+  <!-- Segundo carril fino -->
+  <path d="M137 81 H1263 L1308 117 V243 L1263 279 H137 L92 243 V117 Z"
+        fill="url(#inside)" stroke="url(#energy)" stroke-width="3.5" opacity=".98"/>
+
+  <!-- Circuitos sutiles -->
+  <g fill="none" stroke="#5ee4df" stroke-width="1.5" opacity=".17">
+    <path d="M180 123 H350 L388 151 H470"/>
+    <path d="M180 150 H310 L340 180 H510"/>
+    <path d="M180 208 H335 L365 181 H470"/>
+    <path d="M1220 123 H1050 L1012 151 H930"/>
+    <path d="M1220 150 H1090 L1060 180 H890"/>
+    <path d="M1220 208 H1065 L1035 181 H930"/>
+    <path d="M520 104 H880"/>
+    <path d="M520 256 H880"/>
+  </g>
+
+  <!-- Reflejo metálico superior -->
+  <path d="M135 50 H1265" stroke="#dce3e5" stroke-width="3" opacity=".25"/>
+
+  <!-- Destello central inferior como JUGAR -->
+  <g filter="url(#spark)">
+    <circle cx="700" cy="292" r="7" fill="#ffffdc" opacity="0.62"/>
+    <path d="M648 292 H752" stroke="#f6ff9e" stroke-width="3" opacity="0.62"/>
+    <path d="M700 258 V326" stroke="#8fffe7" stroke-width="2" opacity="0.62"/>
+  </g>
+</svg>

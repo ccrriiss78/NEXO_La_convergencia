@@ -1,0 +1,4188 @@
+/* =====================================================================
+   NEXO — LA CONVERGENCIA — HOJA DE ESTILOS
+   =====================================================================
+   Paleta inspirada en el concepto: verde-natural (Humano/ecología)
+   frente a azul-tecnológico (IA), sobre un fondo oscuro que representa
+   el espacio y la crisis planetaria.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. VARIABLES DE COLOR Y TIPOGRAFÍA
+   Las guardamos en un solo sitio para poder cambiarlas fácilmente
+--------------------------------------------------------------------- */
+:root {
+  /* Colores principales */
+  --color-fondo: #0b0f14;
+  --color-fondo-panel: #131a22;
+  --color-texto: #e8eef2;
+  --color-texto-secundario: #9fb0bd;
+
+  /* Humano = verde natural | IA = azul tecnológico */
+  --color-humano: #4caf7d;
+  --color-humano-claro: #7fd9a8;
+  --color-ia: #4a9dd9;
+  --color-ia-claro: #7ec4f2;
+
+  /* Planeta: de crítico (rojo) a recuperado (verde) */
+  --color-planeta: #e0c341;
+  --color-planeta-critico: #d9534f;
+
+  /* Acentos */
+  --color-borde: #24303b;
+  --color-riesgo: #d9534f;
+  --color-exito: #4caf7d;
+
+  /* Tipografía */
+  --fuente-titulos: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --fuente-texto: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+  /* Bordes y espaciados reutilizables */
+  --radio-borde: 10px;
+  --espacio-md: 1.5rem;
+  --espacio-lg: 3rem;
+}
+
+/* ---------------------------------------------------------------------
+   2. RESET BÁSICO
+   Quitamos márgenes por defecto del navegador para controlar todo
+--------------------------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--fuente-texto);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--fuente-titulos);
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------
+   3. SISTEMA DE PANTALLAS
+   Cada <section class="pantalla"> ocupa toda la ventana.
+   Solo se ve la que tiene la clase "activa".
+   JavaScript se encargará de añadir/quitar esta clase.
+--------------------------------------------------------------------- */
+.pantalla {
+  display: none;
+  min-height: 100vh;
+  width: 100%;
+  padding: var(--espacio-lg) var(--espacio-md);
+  animation: aparecer 0.4s ease;
+}
+
+.pantalla.activa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------
+   4. BOTONES
+--------------------------------------------------------------------- */
+.boton {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radio-borde);
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.9rem 2rem;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.boton:hover {
+  transform: translateY(-2px);
+}
+
+.boton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.boton-principal {
+  background: linear-gradient(90deg, var(--color-humano), var(--color-ia));
+  color: #0b0f14;
+  margin-top: var(--espacio-md);
+}
+
+.boton-apuesta {
+  background-color: var(--color-fondo-panel);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+  margin: 0 0.4rem;
+}
+
+.boton-apuesta.seleccionada {
+  background-color: var(--color-ia);
+  color: #0b0f14;
+}
+
+/* =====================================================================
+   PANTALLA 1 — INICIO
+   ===================================================================== */
+
+.fondo-inicio {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+
+  background-image:
+    radial-gradient(ellipse 48% 42% at 50% 37%, rgba(112, 241, 211, 0.20), transparent 72%),
+    radial-gradient(ellipse 75% 55% at 50% 100%, rgba(17, 139, 166, 0.17), transparent 70%),
+    linear-gradient(to bottom, rgba(5, 11, 18, 0.16) 0%, rgba(5, 11, 18, 0.08) 42%, rgba(5, 11, 18, 0.58) 100%),
+    url("../assets/images/portada/fondos/fondo-inicio-nexo.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* La portada es una escena fija de videojuego: no debe poder desplazarse. */
+#pantalla-inicio.activa {
+  position: relative;
+  isolation: isolate;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.contenido-inicio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  width: min(90vw, 920px);
+  min-height: 100%;
+  padding: clamp(1rem, 2.2vh, 2rem) 0 clamp(1.5rem, 4vh, 3rem);
+}
+
+.logo-inicio {
+  width: min(76vw, 820px);
+  min-width: 350px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.lema-juego {
+  color: #d3e1e6;
+  font-size: clamp(0.96rem, 1.4vw, 1.12rem);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  max-width: 530px;
+  /* El lema pertenece visualmente al botón: guía la mirada hacia la acción. */
+  margin: auto auto clamp(0.9rem, 1.8vh, 1.3rem);
+  line-height: 1.55;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+}
+
+/* Botón prismático de Inicio: imagen normal + respuesta al pasar el ratón. */
+.boton-jugar-imagen {
+  width: min(24vw, 320px);
+  min-width: 205px;
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.boton-jugar-imagen img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: brightness(0.9) saturate(0.94);
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.boton-jugar-imagen:hover img,
+.boton-jugar-imagen:focus-visible img {
+  transform: translateY(-3px) scale(1.025);
+  filter: brightness(1.14) saturate(1.08)
+          drop-shadow(0 0 11px rgba(124, 194, 66, 0.5))
+          drop-shadow(0 0 16px rgba(0, 159, 227, 0.46));
+}
+
+.boton-jugar-imagen:focus-visible {
+  outline: 2px solid #d9fff8;
+  outline-offset: 5px;
+  border-radius: 10px;
+}
+
+.boton-jugar-imagen:active img {
+  transform: translateY(-1px) scale(1.01);
+  filter: brightness(1.2) saturate(1.14)
+          drop-shadow(0 0 18px rgba(118, 235, 210, 0.68));
+}
+
+/* =====================================================================
+   PANTALLA 2 — INTRODUCCIÓN
+   ===================================================================== */
+#pantalla-introduccion.activa {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  height: 100svh;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: clamp(2.8rem, 6.6vh, 4.2rem) clamp(1.2rem, 4vw, 5rem) 1rem;
+  overflow: hidden;
+}
+
+.fondo-introduccion {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(90deg, transparent 0%, transparent 43%, rgba(2, 8, 11, 0.14) 54%, rgba(2, 8, 11, 0.50) 100%),
+    radial-gradient(ellipse 44% 82% at 76% 42%, rgba(2, 8, 11, 0.20) 0%, rgba(2, 8, 11, 0.09) 58%, transparent 84%),
+    linear-gradient(180deg, rgba(2, 8, 11, 0.04) 0%, transparent 56%, rgba(2, 8, 11, 0.40) 100%),
+    url("../assets/images/introduccion/fondos/fondo-introduccion-nexo.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.nodo-convergencia {
+  position: absolute;
+  z-index: 1;
+  top: clamp(6rem, 13.5vh, 8.2rem);
+  left: clamp(14rem, 22.7vw, 26.5rem);
+  width: clamp(170px, 12vw, 225px);
+  height: auto;
+  opacity: 0.94;
+  filter:
+    drop-shadow(0 0 10px rgba(113, 232, 199, 0.40))
+    drop-shadow(0 0 24px rgba(71, 184, 228, 0.22));
+  pointer-events: none;
+  user-select: none;
+}
+
+.contenido-introduccion {
+
+  position: relative;
+  z-index: 2;
+  width: min(44vw, 740px);
+  margin-left: auto;
+  margin-right: clamp(2rem, 4.5vw, 5.5rem);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.92);
+}
+
+.sobrelinea-introduccion {
+  margin-bottom: 0;
+  color: #9de4d5;
+  font-size: clamp(0.65rem, 0.72vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.sobrelinea-introduccion::after {
+  content: "";
+  display: block;
+  width: min(34%, 210px);
+  height: 1px;
+  margin-top: 0.9rem;
+  background: linear-gradient(90deg, rgba(132, 226, 205, 0.92), transparent);
+}
+
+.cabecera-introduccion h2 {
+  margin-top: 0.8rem;
+  color: #f5fbf8;
+  font-size: clamp(2rem, 2.35vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: 0.025em;
+}
+
+.relato-introduccion {
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(190px, 23vh, 245px);
+  margin-top: clamp(0.35rem, 0.8vh, 0.6rem);
+}
+
+.relato-introduccion p {
+  max-width: 72ch;
+  color: #e4ece9;
+  font-size: clamp(0.95rem, 0.94vw, 1.06rem);
+  line-height: 1.52;
+}
+
+
+/* ---------------------------------------------------------------------
+   INTRO NARRATIVA POR BLOQUES
+   La animación es solo visual. El usuario decide cuándo avanzar.
+   --------------------------------------------------------------------- */
+.cabecera-intro-fila {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn-saltar-intro {
+  margin-top: 0.95rem;
+  padding: 0.45rem 0.2rem;
+  border: 0;
+  border-bottom: 1px solid rgba(156, 224, 214, 0.34);
+  color: rgba(210, 231, 228, 0.72);
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, text-shadow 160ms ease;
+}
+
+.btn-saltar-intro:hover,
+.btn-saltar-intro:focus-visible {
+  color: #dff9f4;
+  border-color: rgba(126, 228, 208, 0.78);
+  text-shadow: 0 0 10px rgba(80, 222, 201, 0.42);
+}
+
+.relato-introduccion {
+  position: relative;
+  display: block;
+  min-height: clamp(220px, 27vh, 290px);
+  margin-top: clamp(1.2rem, 2.7vh, 1.8rem);
+}
+
+.bloque-intro {
+
+  width: 100%;
+  min-height: clamp(180px, 21vh, 230px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 clamp(0.15rem, 0.4vw, 0.35rem);
+}
+
+.bloque-intro.activo {
+  animation: entradaBloqueNexo 0.58s ease both;
+}
+
+.bloque-intro p {
+
+  width: 100%;
+  max-width: none;
+  margin: 0 0 clamp(0.4rem, 0.75vh, 0.62rem);
+  color: #dce8e5;
+  font-size: clamp(0.90rem, 0.94vw, 1.02rem);
+  line-height: 1.45;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
+.bloque-intro p:first-child {
+
+  color: #f5fbf8;
+  font-size: clamp(1rem, 1.05vw, 1.16rem);
+  font-weight: 700;
+  text-align: left;
+  letter-spacing: 0.01em;
+}
+
+.bloque-intro strong {
+  color: #b9f1e3;
+  font-weight: 750;
+  text-shadow: 0 0 12px rgba(74, 218, 191, 0.18);
+}
+
+@keyframes entradaBloqueNexo {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Ruta NEXO: cuatro mini-X conectadas por una línea de convergencia.
+   Se inspira en la X y en el nexo central del logotipo sin repetirlo literalmente. */
+.progreso-intro {
+
+  position: relative;
+  width: min(58%, 320px);
+  height: 28px;
+  margin: clamp(0.1rem, 0.35vh, 0.3rem) auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linea-progreso-intro {
+  position: absolute;
+  z-index: 0;
+  left: 10px;
+  right: 10px;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgba(104, 223, 166, 0.52),
+    rgba(221, 203, 72, 0.36) 48%,
+    rgba(70, 188, 239, 0.52));
+  box-shadow: 0 0 8px rgba(80, 211, 208, 0.16);
+}
+
+.paso-nexo {
+  position: relative;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border-radius: 50%;
+  background: #071216;
+  box-shadow: 0 0 0 1px rgba(149, 209, 207, 0.28);
+  opacity: 0.46;
+  transition: opacity 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.paso-nexo::before,
+.paso-nexo::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  transform-origin: center;
+}
+
+.paso-nexo::before {
+  background: #77dfa8;
+  transform: rotate(45deg);
+}
+
+.paso-nexo::after {
+  background: #55c6f4;
+  transform: rotate(-45deg);
+}
+
+.paso-nexo.completado {
+  opacity: 0.78;
+}
+
+.paso-nexo.activo {
+  opacity: 1;
+  transform: scale(1.16);
+  box-shadow:
+    0 0 0 1px rgba(188, 244, 234, 0.72),
+    0 0 11px rgba(87, 224, 179, 0.34),
+    0 0 16px rgba(73, 188, 242, 0.24);
+}
+
+.controles-intro {
+
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) auto minmax(90px, 1fr);
+  align-items: center;
+  gap: clamp(0.55rem, 1.2vw, 0.9rem);
+  width: min(84%, 540px);
+  margin: clamp(0.35rem, 0.7vh, 0.55rem) auto 0;
+}
+
+.controles-intro .boton-continuar-imagen {
+  grid-column: 2;
+  margin: 0;
+}
+
+.btn-intro-atras {
+  grid-column: 1;
+  justify-self: end;
+  min-width: 86px;
+  padding: 0.58rem 0.75rem;
+  border: 1px solid rgba(133, 207, 211, 0.22);
+  border-radius: 8px;
+  color: #a9c8c6;
+  background: rgba(3, 13, 17, 0.42);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.btn-intro-atras:hover:not(:disabled),
+.btn-intro-atras:focus-visible:not(:disabled) {
+  color: #e0f3ef;
+  border-color: rgba(124, 223, 210, 0.58);
+  background: rgba(7, 27, 31, 0.62);
+}
+
+.btn-intro-atras:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.sistema-indicadores {
+  margin-top: clamp(1.2rem, 2.8vh, 1.75rem);
+}
+
+.sistema-indicadores h3 {
+  color: #91e2d1;
+  font-size: clamp(1.05rem, 1.12vw, 1.22rem);
+  letter-spacing: 0.08em;
+}
+
+.entradilla-indicadores {
+  margin-top: 0.42rem;
+  color: #b7c8c6;
+  font-size: clamp(0.78rem, 0.84vw, 0.9rem);
+}
+
+.explicacion-barras {
+  display: grid;
+  margin-top: clamp(1rem, 2.3vh, 1.45rem);
+}
+
+.explicacion-barra {
+  --color-indicador: #ffffff;
+  display: grid;
+  grid-template-columns: 2.2rem 3.35rem minmax(0, 1fr) minmax(110px, 180px);
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 82px;
+  padding: 0.72rem 0.25rem;
+  border: 0;
+  border-bottom: 1px solid rgba(205, 233, 230, 0.18);
+  background: transparent;
+}
+
+.explicacion-barra:first-child {
+  border-top: 1px solid rgba(205, 233, 230, 0.18);
+}
+
+.indicador-humano { --color-indicador: var(--color-humano-claro); }
+.indicador-planeta { --color-indicador: #f0ce3d; }
+.indicador-ia { --color-indicador: var(--color-ia-claro); }
+
+.numero-indicador {
+  color: var(--color-indicador);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  opacity: 0.82;
+}
+
+.icono-indicador {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid color-mix(in srgb, var(--color-indicador) 76%, transparent);
+  border-radius: 50%;
+  color: #f3f7f5;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-indicador) 12%, transparent), transparent 68%);
+  box-shadow:
+    inset 0 0 14px color-mix(in srgb, var(--color-indicador) 13%, transparent),
+    0 0 12px color-mix(in srgb, var(--color-indicador) 13%, transparent);
+}
+
+.icono-indicador svg {
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+}
+
+.icono-indicador svg circle,
+.icono-indicador svg path {
+  fill: currentColor;
+  stroke: none;
+}
+
+.indicador-planeta .icono-indicador svg path,
+.indicador-ia .icono-indicador svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.45;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.texto-indicador {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.texto-indicador strong {
+  color: #f2f8f6;
+  font-size: clamp(0.86rem, 0.92vw, 1rem);
+  letter-spacing: 0.025em;
+}
+
+.texto-indicador > span {
+  color: #c8d5d3;
+  font-size: clamp(0.76rem, 0.8vw, 0.86rem);
+  line-height: 1.25;
+}
+
+.barra-indicador {
+  position: relative;
+  height: 2px;
+  background: rgba(218, 242, 238, 0.14);
+}
+
+.barra-indicador > span {
+  position: relative;
+  display: block;
+  width: 72%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--color-indicador));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-indicador) 62%, transparent);
+}
+
+.barra-indicador > span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-indicador);
+  box-shadow: 0 0 8px var(--color-indicador);
+  transform: translateY(-50%);
+}
+
+.indicador-planeta .barra-indicador > span { width: 58%; }
+.indicador-ia .barra-indicador > span { width: 66%; }
+
+.boton-continuar-imagen {
+  position: relative;
+  display: block;
+  width: min(14vw, 260px);
+  min-width: 220px;
+  aspect-ratio: 1552 / 400;
+  align-self: center;
+  margin: clamp(1.45rem, 3.6vh, 2.25rem) auto 0;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  transform-origin: center;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.boton-continuar-estado {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  transition: opacity 150ms ease, filter 180ms ease;
+}
+
+.boton-continuar-normal {
+  opacity: 1;
+}
+
+.boton-continuar-hover {
+  opacity: 0;
+}
+
+.boton-continuar-imagen:hover,
+.boton-continuar-imagen:focus-visible {
+  transform: translateY(-2px) scale(1.02);
+  filter:
+    drop-shadow(0 0 9px rgba(255, 205, 75, 0.26))
+    drop-shadow(0 0 12px rgba(69, 216, 255, 0.34));
+}
+
+.boton-continuar-imagen:hover .boton-continuar-normal,
+.boton-continuar-imagen:focus-visible .boton-continuar-normal {
+  opacity: 0;
+}
+
+.boton-continuar-imagen:hover .boton-continuar-hover,
+.boton-continuar-imagen:focus-visible .boton-continuar-hover {
+  opacity: 1;
+  filter: brightness(1.05) saturate(1.04);
+}
+
+.boton-continuar-imagen:focus-visible {
+  outline: 2px solid rgba(139, 236, 255, 0.90);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.boton-continuar-imagen:active {
+  transform: translateY(-1px) scale(1.01);
+}
+
+.texto-solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Solo compactamos en ventanas realmente bajas. El límite anterior de
+   760 px se activaba con el escalado de Windows y comprimía esta pantalla. */
+@media (max-height: 620px) {
+  #pantalla-introduccion.activa {
+    padding-top: 0.5rem;
+  }
+
+  .contenido-introduccion {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+
+  .cabecera-introduccion h2 {
+    font-size: 1.8rem;
+  }
+
+  .relato-introduccion {
+    gap: 0.32rem;
+    margin-top: 0.48rem;
+  }
+
+  .relato-introduccion p {
+    font-size: 0.88rem;
+    line-height: 1.38;
+  }
+
+  .sistema-indicadores {
+    margin-top: 0.55rem;
+  }
+
+  .explicacion-barras {
+    margin-top: 0.35rem;
+  }
+
+  .explicacion-barra {
+    min-height: 60px;
+    padding-top: 0.34rem;
+    padding-bottom: 0.34rem;
+  }
+
+  .icono-indicador {
+    width: 42px;
+    height: 42px;
+  }
+
+  .boton-continuar-imagen {
+    width: 240px;
+    min-width: 0;
+    margin-top: 0.4rem;
+  }
+}
+
+@media (max-width: 1100px) {
+  .nodo-convergencia {
+    display: none;
+  }
+
+  .contenido-introduccion {
+    width: min(56vw, 650px);
+    margin-left: auto;
+    margin-right: clamp(1rem, 5vw, 3.5rem);
+  }
+}
+
+@media (max-width: 760px) {
+  #pantalla-introduccion.activa {
+    height: auto;
+    min-height: 100svh;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .fondo-introduccion {
+    background-position: 45% center;
+  }
+
+  .contenido-introduccion {
+    width: min(94vw, 650px);
+    margin: 0 auto;
+  }
+
+  .explicacion-barra {
+    grid-template-columns: 2rem 2.8rem minmax(0, 1fr);
+    gap: 0.65rem;
+  }
+
+  .barra-indicador {
+    grid-column: 3;
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .icono-indicador {
+    width: 40px;
+    height: 40px;
+  }
+
+  .boton-continuar-imagen {
+    width: min(64vw, 270px);
+    min-width: 205px;
+    align-self: center;
+  }
+
+  .cabecera-intro-fila {
+    display: block;
+  }
+
+  .btn-saltar-intro {
+    margin-top: 0.35rem;
+  }
+
+  .relato-introduccion {
+    min-height: 0;
+  }
+
+  .controles-intro {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .controles-intro .boton-continuar-imagen,
+  .btn-intro-atras {
+    grid-column: 1;
+  }
+
+  .btn-intro-atras {
+    grid-row: 2;
+    justify-self: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boton-continuar-imagen,
+  .boton-continuar-estado,
+  .paso-nexo,
+  .btn-saltar-intro,
+  .btn-intro-atras {
+    transition: none;
+  }
+
+  .bloque-intro.activo {
+    animation: none;
+  }
+}
+
+/* =====================================================================
+   PANTALLA 3 — CONFIGURACIÓN · REDISEÑO V4
+   Centro libre: esfera bicolor. Humano izquierda, IA derecha.
+   Rondas e iniciar protocolo apilados y centrados abajo.
+   ===================================================================== */
+#pantalla-configuracion.activa {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: 100%;
+  height: 100svh;
+  min-height: 620px;
+  overflow: hidden;
+  background: #02080d;
+}
+
+.fondo-configuracion {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  /* NEXO V7 · fondo definitivo WebP 2560x1440 */
+  background-image:
+    linear-gradient(180deg, rgba(0, 7, 12, .10) 0%, rgba(0, 7, 12, 0) 50%, rgba(0, 7, 12, .24) 100%),
+    url("../assets/images/configuracion/fondos/fondo-configuracion-nexo-v10-web.webp");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.fondo-configuracion::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* NEXO V7 · viñeta lateral muy suave.
+     Se elimina la antigua radial que hacía más visible el aro desplazado. */
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 8, 13, .22) 0%,
+      transparent 20%,
+      transparent 80%,
+      rgba(0, 8, 13, .22) 100%
+    );
+}
+
+.contenido-configuracion {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: #f4fbfa;
+  text-align: center;
+  text-shadow: 0 2px 16px rgba(0,0,0,.82);
+}
+
+.cabecera-configuracion {
+  position: absolute;
+  z-index: 5;
+  top: clamp(1rem, 2.2vh, 1.75rem);
+  left: 50%;
+  width: min(92vw, 720px);
+  transform: translateX(-50%);
+}
+
+.sobrelinea-configuracion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .8rem;
+  margin: 0 0 .32rem;
+  color: #8fe8df;
+  font-size: clamp(.64rem, .78vw, .82rem);
+  font-weight: 800;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+.sobrelinea-configuracion::before,
+.sobrelinea-configuracion::after {
+  content: "";
+  width: clamp(38px, 5vw, 76px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #8dff45 46%, #27cfff 100%);
+  opacity: .78;
+}
+.sobrelinea-configuracion::after { transform: scaleX(-1); }
+
+.cabecera-configuracion h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.8rem, 2.55vw, 2.9rem);
+  font-weight: 850;
+  letter-spacing: .055em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.panel-identidad {
+  position: absolute;
+  z-index: 4;
+  top: clamp(7.2rem, 14vh, 9.6rem);
+  width: min(26vw, 410px);
+  padding: clamp(.75rem, 1.3vw, 1.1rem);
+  border: 1px solid rgba(112, 216, 220, .34);
+  background: linear-gradient(180deg, rgba(3, 17, 24, .66), rgba(3, 14, 20, .42));
+  backdrop-filter: blur(2px);
+  clip-path: polygon(7% 0, 93% 0, 100% 12%, 100% 88%, 93% 100%, 7% 100%, 0 88%, 0 12%);
+}
+.panel-identidad-humano { left: clamp(1.4rem, 4.8vw, 5.8rem); box-shadow: inset 0 0 0 1px rgba(130,255,70,.08), 0 0 24px rgba(104,255,62,.05); }
+.panel-identidad-ia { right: clamp(1.4rem, 4.8vw, 5.8rem); box-shadow: inset 0 0 0 1px rgba(64,205,255,.08), 0 0 24px rgba(31,173,255,.06); }
+
+.panel-identidad h3 {
+  margin: 0 0 .72rem;
+  font-size: clamp(.75rem, .95vw, .98rem);
+  font-weight: 850;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.panel-identidad-humano h3 { color: #b1ff55; }
+.panel-identidad-ia h3 { color: #5bdbff; }
+
+.opciones-avatar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(.55rem, .8vw, .85rem);
+}
+
+.tarjeta-avatar {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-width: 0;
+  height: clamp(178px, 27vh, 285px);
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(2, 17, 24, .62) none center/100% 100% no-repeat;
+  transition: transform .18s ease, filter .18s ease;
+}
+.tarjeta-avatar input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.tarjeta-avatar:hover,
+.tarjeta-avatar:focus-within { transform: translateY(-3px) scale(1.012); }
+.tarjeta-humano:has(input:checked) {
+  background-image: none;
+  filter: drop-shadow(0 0 10px rgba(140,255,64,.36));
+}
+.tarjeta-ia:has(input:checked) {
+  background-image: none;
+  filter: drop-shadow(0 0 10px rgba(58,201,255,.38));
+}
+
+.retrato-avatar {
+  display: block;
+  width: calc(100% - 18px);
+  height: calc(100% - 52px);
+  margin: 9px auto 0;
+  background-position: center 18%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  clip-path: polygon(8% 0, 92% 0, 100% 8%, 100% 100%, 0 100%, 0 8%);
+}
+.avatar-humano-hombre { background-image: url("../assets/images/configuracion/avatares/avatar-humano-hombre.webp"); }
+.avatar-humano-mujer { background-image: url("../assets/images/configuracion/avatares/avatar-humano-mujer.webp"); }
+.avatar-ia-01 { background-image: url("../assets/images/configuracion/avatares/avatar-ia-01.webp"); }
+.avatar-ia-02 { background-image: url("../assets/images/configuracion/avatares/avatar-ia-02.webp"); }
+
+.texto-avatar {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 9px;
+  display: block;
+  padding: .36rem .25rem .18rem;
+  background: linear-gradient(180deg, transparent, rgba(1,12,18,.82) 36%);
+}
+.texto-avatar strong,
+.texto-avatar small { display: block; }
+.texto-avatar strong { color: #fff; font-size: clamp(.68rem, .8vw, .84rem); letter-spacing: .12em; }
+.texto-avatar small { margin-top: .14rem; color: #c7d9d8; font-size: clamp(.55rem, .63vw, .68rem); }
+
+.info-grupo-avatar {
+  margin: .58rem 0 0;
+  font-size: clamp(.58rem, .66vw, .72rem);
+}
+.info-humano { color: #b7ef8a; }
+.info-ia { color: #8bdcff; }
+
+.configuracion-inferior {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: clamp(.85rem, 2vh, 1.35rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(.42rem, .8vh, .7rem);
+  width: min(94vw, 600px);
+  transform: translateX(-50%);
+}
+
+.grupo-rondas {
+  width: 100%;
+  text-align: center;
+}
+.grupo-rondas h3 {
+  margin: 0;
+  color: #f4fffd;
+  font-size: clamp(.72rem, .9vw, .92rem);
+  font-weight: 850;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.microtexto-rondas {
+  margin: .18rem 0 .42rem;
+  color: #b9d7d6;
+  font-size: clamp(.58rem, .66vw, .7rem);
+}
+.opciones-rondas {
+  display: flex;
+  justify-content: center;
+  gap: clamp(.45rem, .8vw, .72rem);
+}
+
+@media (max-width: 1100px) {
+  .panel-identidad { width: min(31vw, 340px); }
+  .panel-identidad-humano { left: 1.2rem; }
+  .panel-identidad-ia { right: 1.2rem; }
+  .tarjeta-avatar { height: clamp(155px, 24vh, 230px); }
+  .configuracion-inferior { width: min(92vw, 520px); }
+}
+
+@media (max-height: 760px) and (min-width: 761px) {
+  #pantalla-configuracion.activa { min-height: 560px; }
+  .panel-identidad { top: 6.3rem; }
+  .tarjeta-avatar { height: clamp(145px, 23vh, 190px); }
+  .configuracion-inferior { bottom: .5rem; gap: .28rem; }
+  .microtexto-rondas { margin-bottom: .25rem; }
+}
+
+@media (max-width: 760px) {
+  #pantalla-configuracion.activa {
+    height: auto;
+    min-height: 100svh;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+  .fondo-configuracion { position: fixed; background-position: center; }
+  .contenido-configuracion {
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0 1.4rem;
+  }
+  .cabecera-configuracion,
+  .panel-identidad,
+  .configuracion-inferior {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: min(100%, 460px);
+    margin: 0 auto;
+    transform: none;
+  }
+  .cabecera-configuracion { order: 1; }
+  .panel-identidad-humano { order: 2; }
+  .panel-identidad-ia { order: 3; }
+  .configuracion-inferior { order: 4; }
+  .tarjeta-avatar { height: 240px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-avatar { transition: none; }
+}
+
+
+/* =====================================================================
+   PANTALLA 4 — JUEGO
+   ===================================================================== */
+#pantalla-juego.activa {
+  justify-content: flex-start;
+  gap: var(--espacio-md);
+}
+
+.cabecera-juego {
+  display: flex;
+  width: 100%;
+  max-width: 1100px;
+  gap: var(--espacio-md);
+}
+
+.marcador {
+  flex: 1;
+  text-align: center;
+}
+
+.etiqueta-marcador {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-texto-secundario);
+  margin-bottom: 0.3rem;
+}
+
+.barra-progreso {
+  width: 100%;
+  height: 14px;
+  background-color: var(--color-fondo-panel);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--color-borde);
+}
+
+.relleno-barra {
+  height: 100%;
+  width: 50%; /* JavaScript actualizará este valor */
+  transition: width 0.4s ease;
+}
+
+.relleno-humano { background-color: var(--color-humano); }
+.relleno-ia { background-color: var(--color-ia); }
+.relleno-planeta { background-color: var(--color-planeta); }
+
+.contador-ronda {
+  color: var(--color-texto-secundario);
+  font-size: 0.9rem;
+}
+
+.zona-juego {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-lg);
+  width: 100%;
+  max-width: 1100px;
+  flex: 1;
+}
+
+.avatar-lateral img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.avatar-humano-lateral img { border: 3px solid var(--color-humano); }
+.avatar-ia-lateral img { border: 3px solid var(--color-ia); }
+
+.zona-central {
+  text-align: center;
+  flex: 1;
+  max-width: 450px;
+}
+
+.tarjeta-crisis,
+.tarjeta-carta-crisis {
+  background-color: var(--color-fondo-panel);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-md);
+  margin-bottom: 1rem;
+}
+
+.etiqueta-crisis {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-texto-secundario);
+  margin-bottom: 0.4rem;
+}
+
+.zona-resolucion {
+  margin-top: var(--espacio-md);
+}
+
+.cartas-reveladas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.carta-revelada {
+  background-color: var(--color-fondo-panel);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  padding: 0.8rem 1.2rem;
+  text-align: center;
+}
+
+.carta-revelada span {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.signo-suma {
+  font-size: 1.4rem;
+  color: var(--color-texto-secundario);
+}
+
+.resultado-ronda {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Pie de la pantalla de juego: apuesta + mano de cartas */
+.pie-juego {
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+}
+
+.zona-apuesta {
+  margin-bottom: var(--espacio-md);
+  color: var(--color-texto-secundario);
+}
+
+.mano-cartas {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: var(--espacio-md);
+}
+
+.carta-mano {
+  width: 55px;
+  height: 75px;
+  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  background-color: var(--color-fondo-panel);
+  color: var(--color-texto);
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.carta-mano:hover {
+  transform: translateY(-6px);
+}
+
+.carta-mano.seleccionada {
+  border-color: var(--color-humano-claro);
+  color: var(--color-humano-claro);
+}
+
+.carta-mano:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* =====================================================================
+   PANTALLA 6 — EVENTO ESPECIAL (superposición)
+   ===================================================================== */
+.superposicion {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.tarjeta-evento {
+  background-color: var(--color-fondo-panel);
+  border: 1px solid var(--color-humano-claro);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-lg);
+  max-width: 400px;
+  text-align: center;
+}
+
+.tarjeta-evento p:not(.etiqueta-crisis) {
+  color: var(--color-texto-secundario);
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+/* =====================================================================
+   PANTALLA 7 — FINAL
+   ===================================================================== */
+.contenido-final {
+  max-width: 600px;
+  text-align: center;
+}
+
+.perfil-final {
+  background-color: var(--color-fondo-panel);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-md);
+  margin: var(--espacio-md) 0;
+}
+
+.perfil-final p {
+  color: var(--color-texto-secundario);
+  margin-top: 0.5rem;
+}
+
+.porcentajes-final {
+  margin: var(--espacio-md) 0;
+}
+
+.porcentajes-final p {
+  margin-top: 0.5rem;
+  color: var(--color-texto-secundario);
+}
+
+.capacidades-conquistadas {
+  text-align: left;
+  margin: var(--espacio-md) 0;
+}
+
+.capacidades-conquistadas ul {
+  list-style: none;
+  margin-top: 0.6rem;
+}
+
+.capacidades-conquistadas li {
+  padding: 0.4rem 0;
+  color: var(--color-texto-secundario);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+/* =====================================================================
+   CLASE UTILITARIA: ocultar elementos
+   JavaScript añade/quita esta clase para mostrar/ocultar bloques
+   ===================================================================== */
+.oculta {
+  display: none !important;
+}
+
+/* =====================================================================
+   RESPONSIVE — ADAPTACIÓN A MÓVIL Y TABLET
+   Regla general: en pantallas estrechas, las filas se convierten
+   en columnas y los elementos se agrandan para tocarlos con el dedo.
+   ===================================================================== */
+@media (max-width: 900px) {
+  .zona-juego {
+    flex-direction: column;
+    gap: var(--espacio-md);
+  }
+
+  .avatar-lateral img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .cabecera-juego {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .contenido-inicio {
+    min-height: 100svh;
+    padding-top: clamp(1.3rem, 3.5vh, 2.5rem);
+  }
+
+  .logo-inicio { width: min(93vw, 590px); }
+  .lema-juego { margin: auto auto 0.9rem; }
+  .boton-jugar-imagen {
+    width: min(64vw, 300px);
+    min-width: 0;
+    margin-top: 0;
+  }
+
+  .mano-cartas {
+    flex-wrap: wrap;
+  }
+
+  .carta-mano {
+    width: 48px;
+    height: 65px;
+    font-size: 1.2rem;
+  }
+
+  .cartas-reveladas {
+    flex-wrap: wrap;
+  }
+
+  .pantalla {
+    padding: var(--espacio-md) 1rem;
+  }
+}
+
+/* =====================================================================
+   PRUEBA DE INTEGRACIÓN VISUAL + LÓGICA · 2026-08-20
+   Este bloque se añade al final: conserva todo el CSS anterior y solo
+   adapta la configuración y los controles nuevos que necesita la partida.
+   ===================================================================== */
+
+/* Pantalla de juego funcional: usa la paleta existente del proyecto. */
+#pantalla-juego.activa {
+  min-height: 100svh;
+  height: auto;
+  overflow-y: auto;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  background:
+    radial-gradient(circle at 50% 18%, rgba(47, 159, 164, 0.13), transparent 36%),
+    linear-gradient(180deg, #07131a 0%, #09141c 55%, #050b11 100%);
+}
+
+.valor-marcador {
+  display: block;
+  margin-top: 0.32rem;
+  color: var(--color-texto);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.tablero-integrado {
+  align-items: flex-start;
+  max-width: 1200px;
+  gap: clamp(1rem, 2.2vw, 2rem);
+}
+
+.lado {
+  flex: 1 1 170px;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.zona-central {
+  flex: 2 1 520px;
+  width: 100%;
+  max-width: 650px;
+  padding: clamp(0.85rem, 1.8vw, 1.3rem);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  background: rgba(5, 17, 23, 0.78);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+.avatar {
+  width: 104px;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-borde);
+  background: rgba(4, 16, 22, 0.88);
+  color: var(--color-texto);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  transition: border-radius 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+.avatar-humano {
+  border-radius: 50%;
+  border-color: var(--color-humano);
+  box-shadow: 0 0 18px rgba(155, 218, 107, 0.18);
+}
+
+.avatar-ia {
+  border-radius: 8px;
+  border-color: var(--color-ia);
+  box-shadow: 0 0 18px rgba(48, 178, 224, 0.18);
+}
+
+.avatar-humano.nivel-0::after { content: "HU"; }
+.avatar-humano.nivel-1::after { content: "HU+"; }
+.avatar-humano.nivel-2::after { content: "H/IA"; }
+.avatar-humano.nivel-3::after { content: "NEXO"; }
+.avatar-ia.nivel-0::after { content: "IA"; }
+.avatar-ia.nivel-1::after { content: "IA+"; }
+.avatar-ia.nivel-2::after { content: "IA/H"; }
+.avatar-ia.nivel-3::after { content: "NEXO"; }
+
+.avatar-humano.nivel-1,
+.avatar-ia.nivel-2 { border-radius: 34%; }
+
+.avatar-humano.nivel-2,
+.avatar-ia.nivel-1 { border-radius: 20%; }
+
+.avatar-humano.nivel-3,
+.avatar-ia.nivel-3 {
+  border-radius: 10px;
+  border-color: #7ee2c9;
+  box-shadow: 0 0 24px rgba(94, 224, 198, 0.34);
+}
+
+.tipo-nexo-01 { border-color: var(--color-humano-claro); }
+.tipo-nexo-02 { border-color: var(--color-ia-claro); }
+
+.titulo-lista,
+.instruccion {
+  color: var(--color-texto-secundario);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lista-capacidades {
+  width: 100%;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.lista-capacidades li {
+  padding: 0.38rem 0.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+  color: var(--color-texto-secundario);
+}
+
+.capacidad-vacia {
+  opacity: 0.62;
+  font-style: italic;
+}
+
+.panel-memoria {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-borde);
+}
+
+.panel-memoria ul {
+  margin-top: 0.4rem;
+  list-style: none;
+  color: var(--color-texto-secundario);
+  font-size: 0.74rem;
+}
+
+.pista {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.55rem 0.7rem;
+  border-left: 3px solid #a98bd3;
+  color: #d7c5f0;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.cartas-ia,
+.declaracion-ia,
+.zona-apuesta,
+.zona-mano,
+.zona-velocidad {
+  width: 100%;
+  margin-top: 0.85rem;
+}
+
+.cartas-ia {
+  padding: 0.65rem;
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-borde);
+}
+
+.mano-pequena {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.carta-pequena {
+  width: 28px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-ia);
+  border-radius: 4px;
+  background: rgba(9, 30, 40, 0.88);
+  color: var(--color-ia-claro);
+  font-weight: 750;
+}
+
+.declaracion-ia {
+  padding: 0.7rem;
+  border: 1px solid rgba(74, 202, 231, 0.62);
+  border-radius: var(--radio-borde);
+  background: rgba(33, 137, 176, 0.11);
+}
+
+.declaracion-ia h3 {
+  margin-top: 0.2rem;
+  color: var(--color-ia-claro);
+  font-size: 1.65rem;
+  letter-spacing: 0.14em;
+}
+
+.zona-apuesta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.zona-apuesta .instruccion,
+.zona-apuesta .consecuencia {
+  flex: 1 0 100%;
+}
+
+.consecuencia {
+  color: var(--color-texto-secundario);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.boton-apuesta.seleccionada {
+  border-color: var(--color-humano-claro);
+  color: var(--color-humano-claro);
+  box-shadow: 0 0 14px rgba(133, 219, 146, 0.2);
+}
+
+.zona-mano {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.carta-mano.descartada {
+  opacity: 0.24;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.acciones,
+.opciones-velocidad {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 0.9rem;
+}
+
+.boton-poder {
+  border-color: #a98bd3;
+  color: #e2d4f5;
+}
+
+.zona-resolucion {
+  width: 100%;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-borde);
+}
+
+.carta-revelada small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--color-texto-secundario);
+  font-size: 0.66rem;
+}
+
+.resultado-convergencia { color: var(--color-exito); }
+.resultado-rivalidad { color: #f1c75b; }
+.resultado-fracaso { color: #ef7d78; }
+
+.detalle-ronda {
+  margin-top: 0.65rem;
+  color: var(--color-texto-secundario);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.planeta-critico { background-color: #1b0b0d; }
+.planeta-deteriorado { background-color: #17130b; }
+.planeta-estable { background-color: #07131a; }
+.planeta-recuperado { background-color: #071811; }
+
+/* Resumen final ampliado sin eliminar el diseño que ya existía. */
+.contenido-final {
+  width: min(94vw, 850px);
+}
+
+.resumen-final,
+.columnas-capacidades-finales {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: var(--espacio-md) 0;
+}
+
+.dato-final {
+  padding: 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  background: var(--color-fondo-panel);
+}
+
+.dato-final span,
+.dato-final strong {
+  display: block;
+}
+
+.dato-final span {
+  color: var(--color-texto-secundario);
+  font-size: 0.74rem;
+}
+
+.dato-final strong {
+  margin-top: 0.25rem;
+  font-size: 1.2rem;
+}
+
+.coleccion-perfiles {
+  margin: 1rem 0;
+  color: var(--color-texto-secundario);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+  .tablero-integrado {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lado {
+    max-width: 420px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .boton-protocolo-integrado {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: min(100%, 360px);
+    min-width: 0;
+    margin-top: auto;
+    transform: none;
+  }
+
+  .boton-protocolo-integrado:hover,
+  .boton-protocolo-integrado:focus-visible,
+  .boton-protocolo-integrado:active {
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 600px) {
+  .resumen-final,
+  .columnas-capacidades-finales {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================================
+   AJUSTE UX — PANTALLA DE JUEGO SIN SCROLL EN ESCRITORIO + AJUSTES
+   ===================================================================== */
+@media (min-width: 901px) {
+  #pantalla-juego.activa {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    padding: clamp(0.55rem, 1.2vh, 0.9rem) clamp(1rem, 2vw, 1.6rem);
+    gap: clamp(0.45rem, 1vh, 0.75rem);
+  }
+
+  #pantalla-juego .cabecera-juego {
+    flex: 0 0 auto;
+    max-width: 1040px;
+    gap: 1rem;
+  }
+
+  #pantalla-juego .zona-juego {
+    min-height: 0;
+    flex: 1 1 auto;
+    max-width: 1120px;
+    gap: clamp(0.75rem, 1.5vw, 1.35rem);
+    align-items: stretch;
+  }
+
+  #pantalla-juego .zona-central {
+    min-height: 0;
+    max-width: 590px;
+    padding: clamp(0.55rem, 1vh, 0.8rem);
+    overflow: hidden;
+  }
+
+  #pantalla-juego .lado {
+    min-height: 0;
+    max-width: 190px;
+    gap: 0.35rem;
+    justify-content: flex-start;
+  }
+
+  #pantalla-juego .avatar {
+    width: clamp(72px, 9vh, 92px);
+    height: clamp(72px, 9vh, 92px);
+  }
+
+  #pantalla-juego .tarjeta-crisis,
+  #pantalla-juego .tarjeta-carta-crisis {
+    padding: 0.55rem 0.7rem;
+    margin-bottom: 0.45rem;
+  }
+
+  #pantalla-juego .cartas-ia,
+  #pantalla-juego .declaracion-ia,
+  #pantalla-juego .zona-apuesta,
+  #pantalla-juego .zona-mano,
+  #pantalla-juego .zona-velocidad {
+    margin-top: 0.42rem;
+  }
+
+  #pantalla-juego .cartas-ia,
+  #pantalla-juego .declaracion-ia {
+    padding: 0.42rem 0.55rem;
+  }
+
+  #pantalla-juego .declaracion-ia h3 {
+    font-size: clamp(1.1rem, 2.4vh, 1.4rem);
+  }
+
+  #pantalla-juego .zona-mano {
+    gap: 0.35rem;
+  }
+
+  #pantalla-juego .mano-cartas {
+    margin-bottom: 0.35rem;
+  }
+
+  #pantalla-juego .carta-mano {
+    width: clamp(42px, 5.4vh, 50px);
+    height: clamp(58px, 7.3vh, 68px);
+    font-size: 1.15rem;
+  }
+
+  #pantalla-juego .acciones,
+  #pantalla-juego .opciones-velocidad {
+    margin-top: 0.4rem;
+    gap: 0.5rem;
+  }
+
+  #pantalla-juego .acciones .boton,
+  #pantalla-juego .zona-apuesta .boton {
+    padding: 0.58rem 1.2rem;
+    font-size: 0.88rem;
+  }
+
+  #pantalla-juego .lista-capacidades {
+    gap: 0.22rem;
+    font-size: 0.72rem;
+  }
+
+  #pantalla-juego .lista-capacidades li {
+    padding: 0.25rem 0.4rem;
+  }
+
+  #pantalla-juego .titulo-lista,
+  #pantalla-juego .instruccion {
+    font-size: 0.66rem;
+  }
+}
+
+.controles-sistema-juego {
+  position: fixed;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.85rem, env(safe-area-inset-right));
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.boton-icono-ajustes {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(126, 196, 242, 0.34);
+  border-radius: 50%;
+  background: rgba(5, 17, 23, 0.72);
+  color: var(--color-texto-secundario);
+  font-size: 1.05rem;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.boton-icono-ajustes:hover,
+.boton-icono-ajustes:focus-visible {
+  color: var(--color-ia-claro);
+  border-color: var(--color-ia);
+  background: rgba(8, 29, 39, 0.9);
+  transform: rotate(18deg);
+  outline: none;
+}
+
+.boton-abandonar-juego {
+  padding: 0.48rem 0.82rem;
+  border: 1px solid rgba(217, 83, 79, 0.32);
+  background: rgba(31, 13, 15, 0.62);
+  color: #d8a19f;
+  font-size: 0.75rem;
+  backdrop-filter: blur(8px);
+}
+
+.boton-abandonar-juego:hover,
+.boton-abandonar-juego:focus-visible {
+  color: #ffd0ce;
+  border-color: rgba(217, 83, 79, 0.72);
+  background: rgba(58, 20, 22, 0.88);
+  outline: none;
+}
+
+.superposicion-ajustes {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 4.2rem 1rem 1rem;
+  background: rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(3px);
+}
+
+.superposicion-ajustes.oculta {
+  display: none;
+}
+
+.panel-ajustes {
+  width: min(92vw, 330px);
+  padding: 1rem;
+  border: 1px solid rgba(126, 196, 242, 0.34);
+  border-radius: 12px;
+  background: rgba(5, 17, 23, 0.96);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+
+.cabecera-ajustes {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.boton-cerrar-ajustes {
+  border: 0;
+  background: transparent;
+  color: var(--color-texto-secundario);
+  font-size: 1.65rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.boton-cerrar-ajustes:hover,
+.boton-cerrar-ajustes:focus-visible {
+  color: var(--color-texto);
+  outline: none;
+}
+
+.fila-ajuste {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--color-borde);
+  color: var(--color-texto);
+  font-size: 0.88rem;
+}
+
+.fila-ajuste input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-ia);
+  cursor: pointer;
+}
+
+.fila-volumen {
+  flex-wrap: wrap;
+}
+
+.fila-volumen input[type="range"] {
+  width: 100%;
+  accent-color: var(--color-ia);
+}
+
+.nota-ajustes {
+  margin-top: 0.55rem;
+  color: var(--color-texto-secundario);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  #pantalla-juego.activa {
+    height: auto;
+    min-height: 100svh;
+    overflow-y: auto;
+    padding-top: 4.2rem;
+  }
+
+  .controles-sistema-juego {
+    position: absolute;
+  }
+}
+
+/* =====================================================================
+   AJUSTE UX v3 — PANTALLA FINAL COMPLETA SIN SCROLL EN ESCRITORIO
+   El resumen y la acción principal deben permanecer visibles a la vez.
+   Si las capacidades crecen mucho, solo se desplaza su lista interna.
+   ===================================================================== */
+@media (min-width: 901px) {
+  #pantalla-final.activa {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    justify-content: center;
+    padding: clamp(0.55rem, 1.1vh, 0.85rem) clamp(1rem, 2vw, 1.5rem);
+  }
+
+  #pantalla-final .contenido-final {
+    width: min(92vw, 760px);
+    max-height: calc(100dvh - 1.2rem);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #pantalla-final #titulo-desenlace {
+    font-size: clamp(1.35rem, 2.7vh, 1.75rem);
+    line-height: 1.1;
+  }
+
+  #pantalla-final #mensaje-desenlace {
+    margin-top: clamp(0.2rem, 0.55vh, 0.4rem);
+    font-size: clamp(0.82rem, 1.7vh, 0.98rem);
+    line-height: 1.3;
+  }
+
+  #pantalla-final .perfil-final {
+    padding: clamp(0.5rem, 1vh, 0.75rem) 0.9rem;
+    margin: clamp(0.45rem, 1vh, 0.7rem) 0;
+  }
+
+  #pantalla-final .perfil-final .etiqueta-crisis {
+    font-size: clamp(0.66rem, 1.4vh, 0.78rem);
+    margin: 0;
+  }
+
+  #pantalla-final .perfil-final h3 {
+    margin-top: 0.2rem;
+    font-size: clamp(0.95rem, 2vh, 1.15rem);
+  }
+
+  #pantalla-final .perfil-final p:not(.etiqueta-crisis) {
+    margin-top: 0.28rem;
+    font-size: clamp(0.76rem, 1.6vh, 0.9rem);
+    line-height: 1.3;
+  }
+
+  #pantalla-final .resumen-final {
+    gap: clamp(0.35rem, 0.8vh, 0.55rem);
+    margin: 0;
+  }
+
+  #pantalla-final .dato-final {
+    padding: clamp(0.35rem, 0.75vh, 0.52rem) 0.65rem;
+  }
+
+  #pantalla-final .dato-final span {
+    font-size: clamp(0.65rem, 1.3vh, 0.74rem);
+  }
+
+  #pantalla-final .dato-final strong {
+    margin-top: 0.12rem;
+    font-size: clamp(0.95rem, 2vh, 1.14rem);
+  }
+
+  #pantalla-final .porcentajes-final {
+    margin: clamp(0.4rem, 0.9vh, 0.6rem) 0;
+  }
+
+  #pantalla-final .porcentajes-final p {
+    margin-top: 0.25rem;
+    font-size: clamp(0.76rem, 1.6vh, 0.9rem);
+  }
+
+  #pantalla-final .columnas-capacidades-finales {
+    gap: 0.65rem;
+    margin: clamp(0.35rem, 0.8vh, 0.55rem) 0 0;
+  }
+
+  #pantalla-final .capacidades-conquistadas {
+    margin: 0;
+    min-height: 0;
+  }
+
+  #pantalla-final .capacidades-conquistadas h3 {
+    font-size: clamp(0.84rem, 1.75vh, 1rem);
+    line-height: 1.2;
+  }
+
+  #pantalla-final .capacidades-conquistadas ul {
+    max-height: clamp(42px, 8vh, 72px);
+    overflow-y: auto;
+    margin-top: 0.28rem;
+    padding-right: 0.25rem;
+    scrollbar-width: thin;
+  }
+
+  #pantalla-final .capacidades-conquistadas li {
+    padding: 0.18rem 0;
+    font-size: clamp(0.68rem, 1.35vh, 0.78rem);
+    line-height: 1.2;
+  }
+
+  #pantalla-final .coleccion-perfiles {
+    margin: clamp(0.28rem, 0.7vh, 0.45rem) 0;
+    font-size: clamp(0.65rem, 1.3vh, 0.75rem);
+    line-height: 1.2;
+  }
+
+  #pantalla-final #btn-volver-jugar {
+    align-self: center;
+    flex: 0 0 auto;
+    padding: clamp(0.5rem, 1vh, 0.65rem) 1.5rem;
+    font-size: clamp(0.82rem, 1.6vh, 0.94rem);
+  }
+}
+
+/* En equipos con poca altura reducimos un poco más el resumen,
+   conservando el botón principal siempre visible. */
+@media (min-width: 901px) and (max-height: 720px) {
+  #pantalla-final .contenido-final {
+    width: min(90vw, 720px);
+  }
+
+  #pantalla-final .perfil-final {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    margin: 0.35rem 0;
+  }
+
+  #pantalla-final .porcentajes-final,
+  #pantalla-final .columnas-capacidades-finales {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+  }
+
+  #pantalla-final .capacidades-conquistadas ul {
+    max-height: 46px;
+  }
+}
+
+
+/* =====================================================================
+   AJUSTE UX INTRO v6
+   La columna narrativa aprovecha mejor el espacio derecho y todos los
+   bloques ocupan la misma zona visual. No modifica HTML ni JavaScript.
+   ===================================================================== */
+.cabecera-introduccion {
+  width: 100%;
+}
+
+.cabecera-intro-fila {
+  width: 100%;
+}
+
+.bloque-intro p:last-child {
+  margin-bottom: 0;
+}
+
+/* En pantallas de escritorio algo menos anchas seguimos manteniendo
+   una caja de lectura cómoda y centrada en la mitad derecha. */
+@media (min-width: 901px) and (max-width: 1280px) {
+  .contenido-introduccion {
+    width: min(49vw, 690px);
+    margin-right: clamp(1.2rem, 3vw, 2.8rem);
+  }
+
+  .bloque-intro p {
+    font-size: clamp(0.92rem, 1.05vw, 1rem);
+    line-height: 1.5;
+  }
+
+  .relato-introduccion {
+    min-height: clamp(235px, 30vh, 300px);
+  }
+
+  .bloque-intro {
+    min-height: clamp(220px, 27vh, 280px);
+  }
+}
+
+
+/* ==========================================================
+   UX INTRO v7 — ajuste para mantener CONTINUAR siempre visible
+   ========================================================== */
+@media (min-width: 901px) and (max-height: 820px) {
+  .contenido-introduccion {
+    width: min(43vw, 700px);
+    margin-right: clamp(1.5rem, 4vw, 4.5rem);
+  }
+
+  .relato-introduccion {
+    min-height: 165px;
+    margin-top: 0.2rem;
+  }
+
+  .bloque-intro {
+    min-height: 155px;
+  }
+
+  .bloque-intro p {
+    font-size: 0.88rem;
+    line-height: 1.36;
+    margin-bottom: 0.38rem;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: 0.98rem;
+  }
+
+  .progreso-intro {
+    height: 24px;
+    margin-top: 0.1rem;
+  }
+
+  .controles-intro {
+    margin-top: 0.25rem;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 700px) {
+  .relato-introduccion {
+    min-height: 145px;
+  }
+
+  .bloque-intro {
+    min-height: 138px;
+  }
+
+  .bloque-intro p {
+    font-size: 0.83rem;
+    line-height: 1.3;
+    margin-bottom: 0.28rem;
+  }
+
+  .progreso-intro {
+    height: 22px;
+  }
+}
+
+
+/* ==========================================================
+   INTRO v8 — corrección de bloques y botón siempre accesible
+   ========================================================== */
+
+/* IMPORTANTE:
+   Cada bloque que lleva el atributo hidden debe desaparecer por completo.
+   Esto evita que los cuatro relatos se apilen y empujen los controles. */
+.bloque-intro[hidden] {
+  display: none !important;
+}
+
+/* Solo el bloque actual ocupa la caja de lectura. */
+.bloque-intro:not([hidden]) {
+  display: flex;
+}
+
+/* Caja narrativa compacta y estable en escritorio. */
+@media (min-width: 761px) {
+  #pantalla-introduccion.activa {
+    padding-top: clamp(1.4rem, 3.2vh, 2.5rem);
+    padding-bottom: 0.8rem;
+  }
+
+  .contenido-introduccion {
+    width: min(45vw, 720px);
+    margin-right: clamp(1.5rem, 4vw, 4.5rem);
+    max-height: calc(100svh - 2.2rem);
+  }
+
+  .sobrelinea-introduccion::after {
+    margin-top: 0.5rem;
+  }
+
+  .cabecera-introduccion h2 {
+    margin-top: 0.55rem;
+    font-size: clamp(1.8rem, 2.15vw, 2.45rem);
+  }
+
+  .btn-saltar-intro {
+    margin-top: 0.55rem;
+  }
+
+  .relato-introduccion {
+    min-height: clamp(190px, 24vh, 235px);
+    margin-top: clamp(0.45rem, 1vh, 0.75rem);
+    display: flex;
+    align-items: center;
+  }
+
+  .bloque-intro {
+    min-height: 0;
+    padding: 0 0.15rem;
+  }
+
+  .bloque-intro p {
+    margin-bottom: clamp(0.38rem, 0.7vh, 0.55rem);
+    font-size: clamp(0.88rem, 0.92vw, 0.99rem);
+    line-height: 1.42;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: clamp(0.98rem, 1.02vw, 1.12rem);
+  }
+
+  .progreso-intro {
+    height: 26px;
+    margin-top: 0.15rem;
+  }
+
+  .controles-intro {
+    margin-top: 0.3rem;
+  }
+
+  .controles-intro .boton-continuar-imagen {
+    width: clamp(205px, 16vw, 245px);
+    min-width: 0;
+  }
+}
+
+/* Alturas típicas de portátil: aún más compacto, sin perder lectura. */
+@media (min-width: 761px) and (max-height: 760px) {
+  #pantalla-introduccion.activa {
+    padding-top: 0.7rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .contenido-introduccion {
+    max-height: calc(100svh - 1.15rem);
+  }
+
+  .sobrelinea-introduccion {
+    font-size: 0.62rem;
+  }
+
+  .sobrelinea-introduccion::after {
+    margin-top: 0.32rem;
+  }
+
+  .cabecera-introduccion h2 {
+    margin-top: 0.4rem;
+    font-size: 1.72rem;
+  }
+
+  .relato-introduccion {
+    min-height: 160px;
+    margin-top: 0.25rem;
+  }
+
+  .bloque-intro p {
+    font-size: 0.84rem;
+    line-height: 1.34;
+    margin-bottom: 0.3rem;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: 0.94rem;
+  }
+
+  .progreso-intro {
+    height: 22px;
+  }
+
+  .controles-intro {
+    margin-top: 0.18rem;
+  }
+
+  .controles-intro .boton-continuar-imagen {
+    width: 205px;
+  }
+}
+
+
+/* ==========================================================
+   INTRO v9 — REEQUILIBRIO VISUAL DE LA COLUMNA DERECHA
+   Objetivo:
+   - Todo el contenido funciona como una única composición.
+   - Centrado vertical dentro de la mitad derecha.
+   - Márgenes visuales similares y moderados.
+   - Texto, progreso y botones comparten el mismo eje.
+   ========================================================== */
+
+@media (min-width: 901px) {
+
+  #pantalla-introduccion.activa {
+    position: relative;
+    display: block;
+    min-height: 100vh;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .contenido-introduccion {
+    position: absolute;
+    top: 50%;
+    right: clamp(2.2rem, 4vw, 4.8rem);
+    transform: translateY(-50%);
+
+    width: min(43vw, 700px);
+    max-height: 90vh;
+
+    margin: 0;
+    padding: clamp(0.45rem, 1vh, 0.8rem) 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+
+    text-align: left;
+  }
+
+  /* Cabecera alineada con todo el cuerpo narrativo */
+  .cabecera-introduccion,
+  .cabecera-intro-fila {
+    width: 100%;
+  }
+
+  .sobrelinea-introduccion {
+    margin: 0;
+  }
+
+  .sobrelinea-introduccion::after {
+    margin-top: 0.45rem;
+  }
+
+  .cabecera-introduccion h2 {
+    margin-top: 0.55rem;
+    margin-bottom: 0;
+    font-size: clamp(2rem, 2.35vw, 2.65rem);
+    line-height: 1.05;
+  }
+
+  /* Saltar intro se mantiene arriba, pero integrado en la misma columna */
+  .btn-saltar-intro {
+    margin-top: 0.35rem;
+  }
+
+  /* Una caja de lectura compacta y estable */
+  .relato-introduccion {
+    width: 100%;
+    min-height: clamp(190px, 23vh, 235px);
+    margin-top: clamp(0.75rem, 1.6vh, 1.05rem);
+
+    display: flex;
+    align-items: center;
+  }
+
+  .bloque-intro {
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .bloque-intro[hidden] {
+    display: none !important;
+  }
+
+  .bloque-intro:not([hidden]) {
+    display: flex;
+  }
+
+  .bloque-intro p {
+    width: 100%;
+    margin: 0 0 clamp(0.48rem, 0.9vh, 0.68rem);
+    font-size: clamp(0.92rem, 0.98vw, 1.04rem);
+    line-height: 1.48;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+
+  .bloque-intro p:first-child {
+    margin-bottom: clamp(0.55rem, 1vh, 0.75rem);
+    font-size: clamp(1.03rem, 1.08vw, 1.16rem);
+    line-height: 1.35;
+    text-align: left;
+  }
+
+  .bloque-intro p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Ruta de convergencia centrada respecto al texto */
+  .progreso-intro {
+    width: min(56%, 330px);
+    height: 30px;
+    margin: clamp(0.5rem, 1vh, 0.75rem) auto 0;
+  }
+
+  /* Botonera como pie del mismo bloque */
+  .controles-intro {
+    width: min(82%, 540px);
+    margin: clamp(0.55rem, 1.1vh, 0.8rem) auto 0;
+
+    display: grid;
+    grid-template-columns: minmax(92px, 1fr) auto minmax(92px, 1fr);
+    align-items: center;
+    gap: clamp(0.7rem, 1.35vw, 1rem);
+  }
+
+  .controles-intro .boton-continuar-imagen {
+    width: clamp(210px, 15.5vw, 245px);
+    min-width: 0;
+  }
+}
+
+/* Portátiles con menos altura: reducimos solo lo necesario,
+   pero mantenemos el conjunto centrado verticalmente. */
+@media (min-width: 901px) and (max-height: 760px) {
+
+  .contenido-introduccion {
+    width: min(44vw, 680px);
+    max-height: 94vh;
+    right: clamp(1.6rem, 3.4vw, 3.8rem);
+  }
+
+  .cabecera-introduccion h2 {
+    font-size: clamp(1.72rem, 2vw, 2.1rem);
+  }
+
+  .relato-introduccion {
+    min-height: 155px;
+    margin-top: 0.45rem;
+  }
+
+  .bloque-intro p {
+    font-size: 0.84rem;
+    line-height: 1.34;
+    margin-bottom: 0.34rem;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .progreso-intro {
+    width: min(54%, 300px);
+    height: 24px;
+    margin-top: 0.3rem;
+  }
+
+  .controles-intro {
+    margin-top: 0.35rem;
+  }
+
+  .controles-intro .boton-continuar-imagen {
+    width: 205px;
+  }
+}
+
+/* En móvil/tablet volvemos al flujo normal para no bloquear contenido. */
+@media (max-width: 900px) {
+  .contenido-introduccion {
+    position: relative;
+    top: auto;
+    right: auto;
+    transform: none;
+    width: auto;
+    max-height: none;
+    margin: 0 auto;
+  }
+}
+
+
+/* ==========================================================
+   INTRO v10 — LECTURA + EQUILIBRIO + PULSO HOLOGRÁFICO
+   ========================================================== */
+
+/* Pulso visual sutil del holograma central.
+   Solo CSS: imita un latido suave sin convertirse en foco principal. */
+.nodo-convergencia {
+  transform-origin: center;
+  animation: pulso-nexo 1.2s ease-in-out infinite;
+  will-change: filter, opacity, transform;
+}
+
+@keyframes pulso-nexo {
+  0%, 100% {
+    opacity: 0.88;
+    transform: scale(1);
+    filter:
+      brightness(0.98)
+      drop-shadow(0 0 9px rgba(113, 232, 199, 0.34))
+      drop-shadow(0 0 20px rgba(71, 184, 228, 0.18));
+  }
+
+  12% {
+    opacity: 0.98;
+    transform: scale(1.012);
+    filter:
+      brightness(1.14)
+      drop-shadow(0 0 13px rgba(113, 232, 199, 0.48))
+      drop-shadow(0 0 28px rgba(71, 184, 228, 0.28));
+  }
+
+  24% {
+    opacity: 0.93;
+    transform: scale(1.006);
+    filter:
+      brightness(1.06)
+      drop-shadow(0 0 11px rgba(113, 232, 199, 0.42))
+      drop-shadow(0 0 24px rgba(71, 184, 228, 0.23));
+  }
+
+  42%, 88% {
+    opacity: 0.88;
+    transform: scale(1);
+    filter:
+      brightness(0.98)
+      drop-shadow(0 0 9px rgba(113, 232, 199, 0.34))
+      drop-shadow(0 0 20px rgba(71, 184, 228, 0.18));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nodo-convergencia {
+    animation: none;
+  }
+}
+
+/* Escritorio: la composición sigue en la mitad derecha, pero utiliza
+   mejor su ancho y deja márgenes laterales similares y contenidos. */
+@media (min-width: 901px) {
+
+  .contenido-introduccion {
+    left: 52%;
+    right: auto;
+    width: 46%;
+    max-width: none;
+    transform: translateY(-50%);
+  }
+
+  .relato-introduccion {
+    min-height: clamp(205px, 24vh, 255px);
+  }
+
+  .bloque-intro p {
+    font-size: clamp(1.04rem, 1.08vw, 1.16rem);
+    line-height: 1.52;
+    margin-bottom: clamp(0.52rem, 0.9vh, 0.72rem);
+  }
+
+  .bloque-intro p:first-child {
+    font-size: clamp(1.14rem, 1.18vw, 1.28rem);
+    line-height: 1.38;
+    margin-bottom: clamp(0.58rem, 1vh, 0.78rem);
+  }
+
+  .cabecera-introduccion h2 {
+    font-size: clamp(2.05rem, 2.4vw, 2.72rem);
+  }
+
+  .progreso-intro {
+    width: min(52%, 350px);
+  }
+
+  .controles-intro {
+    width: min(76%, 560px);
+  }
+}
+
+/* Portátiles de poca altura: mantenemos una lectura cómoda sin
+   empujar el botón fuera del viewport. */
+@media (min-width: 901px) and (max-height: 760px) {
+
+  .contenido-introduccion {
+    left: 51.5%;
+    width: 47%;
+  }
+
+  .relato-introduccion {
+    min-height: 175px;
+    margin-top: 0.45rem;
+  }
+
+  .bloque-intro p {
+    font-size: 0.94rem;
+    line-height: 1.4;
+    margin-bottom: 0.36rem;
+  }
+
+  .bloque-intro p:first-child {
+    font-size: 1.04rem;
+    line-height: 1.34;
+  }
+
+  .cabecera-introduccion h2 {
+    font-size: clamp(1.82rem, 2.05vw, 2.18rem);
+  }
+
+  .progreso-intro {
+    width: min(50%, 320px);
+  }
+
+  .controles-intro {
+    width: min(74%, 520px);
+  }
+}
+
+.cabecera-introduccion h2 {
+  border-bottom: 1px solid rgba(112, 236, 191, 0.42);
+  padding-bottom: 0.42rem;
+}
+
+
+/* ==========================================================
+   INTRO v11 — X HOLOGRÁFICA JUNTO A “EL PROTOCOLO NEXO”
+   Solo CSS. No requiere cambios en HTML.
+   ========================================================== */
+
+/* Convertimos el título en un bloque con espacio para el símbolo */
+.cabecera-introduccion h2 {
+  position: relative;
+  padding-left: clamp(4.2rem, 4.7vw, 5.2rem);
+}
+
+/* X holográfica construida con pseudo-elemento */
+.cabecera-introduccion h2::before {
+  content: "X";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: clamp(3.5rem, 4vw, 4.5rem);
+  height: clamp(3.5rem, 4vw, 4.5rem);
+
+  display: grid;
+  place-items: center;
+
+  font-size: clamp(2.7rem, 3.2vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1;
+
+  color: transparent;
+  background:
+    linear-gradient(
+      135deg,
+      #79f28b 0%,
+      #6ef0cc 42%,
+      #58d8f5 58%,
+      #56a9ff 100%
+    );
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  text-shadow:
+    0 0 6px rgba(113, 242, 181, 0.25),
+    0 0 12px rgba(94, 224, 225, 0.22),
+    0 0 20px rgba(74, 169, 255, 0.18);
+
+  opacity: 0.78;
+  transform-origin: center;
+  animation: pulso-x-nexo 1.2s ease-in-out infinite;
+
+  pointer-events: none;
+}
+
+/* Halo holográfico muy ligero detrás de la X */
+.cabecera-introduccion h2::after {
+  content: "";
+  position: absolute;
+  left: clamp(0.2rem, 0.25vw, 0.3rem);
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: clamp(3.15rem, 3.7vw, 4.15rem);
+  height: clamp(3.15rem, 3.7vw, 4.15rem);
+
+  border: 1px solid rgba(103, 224, 221, 0.2);
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 10px rgba(108, 237, 194, 0.12),
+    0 0 18px rgba(82, 182, 255, 0.10),
+    inset 0 0 8px rgba(98, 224, 232, 0.08);
+
+  opacity: 0.42;
+  animation: halo-x-nexo 1.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Reponemos la línea decorativa inferior del título con otro selector,
+   porque ::after se usa ahora como halo de la X. */
+.cabecera-introduccion h2 + .linea-titulo-intro,
+.cabecera-introduccion .linea-titulo-intro {
+  display: block;
+}
+
+/* Pulso sutil: más brillo que movimiento */
+@keyframes pulso-x-nexo {
+  0%, 100% {
+    opacity: 0.72;
+    transform: translateY(-50%) scale(1);
+    filter: brightness(1);
+  }
+
+  13% {
+    opacity: 0.96;
+    transform: translateY(-50%) scale(1.025);
+    filter: brightness(1.22)
+            drop-shadow(0 0 7px rgba(103, 237, 194, 0.32))
+            drop-shadow(0 0 11px rgba(78, 177, 255, 0.24));
+  }
+
+  27% {
+    opacity: 0.84;
+    transform: translateY(-50%) scale(1.01);
+    filter: brightness(1.08);
+  }
+
+  45%, 88% {
+    opacity: 0.72;
+    transform: translateY(-50%) scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes halo-x-nexo {
+  0%, 100% {
+    opacity: 0.30;
+    transform: translateY(-50%) scale(0.98);
+  }
+
+  13% {
+    opacity: 0.54;
+    transform: translateY(-50%) scale(1.025);
+  }
+
+  27% {
+    opacity: 0.40;
+    transform: translateY(-50%) scale(1.01);
+  }
+
+  45%, 88% {
+    opacity: 0.30;
+    transform: translateY(-50%) scale(0.98);
+  }
+}
+
+/* En portátiles bajos reducimos un poco el símbolo */
+@media (min-width: 901px) and (max-height: 760px) {
+  .cabecera-introduccion h2 {
+    padding-left: 3.7rem;
+  }
+
+  .cabecera-introduccion h2::before {
+    width: 3.2rem;
+    height: 3.2rem;
+    font-size: 2.5rem;
+  }
+
+  .cabecera-introduccion h2::after {
+    width: 2.9rem;
+    height: 2.9rem;
+  }
+}
+
+/* En móvil, la X sigue presente pero más discreta */
+@media (max-width: 900px) {
+  .cabecera-introduccion h2 {
+    padding-left: 3.25rem;
+  }
+
+  .cabecera-introduccion h2::before {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 2.2rem;
+  }
+
+  .cabecera-introduccion h2::after {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cabecera-introduccion h2::before,
+  .cabecera-introduccion h2::after {
+    animation: none;
+  }
+}
+
+
+
+/* =====================================================================
+   PORTADA — LOGO NEXO · TIPOGRAFÍA ORIGINAL HD + UN SOLO PULSO · v11
+   =====================================================================
+   CAMBIOS PRINCIPALES:
+   1. El logo se ha recentrado ópticamente dentro de su propio lienzo.
+   2. Se han eliminado de la imagen las dos bolitas FIJAS junto a
+      "LA CONVERGENCIA".
+   3. La expansión de la X ya no utiliza un segundo dibujo desalineado:
+      se genera desde la MISMA X y crece desde su centro hacia sus extremos.
+      Por tanto, la X no puede desplazarse lateralmente.
+   4. Los nodos empiezan pequeños y tenues en los extremos exteriores.
+      Aumentan progresivamente tamaño, brillo y halo mientras avanzan.
+   5. Alcanzan su máximo justo al lado de las letras del subtítulo.
+   6. Un solo pulso por ciclo de 1.2 s, manteniendo la cadencia general.
+   ===================================================================== */
+
+
+/* ---------------------------------------------------------------------
+   1. CONTENEDOR DEL LOGO
+   --------------------------------------------------------------------- */
+#pantalla-inicio .logo-nexo-animado {
+  position: relative;
+
+  width: min(82vw, 900px);
+  min-width: 360px;
+  aspect-ratio: 428 / 128;
+
+  margin:
+    clamp(0.25rem, 1vh, 0.7rem)
+    auto
+    clamp(0.15rem, 0.6vh, 0.4rem);
+
+  flex: 0 0 auto;
+  overflow: visible;
+  border: 0;
+  isolation: isolate;
+
+  /*
+     El asset base ya está recentrado ópticamente.
+     Las cuatro primeras capas son los dos nodos:
+       núcleo verde + halo verde
+       núcleo azul  + halo azul
+  */
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(247, 255, 225, 1) 0 22%,
+      rgba(175, 255, 90, 1) 23% 50%,
+      transparent 72%
+    ),
+    radial-gradient(
+      circle,
+      rgba(133, 255, 77, 0.38) 0 20%,
+      rgba(90, 255, 60, 0.13) 42%,
+      transparent 74%
+    ),
+    radial-gradient(
+      circle,
+      rgba(236, 253, 255, 1) 0 22%,
+      rgba(75, 219, 255, 1) 23% 50%,
+      transparent 72%
+    ),
+    radial-gradient(
+      circle,
+      rgba(64, 205, 255, 0.40) 0 20%,
+      rgba(38, 174, 255, 0.13) 42%,
+      transparent 74%
+    ),
+    url("../assets/images/portada/logo/nexo_logo_base_tipografia_original_hd.webp");
+
+  background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat;
+
+  /*
+     POSICIONES CORREGIDAS TRAS RECENTRAR EL ASSET:
+     verde: extremo exterior 7.5% -> extremo interior 25.5%
+     azul:  extremo exterior 90.4% -> extremo interior 75.5%
+  */
+  background-position:
+    7.5% 77.3%,
+    7.5% 77.3%,
+    90.4% 77.3%,
+    90.4% 77.3%,
+    center;
+
+  /* Inicio mucho más discreto. */
+  background-size:
+    2px 2px,
+    5px 5px,
+    2px 2px,
+    5px 5px,
+    100% 100%;
+
+  animation:
+    nexo-nodos-v8 1.2s linear infinite;
+}
+
+
+/* El SVG antiguo queda fuera de la composición visual. */
+#pantalla-inicio .logo-nexo-svg {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* ---------------------------------------------------------------------
+   2. X BASE
+   ---------------------------------------------------------------------
+   El mismo asset se utiliza en ambas capas de la X.
+   El centro visual de la X, una vez recentrada, está aprox. en:
+      x = 57.8%
+      y = 34.8%
+   --------------------------------------------------------------------- */
+#pantalla-inicio .logo-nexo-animado::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+  pointer-events: none;
+
+  background:
+    center / 100% 100%
+    no-repeat
+    url("../assets/images/portada/logo/nexo_x_estatica_centrada.webp");
+
+  opacity: 1;
+
+  transform: scale(1);
+  transform-origin: 57.8% 34.8%;
+
+  animation:
+    nexo-x-base-v8 1.2s cubic-bezier(.36, 0, .28, 1) infinite;
+
+  will-change:
+    opacity,
+    filter;
+}
+
+
+/* ---------------------------------------------------------------------
+   3. X EN EXPANSIÓN
+   ---------------------------------------------------------------------
+   MUY IMPORTANTE:
+   NO cargamos una segunda X distinta.
+   Es exactamente la misma X duplicada y escalada desde el mismo centro.
+
+   Esto elimina:
+   - desplazamiento lateral;
+   - salto entre dos dibujos;
+   - caja rectangular;
+   - desalineación entre estado inicial y expandido.
+   --------------------------------------------------------------------- */
+#pantalla-inicio .logo-nexo-animado::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 3;
+  pointer-events: none;
+
+  background:
+    center / 100% 100%
+    no-repeat
+    url("../assets/images/portada/logo/nexo_x_estatica_centrada.webp");
+
+  opacity: 0;
+
+  transform:
+    scaleX(1)
+    scaleY(1);
+
+  transform-origin: 57.8% 34.8%;
+
+  animation:
+    nexo-x-expansion-v8 1.2s cubic-bezier(.36, 0, .28, 1) infinite;
+
+  will-change:
+    opacity,
+    transform,
+    filter;
+}
+
+
+/* X de reposo: desaparece únicamente durante el pico. */
+@keyframes nexo-x-base-v8 {
+
+  /*
+     UN SOLO PULSO POR CICLO:
+     la X de reposo se mantiene estable, cede progresivamente a la X
+     expandida y vuelve una sola vez. El ciclo completo sigue durando 1.2 s.
+  */
+
+  0%,
+  42%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+
+  50% {
+    opacity: 0.82;
+  }
+
+  58% {
+    opacity: 0.46;
+  }
+
+  66% {
+    opacity: 0.12;
+  }
+
+  /* Pico único */
+  70% {
+    opacity: 0;
+  }
+
+  78% {
+    opacity: 0.38;
+  }
+
+  86% {
+    opacity: 0.76;
+  }
+
+  92% {
+    opacity: 1;
+  }
+}
+
+
+/* ---------------------------------------------------------------------
+   EXPANSIÓN SIMÉTRICA:
+   crece DESDE EL CENTRO hacia los cuatro extremos.
+   No existe ningún translate ni cambio de left/top.
+   --------------------------------------------------------------------- */
+@keyframes nexo-x-expansion-v8 {
+
+  /*
+     EXPANSIÓN ÚNICA "PUM":
+     desde la X normal hasta el máximo de expansión en una sola subida.
+     No hay segundo golpe.
+  */
+
+  0%,
+  42%,
+  100% {
+    opacity: 0;
+
+    transform:
+      scaleX(1)
+      scaleY(1);
+
+    filter:
+      brightness(1)
+      saturate(1);
+  }
+
+  /* Comienza el crecimiento */
+  48% {
+    opacity: 0.12;
+
+    transform:
+      scaleX(1.025)
+      scaleY(1.015);
+  }
+
+  54% {
+    opacity: 0.28;
+
+    transform:
+      scaleX(1.07)
+      scaleY(1.045);
+  }
+
+  60% {
+    opacity: 0.50;
+
+    transform:
+      scaleX(1.13)
+      scaleY(1.08);
+  }
+
+  65% {
+    opacity: 0.75;
+
+    transform:
+      scaleX(1.20)
+      scaleY(1.12);
+  }
+
+  /* ÚNICO PICO — máximo brillo y expansión */
+  70% {
+    opacity: 1;
+
+    transform:
+      scaleX(1.28)
+      scaleY(1.17);
+
+    filter:
+      brightness(1.45)
+      saturate(1.18)
+
+      drop-shadow(
+        0 0 9px
+        rgba(255, 255, 255, 0.70)
+      )
+
+      drop-shadow(
+        0 0 17px
+        rgba(135, 255, 63, 0.48)
+      )
+
+      drop-shadow(
+        0 0 23px
+        rgba(38, 189, 255, 0.52)
+      )
+
+      drop-shadow(
+        0 0 34px
+        rgba(63, 215, 236, 0.22)
+      );
+  }
+
+  /* Descenso único, sin segundo golpe */
+  77% {
+    opacity: 0.68;
+
+    transform:
+      scaleX(1.17)
+      scaleY(1.10);
+
+    filter:
+      brightness(1.18)
+      saturate(1.08);
+  }
+
+  84% {
+    opacity: 0.35;
+
+    transform:
+      scaleX(1.08)
+      scaleY(1.05);
+
+    filter:
+      brightness(1.08);
+  }
+
+  90% {
+    opacity: 0.10;
+
+    transform:
+      scaleX(1.025)
+      scaleY(1.015);
+  }
+
+  94% {
+    opacity: 0;
+
+    transform:
+      scaleX(1)
+      scaleY(1);
+  }
+}
+
+
+/* ---------------------------------------------------------------------
+   4. NODOS
+   ---------------------------------------------------------------------
+   El contraste entre inicio y final se ha aumentado claramente.
+
+   INICIO:
+   - 2 px de núcleo;
+   - halo casi imperceptible;
+   - poco brillo.
+
+   FINAL:
+   - núcleo de 11 px;
+   - halo de 35 px;
+   - máximo resplandor justo al lado del texto.
+   --------------------------------------------------------------------- */
+@keyframes nexo-nodos-v8 {
+
+  /* EXTERIOR: mínimo tamaño y brillo */
+  0%,
+  15% {
+    background-position:
+      7.5% 77.3%,
+      7.5% 77.3%,
+      90.4% 77.3%,
+      90.4% 77.3%,
+      center;
+
+    background-size:
+      2px 2px,
+      5px 5px,
+      2px 2px,
+      5px 5px,
+      100% 100%;
+  }
+
+
+  /* Empiezan a adquirir energía */
+  30% {
+    background-position:
+      12.5% 77.3%,
+      12.5% 77.3%,
+      86.2% 77.3%,
+      86.2% 77.3%,
+      center;
+
+    background-size:
+      3px 3px,
+      8px 8px,
+      3px 3px,
+      8px 8px,
+      100% 100%;
+  }
+
+
+  /* Mitad del recorrido */
+  44% {
+    background-position:
+      18% 77.3%,
+      18% 77.3%,
+      81.7% 77.3%,
+      81.7% 77.3%,
+      center;
+
+    background-size:
+      5px 5px,
+      14px 14px,
+      5px 5px,
+      14px 14px,
+      100% 100%;
+  }
+
+
+  /* Cerca de LA CONVERGENCIA */
+  56% {
+    background-position:
+      23% 77.3%,
+      23% 77.3%,
+      77.5% 77.3%,
+      77.5% 77.3%,
+      center;
+
+    background-size:
+      7px 7px,
+      22px 22px,
+      7px 7px,
+      22px 22px,
+      100% 100%;
+  }
+
+
+  /* MÁXIMO justo al lado de las letras */
+  70%,
+  74% {
+    background-position:
+      25.5% 77.3%,
+      25.5% 77.3%,
+      75.5% 77.3%,
+      75.5% 77.3%,
+      center;
+
+    background-size:
+      11px 11px,
+      35px 35px,
+      11px 11px,
+      35px 35px,
+      100% 100%;
+  }
+
+
+  /*
+     Tras el pico desaparecen.
+     Como las bolitas fijas se han eliminado del asset,
+     no queda ningún círculo visible en reposo.
+  */
+  78% {
+    background-position:
+      25.5% 77.3%,
+      25.5% 77.3%,
+      75.5% 77.3%,
+      75.5% 77.3%,
+      center;
+
+    background-size:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      100% 100%;
+  }
+
+
+  79%,
+  98% {
+    background-position:
+      7.5% 77.3%,
+      7.5% 77.3%,
+      90.4% 77.3%,
+      90.4% 77.3%,
+      center;
+
+    background-size:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      100% 100%;
+  }
+
+
+  100% {
+    background-position:
+      7.5% 77.3%,
+      7.5% 77.3%,
+      90.4% 77.3%,
+      90.4% 77.3%,
+      center;
+
+    background-size:
+      2px 2px,
+      5px 5px,
+      2px 2px,
+      5px 5px,
+      100% 100%;
+  }
+}
+
+
+/* ---------------------------------------------------------------------
+   5. BOTÓN JUGAR
+   --------------------------------------------------------------------- */
+#pantalla-inicio .boton-jugar-imagen {
+  width: min(19vw, 245px);
+  min-width: 185px;
+
+  margin-top: 0.1rem;
+
+  opacity: 0.92;
+
+  transform-origin: center;
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    opacity 180ms ease;
+}
+
+#pantalla-inicio .boton-jugar-imagen img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  opacity: 0.88;
+
+  filter:
+    brightness(0.85)
+    saturate(0.91)
+    contrast(0.99);
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    opacity 180ms ease;
+}
+
+#pantalla-inicio .boton-jugar-imagen:hover img,
+#pantalla-inicio .boton-jugar-imagen:focus-visible img {
+  opacity: 1;
+
+  transform:
+    translateY(-2px)
+    scale(1.02);
+
+  filter:
+    brightness(1.08)
+    saturate(1.04)
+    drop-shadow(0 0 8px rgba(124, 194, 66, 0.30))
+    drop-shadow(0 0 11px rgba(0, 159, 227, 0.31));
+}
+
+
+/* ---------------------------------------------------------------------
+   6. LEMA
+   --------------------------------------------------------------------- */
+#pantalla-inicio .lema-juego {
+  max-width: 550px;
+
+  color: rgba(219, 233, 237, 0.88);
+
+  font-size:
+    clamp(0.90rem, 1.18vw, 1.04rem);
+
+  line-height: 1.5;
+
+  margin:
+    auto
+    auto
+    clamp(0.7rem, 1.5vh, 1rem);
+
+  text-shadow:
+    0 2px 12px
+    rgba(0, 0, 0, 0.86);
+}
+
+
+/* ---------------------------------------------------------------------
+   7. RESPONSIVE
+   --------------------------------------------------------------------- */
+@media (min-width: 761px) and (max-height: 760px) {
+
+  #pantalla-inicio .logo-nexo-animado {
+    width: min(73vw, 770px);
+  }
+
+  #pantalla-inicio .boton-jugar-imagen {
+    width: min(17vw, 220px);
+    min-width: 170px;
+  }
+}
+
+@media (max-width: 760px) {
+
+  #pantalla-inicio .logo-nexo-animado {
+    width: min(94vw, 620px);
+    min-width: 0;
+  }
+
+  #pantalla-inicio .boton-jugar-imagen {
+    width: min(48vw, 230px);
+    min-width: 165px;
+  }
+}
+
+
+/* ---------------------------------------------------------------------
+   8. ACCESIBILIDAD
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+  #pantalla-inicio .logo-nexo-animado {
+    animation: none;
+
+    background-image:
+      url("../assets/images/portada/logo/nexo_logo_base_tipografia_original_hd.webp");
+
+    background-size:
+      100% 100%;
+
+    background-position:
+      center;
+  }
+
+  #pantalla-inicio .logo-nexo-animado::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  #pantalla-inicio .logo-nexo-animado::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+
+/* =====================================================================
+   NEXO V10 · CONFIGURACIÓN · ESFERA + PEDESTAL ALINEADOS DESDE ORIGEN
+   =====================================================================
+   REGLA CLAVE DE ALINEACIÓN:
+   - fondo: 2560x1440 + background-size: cover + center
+   - SVG:   viewBox 2560x1440 + preserveAspectRatio xMidYMid slice
+   Ambos usan el MISMO sistema de coordenadas.
+   Por tanto la circunferencia/máscara de la animación siempre coincide
+   con la esfera del fondo, incluso cuando el navegador recorta con cover.
+   ===================================================================== */
+
+#pantalla-configuracion .fondo-configuracion {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(0, 7, 12, .035) 0%,
+      rgba(0, 7, 12, 0) 52%,
+      rgba(0, 7, 12, .10) 100%
+    ),
+    url("../assets/images/configuracion/fondos/fondo-configuracion-nexo-v10-web.webp");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+#pantalla-configuracion .fondo-configuracion::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,7,11,.10) 0%,
+      transparent 15%,
+      transparent 85%,
+      rgba(0,7,11,.10) 100%
+    );
+}
+
+/* ---------- CABECERA ---------- */
+#pantalla-configuracion .cabecera-configuracion {
+  top: clamp(.55rem, 1vh, .9rem);
+  width: min(94vw, 900px);
+  padding: .18rem 1rem .5rem;
+  background: linear-gradient(
+    180deg,
+    rgba(1,10,16,.62),
+    rgba(1,10,16,.24) 72%,
+    transparent
+  );
+  border-radius: 10px;
+}
+
+#pantalla-configuracion .cabecera-configuracion h2 {
+  margin-top: .12rem;
+  font-size: clamp(1.75rem, 2.25vw, 2.62rem);
+}
+
+/* ---------- PANELES LATERALES ---------- */
+#pantalla-configuracion .panel-identidad {
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(25vw, 420px);
+  padding: clamp(.76rem, 1.05vw, 1rem);
+  background:
+    linear-gradient(180deg, rgba(3,17,24,.70), rgba(2,12,18,.50));
+  border: 1px solid rgba(121,213,213,.10);
+  backdrop-filter: blur(2px);
+}
+
+#pantalla-configuracion .panel-identidad-humano {
+  left: clamp(1.3rem, 4.7vw, 5.6rem);
+}
+
+#pantalla-configuracion .panel-identidad-ia {
+  right: clamp(1.3rem, 4.7vw, 5.6rem);
+}
+
+/* ---------- AVATARES: selección muy visible ---------- */
+#pantalla-configuracion .tarjeta-avatar {
+  position: relative;
+  height: clamp(180px, 25.5vh, 270px);
+  overflow: visible;
+  border: 1px solid rgba(177,214,218,.22);
+  background: rgba(1,13,19,.56);
+  clip-path: polygon(9% 0, 91% 0, 100% 9%, 100% 91%, 91% 100%, 9% 100%, 0 91%, 0 9%);
+  opacity: .70;
+  filter: saturate(.78) brightness(.84);
+  transform: scale(.98);
+  transition:
+    transform .20s ease,
+    opacity .20s ease,
+    filter .20s ease,
+    box-shadow .20s ease,
+    border-color .20s ease;
+}
+
+#pantalla-configuracion .tarjeta-humano:has(input:checked),
+#pantalla-configuracion .tarjeta-ia:has(input:checked) {
+  opacity: 1;
+  filter: saturate(1.16) brightness(1.08);
+  transform: translateY(-4px) scale(1.03);
+}
+
+#pantalla-configuracion .tarjeta-humano:has(input:checked) {
+  border-color: #b5ff4c;
+  box-shadow:
+    inset 0 0 0 2px rgba(181,255,76,.45),
+    0 0 12px rgba(176,255,67,.68),
+    0 0 30px rgba(87,255,50,.27);
+}
+
+#pantalla-configuracion .tarjeta-ia:has(input:checked) {
+  border-color: #55dfff;
+  box-shadow:
+    inset 0 0 0 2px rgba(85,223,255,.47),
+    0 0 12px rgba(66,219,255,.70),
+    0 0 30px rgba(29,175,255,.28);
+}
+
+#pantalla-configuracion .tarjeta-avatar::after {
+  content: "✓";
+  position: absolute;
+  z-index: 8;
+  top: -10px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 1000;
+  color: #061014;
+  opacity: 0;
+  transform: scale(.62);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+#pantalla-configuracion .tarjeta-humano:has(input:checked)::after {
+  opacity: 1;
+  transform: scale(1);
+  background: #b7ff45;
+  box-shadow: 0 0 15px rgba(161,255,61,.92);
+}
+
+#pantalla-configuracion .tarjeta-ia:has(input:checked)::after {
+  opacity: 1;
+  transform: scale(1);
+  background: #59dfff;
+  box-shadow: 0 0 15px rgba(73,218,255,.92);
+}
+
+/* ---------- SVG ENERGÍA: MISMO RECORTE QUE EL FONDO ---------- */
+#pantalla-configuracion .energia-esfera {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  pointer-events: none;
+  opacity: .78;
+  mix-blend-mode: screen;
+}
+
+#pantalla-configuracion .energia-esfera-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---------- NODOS ---------- */
+#pantalla-configuracion .nodo-energia {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: .38;
+  animation: nexo-pulso-nodo-v10 3.2s ease-in-out infinite;
+}
+
+#pantalla-configuracion .nodo-verde {
+  fill: #d9f5ac;
+  color: #aaff48;
+  filter:
+    drop-shadow(0 0 3px rgba(201,255,120,.72))
+    drop-shadow(0 0 7px rgba(133,255,61,.34));
+}
+
+#pantalla-configuracion .nodo-azul {
+  fill: #d5f6fb;
+  color: #50dcff;
+  filter:
+    drop-shadow(0 0 3px rgba(190,247,255,.74))
+    drop-shadow(0 0 7px rgba(51,202,255,.38));
+}
+
+#pantalla-configuracion .nodo-centro {
+  fill: #fff;
+  color: #bafcff;
+  opacity: .74;
+  filter:
+    drop-shadow(0 0 5px #fff)
+    drop-shadow(0 0 11px rgba(118,241,255,.68));
+}
+
+#pantalla-configuracion .nodo-energia.nodo-activo {
+  animation: nexo-nodo-recibe-energia-v10 470ms ease-out forwards;
+}
+
+/* ---------- DESCARGAS ---------- */
+#pantalla-configuracion .energia-ruta {
+  --duracion-descarga: 390ms;
+  fill: none;
+  stroke-width: 3.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  stroke-dasharray: .13 .87;
+  stroke-dashoffset: 1;
+}
+
+#pantalla-configuracion .energia-verde {
+  stroke: #d8ff90;
+  color: #a8ff47;
+}
+
+#pantalla-configuracion .energia-azul {
+  stroke: #a4f3ff;
+  color: #3ed3ff;
+}
+
+#pantalla-configuracion .energia-cian {
+  stroke: #fff;
+  color: #91f6ff;
+}
+
+#pantalla-configuracion .energia-ruta.activa {
+  animation:
+    nexo-descarga-esfera-v10
+    var(--duracion-descarga)
+    cubic-bezier(.15,.8,.22,1)
+    forwards;
+}
+
+#pantalla-configuracion .energia-pulso-centro {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+#pantalla-configuracion .energia-pulso-centro.activo {
+  animation: nexo-pulso-convergencia-v10 560ms ease-out forwards;
+}
+
+@keyframes nexo-pulso-nodo-v10 {
+  0%, 100% { opacity: .32; transform: scale(.82); }
+  48%      { opacity: .72; transform: scale(1.14); }
+  66%      { opacity: .50; transform: scale(.96); }
+}
+
+@keyframes nexo-nodo-recibe-energia-v10 {
+  0%   { opacity: .52; transform: scale(1); }
+  35%  {
+    opacity: 1;
+    transform: scale(1.75);
+    filter:
+      drop-shadow(0 0 5px #fff)
+      drop-shadow(0 0 12px currentColor)
+      drop-shadow(0 0 18px currentColor);
+  }
+  100% { opacity: .50; transform: scale(1); }
+}
+
+@keyframes nexo-descarga-esfera-v10 {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+  14% { opacity: .76; }
+  42% {
+    opacity: .94;
+    filter:
+      drop-shadow(0 0 3px #fff)
+      drop-shadow(0 0 7px currentColor);
+  }
+  58% {
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 4px #fff)
+      drop-shadow(0 0 10px currentColor)
+      drop-shadow(0 0 16px currentColor);
+  }
+  80% {
+    opacity: .56;
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+    filter: none;
+  }
+}
+
+@keyframes nexo-pulso-convergencia-v10 {
+  0%   { opacity: 0; transform: scale(.24); }
+  26%  { opacity: .72; }
+  100% { opacity: 0; transform: scale(1.16); }
+}
+
+#pantalla-configuracion .configuracion-inferior {
+  bottom: clamp(.62rem, 1.2vh, .95rem);
+  width: min(93vw, 630px);
+  gap: clamp(.36rem, .65vh, .56rem);
+}
+
+@media (max-height: 760px) and (min-width: 761px) {
+  #pantalla-configuracion .panel-identidad {
+    top: 50%;
+    width: min(24.5vw, 395px);
+  }
+
+  #pantalla-configuracion .tarjeta-avatar {
+    height: clamp(165px, 23.5vh, 225px);
+  }
+
+  #pantalla-configuracion .cabecera-configuracion h2 {
+    font-size: clamp(1.5rem, 2vw, 2.15rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pantalla-configuracion .energia-ruta,
+  #pantalla-configuracion .nodo-energia,
+  #pantalla-configuracion .energia-pulso-centro {
+    animation: none !important;
+  }
+}
+
+
+/* =====================================================================
+   NEXO V12 · BOTONES CONFIGURACIÓN · ASSETS INSPIRADOS EN JUGAR
+   ---------------------------------------------------------------------
+   Esta es la ÚNICA apariencia de los botones de Configuración.
+   Los marcos se cargan desde assets SVG vectoriales nuevos.
+   No quedan estilos de las versiones sustituidas.
+   ===================================================================== */
+
+/* --------------------- RONDAS --------------------- */
+#pantalla-configuracion .boton-opcion {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: clamp(88px, 6.4vw, 112px);
+  height: clamp(62px, 7.4vh, 82px);
+  padding: 0;
+  margin: 0;
+
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  background-image: url("../assets/images/configuracion/botones/boton-ronda-normal.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+
+  color: #ffffff;
+  font-size: clamp(1.05rem, 1.34vw, 1.46rem);
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, .95),
+    0 0 9px rgba(255, 255, 255, .12);
+
+  filter:
+    drop-shadow(0 5px 8px rgba(0, 0, 0, .42));
+
+  transition:
+    transform .18s ease,
+    filter .18s ease;
+}
+
+#pantalla-configuracion .boton-opcion:hover,
+#pantalla-configuracion .boton-opcion:focus-visible {
+  background-image: url("../assets/images/configuracion/botones/boton-ronda-hover.svg");
+  transform: translateY(-4px) scale(1.055);
+  filter:
+    brightness(1.08)
+    drop-shadow(0 6px 10px rgba(0, 0, 0, .48))
+    drop-shadow(0 0 8px rgba(68, 214, 245, .32));
+}
+
+#pantalla-configuracion .boton-opcion-activa {
+  background-image: url("../assets/images/configuracion/botones/boton-ronda-activo.svg");
+  transform: translateY(-4px) scale(1.075);
+  filter:
+    brightness(1.10)
+    drop-shadow(0 6px 10px rgba(0, 0, 0, .48))
+    drop-shadow(0 0 8px rgba(174, 255, 66, .42))
+    drop-shadow(0 0 13px rgba(58, 206, 246, .24));
+}
+
+/* ---------------- INICIAR PROTOCOLO ---------------- */
+#pantalla-configuracion .boton-iniciar-nexo {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: min(88vw, 570px);
+  height: clamp(108px, 12.2vh, 132px);
+  margin: 0;
+  padding: 0 4.3rem;
+
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  background-image: url("../assets/images/configuracion/botones/boton-iniciar-protocolo-normal.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+
+  color: #ffffff;
+  cursor: pointer;
+
+  filter:
+    drop-shadow(0 9px 12px rgba(0, 0, 0, .50));
+
+  transition:
+    transform .20s ease,
+    filter .20s ease;
+}
+
+#pantalla-configuracion .boton-iniciar-nexo span {
+  position: relative;
+  z-index: 2;
+
+  color: #ffffff;
+  font-size: clamp(1.06rem, 1.48vw, 1.40rem);
+  font-weight: 650;
+  letter-spacing: .21em;
+  line-height: 1;
+
+  text-shadow:
+    0 3px 10px rgba(0, 0, 0, .98),
+    0 0 8px rgba(255, 255, 255, .12);
+}
+
+#pantalla-configuracion .boton-iniciar-nexo:hover,
+#pantalla-configuracion .boton-iniciar-nexo:focus-visible {
+  background-image: url("../assets/images/configuracion/botones/boton-iniciar-protocolo-hover.svg");
+  transform: translateY(-5px) scale(1.035);
+
+  filter:
+    brightness(1.08)
+    drop-shadow(0 10px 15px rgba(0, 0, 0, .54))
+    drop-shadow(0 0 10px rgba(174, 255, 58, .27))
+    drop-shadow(0 0 17px rgba(48, 203, 255, .22));
+}
+
+#pantalla-configuracion .boton-iniciar-nexo:active {
+  transform: translateY(-1px) scale(1.012);
+}
+
+/* El bloque inferior conserva la composición estable de V10. */
+#pantalla-configuracion .configuracion-inferior {
+  gap: clamp(.28rem, .52vh, .44rem);
+}
+
+@media (max-width: 760px) {
+  #pantalla-configuracion .boton-opcion {
+    width: clamp(74px, 19vw, 102px);
+    height: 70px;
+  }
+
+  #pantalla-configuracion .boton-iniciar-nexo {
+    width: min(100%, 540px);
+    height: 116px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pantalla-configuracion .boton-opcion,
+  #pantalla-configuracion .boton-iniciar-nexo {
+    transition: none;
+  }
+}
