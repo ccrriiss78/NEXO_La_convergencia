@@ -44,16 +44,18 @@ export function ocultar(id: string): void {
 export function mostrarPantalla(idPantalla: string): void {
   const pantallas: string[] = [
     "pantalla-inicio",
-    "pantalla-intro",
-    "pantalla-config",
+    "pantalla-introduccion",
+    "pantalla-configuracion",
     "pantalla-juego",
     "pantalla-final"
   ];
+  // Las pantallas no usan la clase "oculta" sino "activa": en el CSS una
+  // .pantalla esta escondida por defecto y solo se ve cuando lleva .activa.
   for (let i = 0; i < pantallas.length; i++) {
     if (pantallas[i] === idPantalla) {
-      mostrar(pantallas[i]);
+      elemento(pantallas[i]).classList.add("activa");
     } else {
-      ocultar(pantallas[i]);
+      elemento(pantallas[i]).classList.remove("activa");
     }
   }
 }
@@ -69,13 +71,13 @@ export function pintarMarcadores(partida: Partida): void {
   const anchoIA: number = calcularPorcentaje(ia.getEvolucion(), EVOLUCION_MAXIMA_BARRA);
   const anchoPlaneta: number = calcularPorcentaje(partida.getSaludPlaneta(), SALUD_MAXIMA);
 
-  elemento("barra-humano").style.width = anchoHumano + "%";
-  elemento("barra-ia").style.width = anchoIA + "%";
-  elemento("barra-planeta").style.width = anchoPlaneta + "%";
+  elemento("barra-evolucion-humana").style.width = anchoHumano + "%";
+  elemento("barra-evolucion-ia").style.width = anchoIA + "%";
+  elemento("barra-salud-planeta").style.width = anchoPlaneta + "%";
 
-  escribir("valor-humano", String(jugador.getEvolucion()));
-  escribir("valor-ia", String(ia.getEvolucion()));
-  escribir("valor-planeta", partida.getSaludPlaneta() + " / " + SALUD_MAXIMA);
+  escribir("valor-evolucion-humana", String(jugador.getEvolucion()));
+  escribir("valor-evolucion-ia", String(ia.getEvolucion()));
+  escribir("valor-salud-planeta", partida.getSaludPlaneta() + " / " + SALUD_MAXIMA);
 }
 
 /** Convierte un valor en un porcentaje entre 0 y 100. */
@@ -150,18 +152,24 @@ export function pintarCabeceraRonda(partida: Partida): void {
   } else {
     texto = texto + " · modo libre";
   }
-  escribir("info-ronda", texto);
-  escribir("crisis-nombre", partida.getCrisisActual());
+  escribir("contador-ronda", texto);
+  escribir("nombre-crisis", partida.getCrisisActual());
 
   const carta = partida.getCartaCrisis();
   if (carta === null) {
-    ocultar("carta-crisis");
+    ocultar("tarjeta-carta-crisis");
   } else {
-    escribir("carta-crisis-tipo", carta.tipo.toUpperCase());
-    escribir("carta-crisis-nombre", carta.nombre);
-    escribir("carta-crisis-efecto", carta.efecto);
-    elemento("carta-crisis").className = "carta-crisis crisis-" + carta.tipo.toLowerCase();
-    mostrar("carta-crisis");
+    escribir("tipo-carta-crisis", carta.tipo.toUpperCase());
+    escribir("nombre-carta-crisis", carta.nombre);
+    escribir("descripcion-carta-crisis", carta.efecto);
+    // Solo se cambia la clase del tipo: si reescribieramos className entero
+    // borrariamos las clases del diseño de la tarjeta.
+    const tarjeta: HTMLElement = elemento("tarjeta-carta-crisis");
+    tarjeta.classList.remove("crisis-positiva");
+    tarjeta.classList.remove("crisis-negativa");
+    tarjeta.classList.remove("crisis-mixta");
+    tarjeta.classList.add("crisis-" + carta.tipo.toLowerCase());
+    mostrar("tarjeta-carta-crisis");
   }
 }
 
@@ -286,7 +294,7 @@ export function pintarMano(
   seleccionadas: number[],
   alPulsar: (valor: number) => void
 ): void {
-  const contenedor: HTMLElement = elemento("mano");
+  const contenedor: HTMLElement = elemento("mano-cartas");
   contenedor.innerHTML = "";
 
   const mano: Carta[] = jugador.getMano();
@@ -294,7 +302,7 @@ export function pintarMano(
     const carta: Carta = mano[i];
     const boton: HTMLButtonElement = document.createElement("button");
     boton.textContent = String(carta.getValor());
-    boton.className = "carta";
+    boton.className = "carta-mano";
 
     if (!carta.estaDisponible()) {
       boton.classList.add("descartada");
@@ -317,13 +325,13 @@ export function pintarMano(
 
 /** Marca visualmente qué botón de apuesta ha elegido el jugador. */
 export function pintarApuestaElegida(apuesta: Apuesta | null): void {
-  elemento("btn-par").classList.remove("seleccionada");
-  elemento("btn-impar").classList.remove("seleccionada");
+  elemento("btn-apuesta-par").classList.remove("seleccionada");
+  elemento("btn-apuesta-impar").classList.remove("seleccionada");
   if (apuesta === "PAR") {
-    elemento("btn-par").classList.add("seleccionada");
+    elemento("btn-apuesta-par").classList.add("seleccionada");
   }
   if (apuesta === "IMPAR") {
-    elemento("btn-impar").classList.add("seleccionada");
+    elemento("btn-apuesta-impar").classList.add("seleccionada");
   }
 }
 
@@ -334,19 +342,19 @@ export function pintarResolucion(resumen: ResumenRonda): void {
   // Debajo de cada carta va LA APUESTA de cada uno, y debajo de la suma el
   // resultado real. Se escribe la frase entera para que no se confundan:
   // el "IMPAR" de tu carta es lo que apostaste, no la paridad de la carta.
-  escribir("revelada-jugador", String(resumen.cartaJugador));
+  escribir("valor-carta-jugador", String(resumen.cartaJugador));
   escribir("apuesta-jugador", "apostaste " + resumen.apuestaJugador);
-  escribir("revelada-ia", String(resumen.cartaIA));
+  escribir("valor-carta-ia", String(resumen.cartaIA));
   escribir("apuesta-ia", "apostó " + resumen.apuestaIA);
-  escribir("revelada-suma", String(resumen.suma));
-  escribir("revelada-paridad", "la suma es " + resumen.paridad);
+  escribir("valor-suma", String(resumen.suma));
+  escribir("resultado-paridad", "la suma es " + resumen.paridad);
 
   escribir("resultado-ronda", resumen.resultado);
   elemento("resultado-ronda").className =
     "resultado-ronda resultado-" + resumen.resultado.toLowerCase();
 
   escribir("detalle-ronda", construirDetalle(resumen));
-  mostrar("resolucion");
+  mostrar("zona-resolucion");
 }
 
 /** Construye la frase que explica los puntos repartidos en la ronda. */
@@ -381,24 +389,24 @@ function construirDetalle(resumen: ResumenRonda): string {
 }
 
 export function ocultarResolucion(): void {
-  ocultar("resolucion");
-  escribir("revelada-jugador", "?");
-  escribir("revelada-ia", "?");
-  escribir("revelada-suma", "?");
-  escribir("revelada-paridad", "—");
+  ocultar("zona-resolucion");
+  escribir("valor-carta-jugador", "?");
+  escribir("valor-carta-ia", "?");
+  escribir("valor-suma", "?");
+  escribir("resultado-paridad", "—");
   escribir("apuesta-jugador", "—");
   escribir("apuesta-ia", "—");
 }
 
 /** Muestra la tarjeta superpuesta de un evento especial. */
 export function mostrarEvento(nombre: string, descripcion: string): void {
-  escribir("evento-nombre", nombre);
-  escribir("evento-descripcion", descripcion);
-  mostrar("overlay-evento");
+  escribir("nombre-evento", nombre);
+  escribir("descripcion-evento", descripcion);
+  mostrar("superposicion-evento");
 }
 
 export function ocultarEvento(): void {
-  ocultar("overlay-evento");
+  ocultar("superposicion-evento");
 }
 
 // ---- Pantallas de inicio y final --------------------------------------------
@@ -419,25 +427,25 @@ export function pintarMejorMarca(): void {
 
 /** Rellena toda la pantalla final con el desenlace y el perfil. */
 export function pintarFinal(partida: Partida, resumen: ResumenFinal): void {
-  escribir("final-desenlace", resumen.desenlace);
-  elemento("final-desenlace").className =
+  escribir("titulo-desenlace", resumen.desenlace);
+  elemento("titulo-desenlace").className =
     "final-desenlace final-" + resumen.desenlace.toLowerCase().replace(" ", "-");
-  escribir("final-mensaje", resumen.mensaje);
+  escribir("mensaje-desenlace", resumen.mensaje);
 
-  escribir("final-perfil", resumen.perfil.nombre);
-  escribir("final-perfil-desc", resumen.perfil.descripcion);
+  escribir("nombre-perfil", resumen.perfil.nombre);
+  escribir("descripcion-perfil", resumen.perfil.descripcion);
 
   escribir("final-evo-humano", String(resumen.evolucionJugador));
   escribir("final-evo-ia", String(resumen.evolucionIA));
   escribir("final-planeta", resumen.saludPlaneta + " / " + SALUD_MAXIMA);
   escribir("final-rondas", String(resumen.rondasJugadas));
-  escribir(
-    "final-porcentaje",
-    resumen.porcentajeJugador + "% humano / " + resumen.porcentajeIA + "% IA"
-  );
+  // El diseño reparte el porcentaje en dos textos y una barra.
+  escribir("texto-porcentaje-humano", resumen.porcentajeJugador + "%");
+  escribir("texto-porcentaje-ia", resumen.porcentajeIA + "%");
+  elemento("barra-porcentaje-humano").style.width = resumen.porcentajeJugador + "%";
 
-  pintarCapacidades("final-caps-humano", partida.getJugador().getCapacidades());
-  pintarCapacidades("final-caps-ia", partida.getIA().getCapacidades());
+  pintarCapacidades("lista-capacidades", partida.getJugador().getCapacidades());
+  pintarCapacidades("lista-capacidades-ia", partida.getIA().getCapacidades());
 
   const perfiles: string[] = leerPerfiles();
   const total: number = PERFILES.length;
@@ -445,5 +453,5 @@ export function pintarFinal(partida: Partida, resumen: ResumenFinal): void {
   if (perfiles.length > 0) {
     texto = perfiles.join(" · ");
   }
-  escribir("final-coleccion", texto + "  (" + perfiles.length + " desbloqueados de " + total + ")");
+  escribir("coleccion-perfiles", texto + "  (" + perfiles.length + " desbloqueados de " + total + ")");
 }
