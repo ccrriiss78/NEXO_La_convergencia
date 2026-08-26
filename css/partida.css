@@ -566,3 +566,1243 @@
   #pantalla-juego .controles-sistema-juego{top:8px}
   #pantalla-juego .carta-mano{width:96px;height:149px;flex-basis:96px}
 }
+
+/* =====================================================================
+   NEXO · PARTIDA V17 · ESFERA LIBRE / HUD CINEMATOGRÁFICO
+   ---------------------------------------------------------------------
+   Esta sección sustituye visualmente el layout V16 sin tocar Partida.js.
+   - HUD superior lineal, sin panel central pesado.
+   - Avatares grandes, alineados y sin marco.
+   - Esfera central libre: la X pertenece al fondo; el overlay solo ilumina.
+   - Cartas más abajo y con un único encuadre centrado.
+   - Eventos especiales: imagen raster realista + brillo + micro-muelle.
+   - Pistas de fortalezas en el lateral correspondiente.
+   ===================================================================== */
+
+#pantalla-juego{
+  --v17-verde:#9bea4c;
+  --v17-verde-2:#dfff8e;
+  --v17-azul:#37bfff;
+  --v17-azul-2:#b4ebff;
+  --v17-oro:#ffb85f;
+}
+
+/* --- PLANETA: cambios de estado más visibles cada 25% --- */
+#pantalla-juego .capa-mundo{transition:opacity 1.05s ease,filter 1.05s ease,transform 1.05s ease}
+#pantalla-juego.planeta-saludable .capa-mundo-base{opacity:1;filter:brightness(1.08) saturate(1.08)}
+#pantalla-juego.planeta-fragil .capa-mundo-fragil{opacity:.86;filter:brightness(.97) saturate(.98)}
+#pantalla-juego.planeta-critico .capa-mundo-critico{opacity:.96;filter:brightness(.90) saturate(.91) contrast(1.05)}
+#pantalla-juego.planeta-colapso .capa-mundo-colapso{opacity:1;filter:brightness(.82) saturate(.92) contrast(1.09)}
+#pantalla-juego.planeta-catastrofe .capa-mundo-catastrofe{opacity:1;filter:brightness(.74) saturate(1.12) contrast(1.13)}
+#pantalla-juego .escena-partida-capas::after{
+  content:"";position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;
+}
+#pantalla-juego.planeta-cambia-estado.planeta-mejora-estado .escena-partida-capas::after{
+  background:radial-gradient(circle at 50% 45%,rgba(230,255,231,.48) 0,rgba(111,240,191,.16) 25%,rgba(46,197,255,.08) 42%,transparent 70%);
+  animation:v17-planeta-mejora 1.15s ease-out;
+}
+#pantalla-juego.planeta-cambia-estado.planeta-empeora-estado .escena-partida-capas::after{
+  background:radial-gradient(circle at 50% 45%,rgba(255,188,108,.18) 0,rgba(201,55,26,.20) 34%,rgba(34,5,4,.20) 72%,transparent 92%);
+  animation:v17-planeta-empeora 1.15s ease-out;
+}
+@keyframes v17-planeta-mejora{0%{opacity:0}28%{opacity:1}100%{opacity:0}}
+@keyframes v17-planeta-empeora{0%{opacity:0}24%{opacity:1}45%{opacity:.58}100%{opacity:0}}
+
+/* --- LOGO / controles --- */
+#pantalla-juego .logo-partida-estatico{top:14px;left:28px;width:222px;max-width:14vw;z-index:45}
+#pantalla-juego .controles-sistema-juego{top:12px;right:18px;z-index:50}
+
+/* --- HUD SUPERIOR LINEAL --- */
+#pantalla-juego .cabecera-partida-cinematica{
+  position:absolute;z-index:40;top:6px;left:278px;right:214px;width:auto;transform:none;
+  display:grid;grid-template-columns:120px minmax(300px,1.15fr) minmax(330px,1.28fr) minmax(260px,.92fr);
+  align-items:stretch;gap:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(2,10,15,.78),rgba(2,10,15,.34) 70%,transparent);
+  border-bottom:1px solid rgba(129,219,225,.28);
+  box-shadow:0 14px 34px rgba(0,0,0,.16);
+}
+#pantalla-juego .hud-segmento{
+  position:relative;min-height:92px;padding:10px 16px 8px;
+  border-right:1px solid rgba(168,225,231,.14);
+  text-shadow:0 2px 9px rgba(0,0,0,.88);
+}
+#pantalla-juego .hud-segmento:last-of-type{border-right:0}
+#pantalla-juego .hud-kicker,
+#pantalla-juego .etiqueta-crisis{
+  display:block;margin:0 0 4px;font-size:10px;letter-spacing:.22em;font-weight:750;text-transform:uppercase;color:rgba(220,240,244,.72)!important;
+}
+#pantalla-juego .hud-ronda{display:flex;flex-direction:column;justify-content:center;text-align:center}
+#pantalla-juego .hud-ronda .contador-ronda{margin:0;font-size:20px;line-height:1.05;letter-spacing:.08em;color:#fff;font-weight:760;text-transform:uppercase}
+#pantalla-juego .hud-crisis{display:flex;flex-direction:column;justify-content:center}
+#pantalla-juego .hud-crisis .etiqueta-crisis{color:var(--v17-oro)!important}
+#pantalla-juego .hud-crisis #nombre-crisis{font-size:clamp(22px,1.6vw,30px)!important;line-height:1.02;color:#fff!important;letter-spacing:.005em}
+#pantalla-juego .hud-crisis .descripcion-crisis{margin:5px 0 0!important;font-size:11px!important;line-height:1.24;color:rgba(239,247,249,.80)!important;max-width:520px}
+#pantalla-juego .hud-impacto{display:flex;flex-direction:column;justify-content:center;text-align:center}
+#pantalla-juego .puntos-en-juego-lineal{display:block;font-size:13px;line-height:1.22;color:#fff;letter-spacing:.01em}
+#pantalla-juego .hud-impacto .regla-ronda{margin:4px 0 0!important;font-size:9px!important;line-height:1.18;color:rgba(224,239,242,.54)!important}
+#pantalla-juego .hud-planeta{display:flex;flex-direction:column;justify-content:center}
+#pantalla-juego .hud-planeta .estado-planeta-mini{margin:0 0 7px;text-align:center;font-size:10px;letter-spacing:.14em;color:#d8e9ed;text-transform:uppercase}
+#pantalla-juego .hud-planeta .estado-planeta-mini strong{font-size:23px;color:#fff;letter-spacing:.02em}
+#pantalla-juego .hud-planeta .bloque-barra-planeta{width:100%;margin:0}
+#pantalla-juego .hud-planeta .barra-planeta-logica{height:12px}
+#pantalla-juego .hud-planeta .numeros-barra-planeta{margin-top:3px;font-size:8px}
+
+/* Modificador de crisis: integrado como una línea luminosa, no como panel. */
+#pantalla-juego .hud-modificador{
+  margin-top:6px;padding:5px 8px 4px;display:grid;grid-template-columns:auto auto;gap:2px 8px;align-items:baseline;
+  border-top:1px solid rgba(149,226,166,.26);border-bottom:1px solid rgba(56,188,231,.18);
+  background:linear-gradient(90deg,rgba(117,213,64,.06),rgba(30,126,176,.05));
+}
+#pantalla-juego .hud-modificador .etiqueta-crisis{margin:0;font-size:8px!important}
+#pantalla-juego .hud-modificador strong{font-size:10px;color:#fff}
+#pantalla-juego .hud-modificador p{grid-column:1/-1;margin:0!important;font-size:8px!important;line-height:1.15;color:rgba(233,245,247,.68)!important}
+#pantalla-juego .hud-modificador .impacto-carta-crisis{font-weight:700!important}
+#pantalla-juego .hud-modificador.crisis-positiva{box-shadow:inset 3px 0 0 rgba(146,234,76,.65)}
+#pantalla-juego .hud-modificador.crisis-negativa{box-shadow:inset 3px 0 0 rgba(255,102,73,.72)}
+#pantalla-juego .hud-modificador.crisis-mixta{box-shadow:inset 3px 0 0 rgba(220,180,255,.62)}
+
+/* Evento activo persistente, muy fino: recuerda la regla sin tapar la esfera. */
+#pantalla-juego .hud-evento-activo{
+  position:absolute;top:100%;left:120px;right:260px;min-height:34px;
+  display:grid;grid-template-columns:auto auto 1fr;gap:8px;align-items:center;padding:5px 12px;
+  border-bottom:1px solid rgba(220,174,255,.42);
+  background:linear-gradient(90deg,rgba(28,10,35,.76),rgba(5,17,23,.64),rgba(26,11,34,.55));
+  box-shadow:0 8px 24px rgba(0,0,0,.22);pointer-events:none;
+}
+#pantalla-juego .hud-evento-activo span{font-size:8px;letter-spacing:.18em;color:#d9adff}
+#pantalla-juego .hud-evento-activo strong{font-size:11px;color:#fff}
+#pantalla-juego .hud-evento-activo p{margin:0;font-size:9px;color:#d8e2e5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* --- TABLERO: posicionamiento libre para despejar el centro --- */
+#pantalla-juego .tablero-cinematico{
+  position:absolute;z-index:12;inset:0;display:block;pointer-events:none;
+}
+#pantalla-juego .panel-personaje{
+  position:absolute;top:126px;width:326px;max-width:326px;min-height:0;height:auto;padding:0 12px 13px;align-self:auto;
+  background:linear-gradient(180deg,rgba(2,10,14,.05) 0%,rgba(2,10,14,.44) 42%,rgba(2,9,13,.82) 100%);
+  backdrop-filter:blur(6px);box-shadow:0 22px 48px rgba(0,0,0,.20);pointer-events:auto;
+}
+#pantalla-juego .panel-personaje-humano{left:8px;right:auto;border:0;border-left:1px solid rgba(145,229,66,.28)}
+#pantalla-juego .panel-personaje-ia{right:8px;left:auto;border:0;border-right:1px solid rgba(39,181,255,.30)}
+#pantalla-juego .cabecera-personaje,
+#pantalla-juego .panel-personaje-ia .cabecera-personaje{
+  min-height:238px;display:grid;grid-template-columns:190px 1fr!important;gap:10px;align-items:center;
+}
+#pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 190px!important}
+#pantalla-juego .panel-personaje-ia .retrato-personaje{grid-column:2;grid-row:1}
+#pantalla-juego .panel-personaje-ia .identidad-personaje{grid-column:1;grid-row:1;text-align:right}
+#pantalla-juego .retrato-personaje{
+  width:190px;height:238px;overflow:visible;background:transparent!important;clip-path:none!important;border:0!important;box-shadow:none!important;
+}
+#pantalla-juego .marco-humano,#pantalla-juego .marco-ia{border:0!important;box-shadow:none!important}
+#pantalla-juego .avatar{
+  width:100%;height:100%;background-size:cover;background-repeat:no-repeat;background-position:center top;
+  border:0!important;box-shadow:none;transform-origin:50% 55%;
+  filter:drop-shadow(0 12px 18px rgba(0,0,0,.52));
+  transition:filter .5s ease,transform .5s ease;
+}
+#pantalla-juego .identidad-personaje h3{font-size:21px;line-height:1.18;letter-spacing:.14em}
+#pantalla-juego .microetiqueta{font-size:9px;margin-top:10px}
+#pantalla-juego .porcentaje-personaje{font-size:38px;margin-top:3px}
+
+/* Evolución de avatar: señal fuerte al cruzar 25/50/75, reversible. */
+#pantalla-juego .avatar-evoluciona{animation:v17-avatar-cambio 1.15s cubic-bezier(.2,.72,.28,1)}
+#pantalla-juego .avatar-evoluciona.avatar-avanza{filter:brightness(1.12) drop-shadow(0 0 28px rgba(126,238,183,.76)) drop-shadow(0 14px 20px rgba(0,0,0,.5))}
+#pantalla-juego .avatar-evoluciona.avatar-retrocede{filter:saturate(.72) contrast(1.12) drop-shadow(0 0 25px rgba(255,131,89,.42)) drop-shadow(0 14px 20px rgba(0,0,0,.5))}
+@keyframes v17-avatar-cambio{
+  0%{transform:scale(1);filter:brightness(1)}
+  22%{transform:scale(1.08);filter:brightness(1.9) saturate(1.25)}
+  48%{transform:scale(.985);filter:brightness(1.22)}
+  72%{transform:scale(1.035);filter:brightness(1.48)}
+  100%{transform:scale(1);}
+}
+#pantalla-juego .bloque-barra-personaje{margin-top:2px}
+#pantalla-juego .barra-evolucion-nexo{height:11px}
+#pantalla-juego .bloque-fortalezas{margin-top:7px;padding-top:7px}
+#pantalla-juego .titulo-lista{font-size:9px}
+#pantalla-juego .lista-fortalezas-propias{gap:4px}
+#pantalla-juego .lista-fortalezas-propias li{font-size:9px;padding:3px 7px}
+
+/* Fortalezas conquistadas con su función, para no mandar pistas al centro. */
+#pantalla-juego .lista-capacidades-detallada{display:grid;gap:4px}
+#pantalla-juego .lista-capacidades-detallada li{
+  display:block;padding:5px 7px;border-radius:7px;background:rgba(0,9,13,.36);font-style:normal;
+}
+#pantalla-juego .lista-capacidades-detallada li strong{display:block;font-size:9px;color:#eefbff;font-weight:720}
+#pantalla-juego .lista-capacidades-detallada li small{display:block;margin-top:1px;font-size:7.5px;line-height:1.22;color:rgba(210,229,233,.65)}
+#pantalla-juego .fortaleza-pista-lateral{
+  margin:5px 0 0;padding:6px 7px;border-left:2px solid #c98cff;background:rgba(24,9,31,.45);
+  font-size:8px;line-height:1.28;color:#e7d3f7;
+}
+#pantalla-juego .fortaleza-pista-ia{border-left-color:#56cfff;background:rgba(5,24,35,.48);color:#d6f3ff}
+#pantalla-juego .panel-memoria{padding:7px;margin-top:6px}
+#pantalla-juego #lista-memoria li{font-size:8px}
+#pantalla-juego .cartas-ia-cinematica{margin-top:7px}
+#pantalla-juego .carta-pequena{width:40px;height:62px}
+
+/* --- CENTRO: esfera libre, declaraciones y cartas en la zona baja --- */
+#pantalla-juego .zona-central-cinematica{
+  position:absolute;left:338px;right:338px;top:0;bottom:0;height:auto;display:block;padding:0;pointer-events:none;
+}
+#pantalla-juego .zona-decision-activa{position:absolute;inset:0;display:block;pointer-events:none}
+#pantalla-juego .zona-declaraciones-nexo{
+  position:absolute;z-index:24;left:50%;bottom:300px;transform:translateX(-50%);width:min(820px,94%);min-height:108px;
+  display:grid;grid-template-columns:1fr 50px 1.25fr;align-items:center;gap:10px;padding:11px 18px 9px;
+  background:linear-gradient(90deg,rgba(2,18,13,.72),rgba(2,12,16,.66) 47%,rgba(2,22,34,.74));
+  border:0;border-top:1px solid rgba(155,232,195,.34);border-bottom:1px solid rgba(88,195,221,.32);
+  box-shadow:0 14px 34px rgba(0,0,0,.26);backdrop-filter:blur(6px);pointer-events:auto;
+}
+#pantalla-juego .zona-apuesta .etiqueta-declaracion,
+#pantalla-juego .declaracion-ia-cinematica .etiqueta-declaracion{font-size:9px;letter-spacing:.19em}
+#pantalla-juego .botones-declaracion{gap:12px}
+#pantalla-juego .zona-apuesta .boton-apuesta{
+  min-width:128px;height:52px;padding:0 22px;overflow:hidden;border:1px solid rgba(143,229,72,.58);border-radius:10px;
+  background:linear-gradient(180deg,rgba(19,56,30,.55),rgba(2,19,14,.90)),url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background-size:auto,720px auto;background-position:center,23% 68%;color:#f5ffe9;font-size:18px;font-weight:780;
+  box-shadow:inset 0 1px rgba(240,255,235,.16),inset 0 -12px 24px rgba(81,156,45,.10),0 9px 22px rgba(0,0,0,.25);
+}
+#pantalla-juego .zona-apuesta .boton-apuesta:hover,
+#pantalla-juego .zona-apuesta .boton-apuesta:focus-visible{
+  transform:translateY(-3px) scale(1.035);border-color:#c3ff87;filter:brightness(1.22) saturate(1.1);
+  box-shadow:inset 0 0 26px rgba(155,244,93,.18),0 0 30px rgba(145,229,66,.38),0 12px 24px rgba(0,0,0,.25);outline:none;
+}
+#pantalla-juego .zona-apuesta .boton-apuesta.seleccionada{
+  border-color:#d8ffa8;background:linear-gradient(180deg,rgba(87,152,54,.70),rgba(7,33,18,.96)),url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background-size:auto,720px auto;background-position:center,23% 68%;box-shadow:inset 0 0 30px rgba(170,255,106,.22),0 0 26px rgba(145,229,66,.44);
+}
+#pantalla-juego .declaracion-ia-cinematica{
+  min-height:74px;overflow:hidden;border:1px solid rgba(63,196,255,.58);border-radius:10px;
+  background:linear-gradient(180deg,rgba(24,69,98,.45),rgba(2,20,31,.92)),url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background-size:auto,720px auto;background-position:center,77% 64%;box-shadow:inset 0 0 28px rgba(51,181,255,.09),0 10px 24px rgba(0,0,0,.24);
+}
+#pantalla-juego .declaracion-ia-cinematica h3{font-size:34px;color:#ace8ff;letter-spacing:.17em}
+#pantalla-juego .consecuencia{grid-column:1/-1;margin:5px auto 0!important;padding-top:6px;font-size:9px!important;line-height:1.3;color:rgba(233,246,249,.70)!important}
+
+/* Chispa creativa persistente: arriba, bajo el HUD, lejos de PAR/IMPAR. */
+#pantalla-juego .pistas-partida{
+  position:absolute;z-index:36;left:50%;top:126px;bottom:auto;transform:translateX(-50%);width:min(560px,82%);pointer-events:none;
+}
+#pantalla-juego .pista-chispa-nexo{
+  min-height:92px;display:grid;grid-template-columns:1fr 72px;gap:10px;align-items:center;padding:9px 12px;
+  border:1px solid rgba(208,154,255,.48);border-radius:10px;background:linear-gradient(90deg,rgba(22,8,29,.88),rgba(3,16,22,.80));
+  box-shadow:0 0 32px rgba(182,92,255,.20),inset 0 0 25px rgba(124,76,193,.06);
+}
+#pantalla-juego .texto-pista-chispa span{font-size:8px}
+#pantalla-juego .texto-pista-chispa strong{font-size:16px}
+#pantalla-juego .texto-pista-chispa p{font-size:10px}
+#pantalla-juego .pista-chispa-nexo img{width:66px;height:88px;object-fit:cover;border:0;filter:drop-shadow(0 0 12px rgba(199,113,255,.35))}
+
+/* Mano más abajo para liberar la esfera y alojar acciones de fortalezas. */
+#pantalla-juego .zona-mano-cinematica{
+  position:absolute;z-index:25;left:50%;bottom:68px;transform:translateX(-50%);width:min(790px,96%);text-align:center;pointer-events:auto;
+}
+#pantalla-juego .instruccion-principal{margin:0 0 4px;font-size:9px;letter-spacing:.19em}
+#pantalla-juego .mano-cartas{min-height:176px;padding:7px 12px 0;gap:8px;overflow:visible}
+#pantalla-juego .carta-mano{
+  width:108px;height:168px;flex:0 0 108px;border-radius:8px;overflow:hidden;
+  background-size:100% 100%!important;background-position:center center!important;background-repeat:no-repeat!important;
+}
+#pantalla-juego .carta-mano::before{left:5px;right:5px;top:4px;height:29px;background:linear-gradient(180deg,rgba(1,10,9,.98),rgba(1,10,9,.82) 76%,transparent);font-size:23px}
+#pantalla-juego .carta-mano:nth-child(1){transform:rotate(-4deg) translateY(8px)}
+#pantalla-juego .carta-mano:nth-child(2){transform:rotate(-2deg) translateY(3px)}
+#pantalla-juego .carta-mano:nth-child(3){transform:translateY(0)}
+#pantalla-juego .carta-mano:nth-child(4){transform:rotate(2deg) translateY(3px)}
+#pantalla-juego .carta-mano:nth-child(5){transform:rotate(4deg) translateY(8px)}
+
+/* Precisión: control junto a la mano; el efecto completo está descrito en el lateral. */
+#pantalla-juego .boton-precision-cartas{
+  position:absolute;left:calc(50% + 302px);bottom:22px;width:172px;min-height:62px;margin:0;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;
+  border:1px solid rgba(191,139,255,.58);border-radius:10px;
+  background:linear-gradient(135deg,rgba(36,13,54,.96),rgba(7,23,36,.94));
+  box-shadow:inset 0 0 22px rgba(184,103,255,.08),0 0 24px rgba(121,69,210,.17);color:#f6ebff;cursor:pointer;
+}
+#pantalla-juego .boton-precision-cartas strong{font-size:11px;letter-spacing:.13em;color:#e5c7ff}
+#pantalla-juego .boton-precision-cartas span{font-size:9px;line-height:1.2;color:#d6e2e8;text-align:left}
+#pantalla-juego .boton-precision-cartas:hover,#pantalla-juego .boton-precision-cartas:focus-visible{transform:translateY(-3px);filter:brightness(1.18);box-shadow:0 0 28px rgba(191,118,255,.32);outline:none}
+
+#pantalla-juego .acciones-partida{position:absolute;z-index:28;left:50%;bottom:3px;transform:translateX(-50%);margin:0;min-height:62px;overflow:visible;pointer-events:auto}
+#pantalla-juego .acciones .boton-confirmar-nexo,
+#pantalla-juego #btn-siguiente.boton-siguiente-ronda{width:300px;height:64px;font-size:16px}
+
+/* --- RESOLUCIÓN: franja baja, no dashboard central --- */
+#pantalla-juego .zona-resultado-cinematica{
+  position:absolute!important;z-index:62!important;left:50%;bottom:12px;transform:translateX(-50%);width:min(920px,95%);margin:0!important;padding:10px 16px 11px!important;
+  background:linear-gradient(90deg,rgba(2,14,17,.92),rgba(4,18,22,.83) 48%,rgba(2,14,20,.92));
+  border:0!important;border-top:1px solid rgba(105,221,202,.32)!important;border-bottom:1px solid rgba(73,189,226,.30)!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.36)!important;backdrop-filter:blur(5px);pointer-events:auto!important;
+}
+#pantalla-juego .cartas-reveladas{gap:9px}
+#pantalla-juego .carta-revelada{min-width:102px;padding:7px 10px;border:1px solid rgba(181,219,225,.18);border-radius:9px;background:rgba(4,14,20,.42);text-align:center}
+#pantalla-juego .carta-revelada p{margin:0;font-size:9px;color:#bdcdd1}
+#pantalla-juego .carta-revelada span{display:block;font-size:24px;font-weight:800;color:#fff}
+#pantalla-juego .carta-revelada small{font-size:8px;color:#aebfc3}
+#pantalla-juego .resultado-ronda{margin:7px 0 2px!important;font-size:22px!important;text-align:center}
+#pantalla-juego .cambios-ronda{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+#pantalla-juego .cambio-ronda{font-size:11px;color:#edf7f9}
+#pantalla-juego .detalle-ronda{margin:4px auto 0!important;max-width:760px;text-align:center;font-size:10px!important;color:#c7d7db!important}
+#pantalla-juego #btn-siguiente.boton-siguiente-ronda{margin-top:5px}
+
+/* --- NÚCLEO: sin X ni esfera añadidas; la luz nace del centro de la X del FONDO --- */
+#pantalla-juego .nexo-nucleo-partida{
+  position:absolute;z-index:10;left:50%;top:39.5%;width:270px;height:270px;transform:translate(-50%,-50%);pointer-events:none;filter:none;
+}
+#pantalla-juego .nucleo-luz-convergencia{
+  position:absolute;left:50%;top:50%;width:24px;height:24px;transform:translate(-50%,-50%) scale(.2);border-radius:50%;opacity:0;
+  background:radial-gradient(circle,rgba(255,255,255,1) 0%,rgba(207,255,239,.94) 15%,rgba(112,241,190,.60) 34%,rgba(67,194,255,.45) 52%,rgba(93,219,255,.10) 72%,transparent 100%);
+  box-shadow:0 0 24px rgba(255,255,255,.72),0 0 60px rgba(84,223,222,.38);
+}
+#pantalla-juego .red-descargas-nucleo{position:absolute;inset:0;width:100%;height:100%;opacity:0;overflow:visible}
+#pantalla-juego .descarga-nucleo{stroke-width:1.25;stroke-linecap:round;stroke-dasharray:4 7;opacity:.18}
+#pantalla-juego .nexo-nucleo-partida.convergencia-activa .nucleo-luz-convergencia{animation:v17-convergencia-nucleo 1.12s cubic-bezier(.2,.74,.2,1) forwards}
+#pantalla-juego .nexo-nucleo-partida.convergencia-activa .red-descargas-nucleo{opacity:1;animation:v17-red-respiro 1.05s ease-out forwards}
+#pantalla-juego .nexo-nucleo-partida.convergencia-activa .descarga-nucleo.descarga-activa{opacity:1;filter:drop-shadow(0 0 4px currentColor);animation:descarga-viaje .42s linear infinite}
+@keyframes v17-convergencia-nucleo{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.15)}
+  22%{opacity:1;transform:translate(-50%,-50%) scale(2.8)}
+  48%{opacity:.92;transform:translate(-50%,-50%) scale(5.4)}
+  72%{opacity:.52;transform:translate(-50%,-50%) scale(3.8)}
+  100%{opacity:.24;transform:translate(-50%,-50%) scale(2.1)}
+}
+@keyframes v17-red-respiro{0%{transform:scale(.58);opacity:0}35%{transform:scale(1);opacity:1}100%{transform:scale(1.16);opacity:.25}}
+
+/* --- EVENTOS ESPECIALES: carta realista integrada, no panel despegado --- */
+#pantalla-juego ~ #superposicion-evento,
+#superposicion-evento.superposicion-evento-nexo{
+  position:fixed;inset:0;z-index:120;display:block;background:rgba(0,5,8,.46);backdrop-filter:brightness(.72);pointer-events:auto;
+}
+#superposicion-evento.oculta{display:none!important}
+#superposicion-evento .tarjeta-evento-nexo{
+  position:absolute;left:50%;top:118px;transform:translateX(-50%);width:min(760px,calc(100vw - 520px));min-width:560px;height:172px;
+  display:grid;grid-template-columns:270px 1fr;overflow:visible;border:1px solid rgba(132,225,204,.55);border-radius:14px;
+  background:linear-gradient(90deg,rgba(1,12,16,.96),rgba(3,14,21,.94));box-shadow:0 24px 70px rgba(0,0,0,.52),0 0 32px rgba(93,217,203,.12);
+  animation:v17-evento-muelle 1.8s ease-in-out infinite alternate;
+}
+#superposicion-evento .marco-imagen-evento{position:relative;height:172px;overflow:hidden;border-radius:13px 0 0 13px;background:#030a0d}
+#superposicion-evento .imagen-evento{display:block;width:100%;height:100%;object-fit:cover;filter:brightness(.88) contrast(1.08) saturate(1.05)}
+#superposicion-evento .halo-evento{position:absolute;inset:-8px;pointer-events:none;box-shadow:inset 0 0 28px rgba(117,236,198,.20),0 0 28px rgba(81,216,242,.16)}
+#superposicion-evento .contenido-evento{
+  position:relative;width:auto;overflow:visible;border:0;border-radius:0;background:linear-gradient(90deg,rgba(2,14,18,.84),rgba(3,14,21,.98));box-shadow:none;padding:20px 22px 16px;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+}
+#superposicion-evento .evento-sobrelinea{margin:0 0 5px;font-size:9px;letter-spacing:.22em;color:#caa3ff;font-weight:760}
+#superposicion-evento #nombre-evento{margin:0;font-size:25px;line-height:1.05;color:#fff}
+#superposicion-evento #descripcion-evento{margin:8px 0 11px;font-size:12px;line-height:1.35;color:#c9d9df}
+#superposicion-evento .boton-evento-continuar{
+  min-width:170px;height:43px;padding:0 22px;border:1px solid rgba(101,211,230,.48);border-radius:8px;background:linear-gradient(90deg,rgba(83,190,123,.84),rgba(57,159,216,.87));
+  color:#031018;font-size:12px;font-weight:800;letter-spacing:.08em;cursor:pointer;box-shadow:0 0 22px rgba(71,201,199,.18);
+}
+#superposicion-evento .boton-evento-continuar:hover{filter:brightness(1.16);transform:translateY(-2px);box-shadow:0 0 28px rgba(83,220,211,.30)}
+@keyframes v17-evento-muelle{from{transform:translateX(-50%) translateY(0) scale(1)}to{transform:translateX(-50%) translateY(-5px) scale(1.008)}}
+
+/* --- Responsive escritorio pequeño / portátil --- */
+@media(max-width:1500px){
+  #pantalla-juego .logo-partida-estatico{width:190px}
+  #pantalla-juego .cabecera-partida-cinematica{left:235px;right:195px;grid-template-columns:100px minmax(260px,1.05fr) minmax(280px,1.15fr) minmax(220px,.85fr)}
+  #pantalla-juego .hud-segmento{padding-left:11px;padding-right:11px}
+  #pantalla-juego .panel-personaje{width:292px;max-width:292px;top:120px}
+  #pantalla-juego .cabecera-personaje,#pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:158px 1fr!important;min-height:202px}
+  #pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 158px!important}
+  #pantalla-juego .retrato-personaje{width:158px;height:202px}
+  #pantalla-juego .zona-central-cinematica{left:300px;right:300px}
+  #pantalla-juego .zona-declaraciones-nexo{bottom:278px;width:min(760px,95%)}
+  #pantalla-juego .zona-mano-cinematica{bottom:62px;width:min(720px,96%)}
+  #pantalla-juego .carta-mano{width:96px;height:149px;flex-basis:96px}
+  #pantalla-juego .mano-cartas{min-height:157px}
+  #pantalla-juego .boton-precision-cartas{left:calc(50% + 270px);width:150px}
+  #pantalla-juego .nexo-nucleo-partida{top:39%;width:235px;height:235px}
+  #superposicion-evento .tarjeta-evento-nexo{width:min(680px,calc(100vw - 430px));min-width:520px}
+}
+
+@media(max-height:780px) and (min-width:1051px){
+  #pantalla-juego .cabecera-partida-cinematica{top:2px}
+  #pantalla-juego .hud-segmento{min-height:78px;padding-top:7px;padding-bottom:6px}
+  #pantalla-juego .hud-crisis #nombre-crisis{font-size:22px!important}
+  #pantalla-juego .hud-crisis .descripcion-crisis{font-size:9px!important}
+  #pantalla-juego .panel-personaje{top:104px}
+  #pantalla-juego .cabecera-personaje,#pantalla-juego .panel-personaje-ia .cabecera-personaje{min-height:180px}
+  #pantalla-juego .retrato-personaje{height:180px}
+  #pantalla-juego .zona-declaraciones-nexo{bottom:255px;min-height:96px;padding-top:8px;padding-bottom:7px}
+  #pantalla-juego .zona-mano-cinematica{bottom:56px}
+  #pantalla-juego .carta-mano{width:90px;height:140px;flex-basis:90px}
+  #pantalla-juego .mano-cartas{min-height:146px}
+  #pantalla-juego .acciones .boton-confirmar-nexo,#pantalla-juego #btn-siguiente.boton-siguiente-ronda{height:56px}
+  #pantalla-juego .pistas-partida{top:104px}
+  #superposicion-evento .tarjeta-evento-nexo{top:92px;height:154px}
+  #superposicion-evento .marco-imagen-evento{height:154px}
+}
+
+@media(max-width:1050px){
+  #pantalla-juego{overflow:auto;min-height:980px}
+  #pantalla-juego .cabecera-partida-cinematica{position:relative;left:auto;right:auto;top:auto;margin:0 12px 0 176px;display:grid;grid-template-columns:1fr 1fr}
+  #pantalla-juego .hud-segmento{min-height:90px}
+  #pantalla-juego .hud-evento-activo{position:static;grid-column:1/-1}
+  #pantalla-juego .tablero-cinematico{position:relative;inset:auto;min-height:780px}
+  #pantalla-juego .panel-personaje{position:absolute;top:120px;width:280px;max-width:280px}
+  #pantalla-juego .zona-central-cinematica{position:absolute;left:292px;right:292px;top:0;bottom:0}
+  #pantalla-juego .zona-declaraciones-nexo{bottom:295px}
+  #pantalla-juego .boton-precision-cartas{display:none!important}
+  #superposicion-evento .tarjeta-evento-nexo{width:82vw;min-width:0;grid-template-columns:220px 1fr}
+}
+
+/* V17.1 · Declaraciones flotantes: el centro físico de la esfera queda visible. */
+#pantalla-juego .zona-declaraciones-nexo{
+  width:min(940px,96%);bottom:270px;min-height:92px;padding:0 12px 28px;
+  grid-template-columns:1fr 58px 1fr;gap:24px;
+  background:transparent;border:0;box-shadow:none;backdrop-filter:none;
+}
+#pantalla-juego .declaracion-humano{justify-self:end;width:min(330px,100%)}
+#pantalla-juego .declaracion-ia-cinematica{justify-self:start;width:min(330px,100%)}
+#pantalla-juego .versus-declaraciones{align-self:center;background:rgba(0,9,13,.80);box-shadow:0 0 18px rgba(95,221,218,.13)}
+#pantalla-juego .consecuencia{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(760px,88%);margin:0!important;padding:5px 12px!important;
+  border-top:1px solid rgba(208,236,239,.10);background:linear-gradient(90deg,transparent,rgba(2,10,14,.58) 18%,rgba(2,10,14,.58) 82%,transparent);
+}
+@media(max-width:1500px){
+  #pantalla-juego .zona-declaraciones-nexo{bottom:250px;gap:16px;width:min(830px,96%)}
+  #pantalla-juego .declaracion-humano,#pantalla-juego .declaracion-ia-cinematica{width:min(295px,100%)}
+}
+@media(max-height:780px) and (min-width:1051px){
+  #pantalla-juego .zona-declaraciones-nexo{bottom:230px;min-height:82px}
+  #pantalla-juego .zona-mano-cinematica{bottom:48px}
+}
+
+/* =====================================================================
+   V18 · FORTALEZAS LEGIBLES + MEMORIA TÁCTICA
+   ---------------------------------------------------------------------
+   Objetivo UX:
+   - La información que procede de fortalezas conquistadas debe llamar la
+     atención sin invadir la esfera central.
+   - MEMORIA vive dentro del HUD humano como registro táctico compacto.
+   - ANÁLISIS / EMPATÍA se leen como avisos de inteligencia, no como texto
+     secundario.
+   - VELOCIDAD y PRECISIÓN aparecen junto a las cartas, porque requieren una
+     acción inmediata del jugador.
+   ===================================================================== */
+
+/* Instrucción de mano cuando una fortaleza cambia la forma de jugar. */
+#pantalla-juego .instruccion-principal.instruccion-fortaleza-activa{
+  display:inline-flex;align-items:center;justify-content:center;min-height:30px;
+  margin:0 auto 7px!important;padding:6px 14px;border-radius:999px;
+  border:1px solid rgba(204,155,255,.58);
+  background:linear-gradient(90deg,rgba(32,8,47,.90),rgba(8,28,39,.88),rgba(32,8,47,.90));
+  box-shadow:0 0 24px rgba(176,96,255,.20),inset 0 0 18px rgba(210,160,255,.06);
+  color:#f3ddff!important;font-size:11px!important;font-weight:760;letter-spacing:.14em!important;
+  text-shadow:0 0 12px rgba(220,176,255,.45);
+}
+#pantalla-juego .instruccion-principal.instruccion-precision-activa{
+  border-color:rgba(94,213,255,.64);color:#dff8ff!important;
+  box-shadow:0 0 24px rgba(55,190,255,.22),inset 0 0 18px rgba(79,208,255,.08);
+}
+
+/* MEMORIA: registro táctico integrado, colocado inmediatamente bajo la
+   evolución humana para consultarlo antes de elegir apuesta/carta. */
+#pantalla-juego .panel-memoria-tactica{
+  position:relative;margin:7px 0 4px!important;padding:8px 9px 9px!important;
+  border:1px solid rgba(139,226,76,.32)!important;border-radius:10px!important;
+  background:
+    linear-gradient(90deg,rgba(15,39,18,.78),rgba(3,18,20,.90) 48%,rgba(4,22,28,.82));
+  box-shadow:inset 0 0 26px rgba(129,226,76,.055),0 10px 24px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+#pantalla-juego .panel-memoria-tactica::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,#9deb59 28%,#69d7ff 72%,transparent);
+  opacity:.72;
+}
+#pantalla-juego .cabecera-memoria-tactica{
+  display:flex;align-items:center;gap:8px;margin-bottom:7px;
+}
+#pantalla-juego .cabecera-memoria-tactica .titulo-lista{
+  margin:0 0 1px!important;font-size:7.8px!important;letter-spacing:.16em!important;color:#a7ea78!important;
+}
+#pantalla-juego .cabecera-memoria-tactica strong{
+  display:block;font-size:9.5px;letter-spacing:.10em;color:#f2fbf5;font-weight:730;
+}
+#pantalla-juego .pulso-memoria{
+  width:13px;height:13px;flex:0 0 13px;border-radius:50%;
+  background:radial-gradient(circle,#f2ffea 0 18%,#9bea58 24% 44%,rgba(120,229,87,.15) 65%,transparent 72%);
+  box-shadow:0 0 14px rgba(149,235,86,.62);
+  animation:v18-memoria-pulso 2.2s ease-in-out infinite;
+}
+@keyframes v18-memoria-pulso{0%,100%{transform:scale(.92);opacity:.72}50%{transform:scale(1.12);opacity:1}}
+#pantalla-juego .lista-memoria-tactica{display:grid;gap:4px!important}
+#pantalla-juego .entrada-memoria-tactica{
+  display:grid;grid-template-columns:34px 1fr 54px;align-items:center;gap:6px;
+  min-height:27px;padding:4px 6px;border-radius:7px;
+  border:1px solid rgba(151,220,168,.13);
+  background:linear-gradient(90deg,rgba(1,11,13,.66),rgba(8,28,31,.44));
+  color:#d9e6e8!important;font-size:8.5px!important;line-height:1!important;
+}
+#pantalla-juego .memoria-ronda{
+  display:inline-grid;place-items:center;min-height:18px;border-radius:5px;
+  background:rgba(132,222,73,.10);border:1px solid rgba(144,229,73,.22);
+  color:#baf58f;font-size:7.8px;font-weight:800;letter-spacing:.06em;
+}
+#pantalla-juego .memoria-carta{font-size:8.7px;letter-spacing:.07em;color:#f1fbf4;font-weight:720}
+#pantalla-juego .memoria-apuesta{
+  justify-self:end;min-width:48px;padding:4px 5px;border-radius:5px;text-align:center;
+  font-size:8px;font-weight:850;letter-spacing:.10em;
+}
+#pantalla-juego .memoria-apuesta-par{color:#dfffcb;border:1px solid rgba(151,229,79,.35);background:rgba(64,118,35,.13)}
+#pantalla-juego .memoria-apuesta-impar{color:#d9f4ff;border:1px solid rgba(67,194,255,.35);background:rgba(23,88,126,.16)}
+#pantalla-juego .entrada-memoria-vacia{padding:6px;color:#8ea4a8!important;font-size:8px!important;font-style:italic}
+
+/* Pistas laterales de fortalezas: más presencia y legibilidad. */
+#pantalla-juego .fortaleza-pista-lateral{
+  position:relative;margin:7px 0 1px!important;padding:9px 10px 9px 12px!important;
+  border:1px solid rgba(207,144,255,.30)!important;border-left:3px solid #d092ff!important;border-radius:8px;
+  background:linear-gradient(90deg,rgba(33,9,44,.88),rgba(7,22,29,.82))!important;
+  box-shadow:inset 0 0 22px rgba(193,111,255,.06),0 0 20px rgba(126,65,178,.10);
+  color:#f1e1ff!important;font-size:9.4px!important;font-weight:650;line-height:1.38!important;
+}
+#pantalla-juego .fortaleza-pista-lateral::before{
+  content:"FORTALEZA ACTIVA";display:block;margin-bottom:3px;
+  font-size:7px;letter-spacing:.17em;color:#d2a7ff;font-weight:800;
+}
+#pantalla-juego .fortaleza-pista-ia{
+  border-color:rgba(72,199,255,.30)!important;border-left-color:#56cfff!important;
+  background:linear-gradient(90deg,rgba(5,31,45,.90),rgba(6,21,30,.82))!important;color:#def7ff!important;
+}
+#pantalla-juego .fortaleza-pista-ia::before{color:#6ed8ff}
+
+/* PRECISIÓN: deja de parecer un botón auxiliar lavado. */
+#pantalla-juego .boton-precision-cartas{
+  border:1px solid rgba(108,212,255,.70)!important;
+  background:
+    linear-gradient(135deg,rgba(6,37,52,.97),rgba(19,11,42,.96))!important;
+  color:#f1fbff!important;
+  box-shadow:inset 0 0 26px rgba(78,196,255,.10),0 0 25px rgba(68,175,255,.22)!important;
+}
+#pantalla-juego .boton-precision-cartas::before{
+  content:"FORTALEZA ACTIVA";display:block;font-size:7px;letter-spacing:.15em;color:#75d8ff;
+}
+#pantalla-juego .boton-precision-cartas strong{font-size:12px!important;color:#e8f9ff!important}
+#pantalla-juego .boton-precision-cartas span{font-size:9px!important;color:#bfd8e2!important}
+#pantalla-juego .boton-precision-cartas:hover,#pantalla-juego .boton-precision-cartas:focus-visible{
+  transform:translateY(-3px) scale(1.02)!important;filter:brightness(1.20)!important;
+  box-shadow:0 0 34px rgba(75,201,255,.40),inset 0 0 24px rgba(122,220,255,.10)!important;
+}
+
+/* VELOCIDAD: aparece en el hueco de las declaraciones una vez confirmadas
+   las dos cartas. Es una decisión estratégica, no un par de botones blancos. */
+#pantalla-juego .zona-velocidad.fortaleza-eleccion{
+  position:absolute!important;z-index:34!important;left:50%!important;bottom:268px!important;
+  transform:translateX(-50%);width:min(660px,90%);margin:0!important;padding:10px 14px 11px;
+  border:1px solid rgba(208,145,255,.46);border-radius:12px;
+  background:linear-gradient(90deg,rgba(26,8,38,.93),rgba(4,22,29,.92) 48%,rgba(11,24,42,.93));
+  box-shadow:0 18px 38px rgba(0,0,0,.34),inset 0 0 28px rgba(161,94,226,.05);
+  backdrop-filter:blur(7px);pointer-events:auto!important;
+}
+#pantalla-juego .cabecera-fortaleza-eleccion{display:flex;justify-content:center;align-items:center;gap:9px;margin-bottom:8px;text-align:left}
+#pantalla-juego .pulso-fortaleza{
+  width:17px;height:17px;border-radius:50%;flex:0 0 17px;
+  background:radial-gradient(circle,#fff 0 15%,#d6a5ff 22% 42%,rgba(110,194,255,.32) 55%,transparent 72%);
+  box-shadow:0 0 18px rgba(199,132,255,.62);animation:v18-fortaleza-pulso 1.6s ease-in-out infinite;
+}
+@keyframes v18-fortaleza-pulso{0%,100%{transform:scale(.85);opacity:.72}50%{transform:scale(1.13);opacity:1}}
+#pantalla-juego .etiqueta-fortaleza-activa{margin:0!important;font-size:7.5px;letter-spacing:.18em;color:#d6adff}
+#pantalla-juego .cabecera-fortaleza-eleccion strong{display:block;margin-top:1px;font-size:13px;letter-spacing:.04em;color:#f7f2ff}
+#pantalla-juego .opciones-velocidad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#pantalla-juego .opcion-velocidad{
+  min-height:54px!important;margin:0!important;padding:8px 12px!important;border:1px solid rgba(116,211,255,.40)!important;border-radius:9px!important;
+  background:linear-gradient(135deg,rgba(7,38,50,.96),rgba(17,22,42,.95))!important;
+  box-shadow:inset 0 0 18px rgba(82,197,255,.06),0 6px 14px rgba(0,0,0,.24)!important;
+  color:#e9f8ff!important;font-size:11px!important;font-weight:760!important;line-height:1.25!important;letter-spacing:.02em;
+  cursor:pointer;
+}
+#pantalla-juego .opcion-velocidad:hover,#pantalla-juego .opcion-velocidad:focus-visible{
+  transform:translateY(-3px) scale(1.015);border-color:#8be6ff!important;filter:brightness(1.18);
+  box-shadow:0 0 27px rgba(69,198,255,.28),inset 0 0 20px rgba(109,220,255,.09)!important;outline:none;
+}
+#pantalla-juego .ayuda-fortaleza{margin:7px 0 0!important;text-align:center;font-size:8px;color:#aebfc7;letter-spacing:.02em}
+
+/* Con MEMORIA activa el lateral puede crecer; reducimos solo los huecos,
+   no el texto, para conservar legibilidad. */
+#pantalla-juego .panel-personaje-humano .bloque-fortalezas{margin-top:5px;padding-top:5px}
+
+@media(max-height:860px){
+  #pantalla-juego .panel-memoria-tactica{padding:6px 7px!important}
+  #pantalla-juego .entrada-memoria-tactica{min-height:23px;padding:3px 5px}
+  #pantalla-juego .zona-velocidad.fortaleza-eleccion{bottom:246px!important}
+}
+
+/* =====================================================================
+   V19 · INTELIGENCIA TÁCTICA / FORTALEZAS CON PRESENCIA
+   ---------------------------------------------------------------------
+   Los datos que concede una fortaleza no son texto auxiliar: son ventaja
+   estratégica. Se muestran con contraste alto y cerca de la decisión.
+   ===================================================================== */
+
+/* MEMORIA cambia al lateral IA: la fortaleza pertenece al humano, pero los
+   datos consultados describen a la IA. Así el centro sigue completamente libre. */
+#pantalla-juego .panel-personaje-ia .memoria-en-ia{
+  margin:7px 0 0!important;
+  padding:8px 9px 9px!important;
+  border:1px solid rgba(116,224,156,.34)!important;
+  background:
+    radial-gradient(circle at 8% 0%,rgba(145,229,66,.10),transparent 35%),
+    linear-gradient(135deg,rgba(2,24,24,.94),rgba(4,17,26,.94) 58%,rgba(5,29,42,.90));
+  box-shadow:inset 0 0 25px rgba(91,218,164,.055),0 0 24px rgba(47,179,197,.08)!important;
+}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia::before{
+  background:linear-gradient(90deg,#9dea59,rgba(150,237,190,.75),#49cfff)!important;
+}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia .cabecera-memoria-tactica{
+  margin-bottom:6px;
+}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia .titulo-lista{
+  color:#bdeba3!important;font-size:7.4px!important;letter-spacing:.145em!important;
+}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia .cabecera-memoria-tactica strong{
+  color:#eefaff;font-size:9px;letter-spacing:.085em;
+}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia .lista-memoria-tactica{
+  grid-template-columns:1fr;gap:4px!important;
+}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia .entrada-memoria-tactica{
+  min-height:25px;
+  grid-template-columns:31px 1fr 51px;
+  border-color:rgba(103,211,205,.16);
+  background:linear-gradient(90deg,rgba(1,12,15,.82),rgba(7,29,36,.62));
+}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia .memoria-ronda{
+  color:#d5ffbc;background:rgba(116,205,74,.10);
+}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia .memoria-carta{font-size:9.2px}
+#pantalla-juego .panel-personaje-ia .memoria-en-ia .memoria-apuesta{font-size:8.4px}
+
+/* ANÁLISIS / EMPATÍA: lectura en dos niveles. */
+#pantalla-juego .fortaleza-pista-lateral{
+  display:grid!important;
+  grid-template-columns:auto 1fr;
+  align-items:start;
+  gap:7px 9px;
+  min-height:47px;
+  padding:9px 10px 9px 11px!important;
+  font-size:10px!important;
+  line-height:1.38!important;
+  overflow:hidden;
+}
+#pantalla-juego .fortaleza-pista-lateral::before{display:none!important}
+#pantalla-juego .fortaleza-aviso-nombre{
+  align-self:start;
+  padding:4px 7px;
+  border-radius:999px;
+  border:1px solid rgba(209,153,255,.45);
+  background:rgba(105,44,142,.17);
+  color:#e2bbff;
+  font-size:7.6px;
+  line-height:1;
+  letter-spacing:.16em;
+  font-weight:850;
+  text-transform:uppercase;
+  box-shadow:0 0 14px rgba(187,100,255,.12);
+}
+#pantalla-juego .fortaleza-aviso-texto{
+  color:#f2e8fa;
+  font-size:10px;
+  font-weight:650;
+  line-height:1.4;
+}
+#pantalla-juego .fortaleza-pista-ia .fortaleza-aviso-nombre{
+  color:#c9f1ff;
+  border-color:rgba(80,203,255,.48);
+  background:rgba(36,139,187,.14);
+  box-shadow:0 0 14px rgba(70,199,255,.12);
+}
+#pantalla-juego .fortaleza-pista-ia .fortaleza-aviso-texto{color:#e3f7ff}
+
+/* La instrucción de una fortaleza se convierte en una señal táctica visible,
+   no en una leyenda diminuta sobre las cartas. */
+#pantalla-juego .instruccion-principal.instruccion-fortaleza-activa{
+  position:relative;
+  min-width:min(520px,88%);
+  min-height:36px;
+  margin:0 auto 8px!important;
+  padding:8px 18px!important;
+  border-radius:9px!important;
+  border:1px solid rgba(210,153,255,.68)!important;
+  background:
+    linear-gradient(90deg,rgba(35,10,48,.94),rgba(7,27,36,.95) 48%,rgba(18,23,49,.94))!important;
+  box-shadow:0 0 28px rgba(171,91,245,.20),inset 0 0 25px rgba(135,215,255,.05)!important;
+  color:#f5e8ff!important;
+  font-size:12px!important;
+  font-weight:820!important;
+  letter-spacing:.105em!important;
+  text-shadow:0 0 13px rgba(207,157,255,.35)!important;
+}
+#pantalla-juego .instruccion-principal.instruccion-fortaleza-activa::before{
+  content:"VENTAJA TÁCTICA";
+  margin-right:10px;
+  color:#c99cff;
+  font-size:8px;
+  letter-spacing:.18em;
+  font-weight:900;
+}
+#pantalla-juego .instruccion-principal.instruccion-precision-activa{
+  border-color:rgba(86,213,255,.72)!important;
+  color:#e3f9ff!important;
+  box-shadow:0 0 30px rgba(57,190,255,.24),inset 0 0 26px rgba(83,203,255,.08)!important;
+}
+#pantalla-juego .instruccion-principal.instruccion-precision-activa::before{color:#77dcff}
+
+/* PRECISIÓN: pieza de interfaz NEXO oscura y legible. */
+#pantalla-juego .boton-precision-cartas{
+  min-height:60px!important;
+  border-radius:10px!important;
+  background:
+    radial-gradient(circle at 18% 15%,rgba(80,214,255,.16),transparent 35%),
+    linear-gradient(135deg,rgba(3,31,46,.98),rgba(13,11,35,.98))!important;
+  color:#f4fbff!important;
+  opacity:1!important;
+  filter:none!important;
+}
+#pantalla-juego .boton-precision-cartas::before{
+  color:#6ad9ff!important;font-size:7.4px!important;
+}
+#pantalla-juego .boton-precision-cartas strong{color:#f4fcff!important;font-size:12.5px!important}
+#pantalla-juego .boton-precision-cartas span{color:#cce7f2!important;font-size:9.5px!important}
+
+/* VELOCIDAD: dos opciones de resultado con contraste alto. */
+#pantalla-juego .zona-velocidad.fortaleza-eleccion{
+  width:min(650px,88%)!important;
+  min-height:136px;
+  padding:12px 14px 12px!important;
+  border:1px solid rgba(208,145,255,.64)!important;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(182,103,255,.12),transparent 48%),
+    linear-gradient(90deg,rgba(27,8,40,.98),rgba(3,23,31,.98) 50%,rgba(10,22,41,.98))!important;
+  box-shadow:0 20px 50px rgba(0,0,0,.48),0 0 30px rgba(175,91,245,.18),inset 0 0 28px rgba(114,204,255,.055)!important;
+}
+#pantalla-juego .cabecera-fortaleza-eleccion{margin-bottom:10px!important}
+#pantalla-juego .etiqueta-fortaleza-activa{font-size:8.3px!important;color:#d7adff!important}
+#pantalla-juego .cabecera-fortaleza-eleccion strong{font-size:15px!important;color:#fff!important}
+#pantalla-juego .opciones-velocidad{gap:12px!important}
+#pantalla-juego .opcion-velocidad{
+  min-height:58px!important;
+  border:1px solid rgba(106,213,255,.58)!important;
+  border-radius:9px!important;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(92,216,255,.12),transparent 48%),
+    linear-gradient(180deg,rgba(6,40,53,.99),rgba(4,16,26,.99))!important;
+  color:#f2fbff!important;
+  -webkit-text-fill-color:#f2fbff!important;
+  opacity:1!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  text-shadow:0 1px 6px rgba(0,0,0,.82)!important;
+  box-shadow:inset 0 0 20px rgba(75,200,255,.075),0 8px 17px rgba(0,0,0,.30)!important;
+}
+#pantalla-juego .opcion-velocidad:hover,#pantalla-juego .opcion-velocidad:focus-visible{
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  border-color:#9beaff!important;
+  background:linear-gradient(180deg,rgba(15,72,86,.99),rgba(6,28,39,.99))!important;
+  box-shadow:0 0 30px rgba(77,206,255,.36),inset 0 0 24px rgba(111,225,255,.12)!important;
+}
+#pantalla-juego .ayuda-fortaleza{font-size:9px!important;color:#c3d2d9!important}
+
+/* En alturas pequeñas conservamos información legible reduciendo el retrato
+   unos píxeles, nunca el texto táctico. */
+@media(max-height:860px) and (min-width:1051px){
+  #pantalla-juego .panel-personaje-ia .memoria-en-ia{padding:6px 7px 7px!important}
+  #pantalla-juego .panel-personaje-ia .memoria-en-ia .entrada-memoria-tactica{min-height:22px;padding:3px 5px}
+  #pantalla-juego .panel-personaje-ia .memoria-en-ia .cabecera-memoria-tactica{margin-bottom:4px}
+  #pantalla-juego .zona-velocidad.fortaleza-eleccion{min-height:124px!important;padding-top:9px!important}
+}
+
+/* V20 · COHERENCIA DE CRISIS: colores de los cambios de ronda. */
+#pantalla-juego .cambio-ronda.positivo{color:#bdf49a;text-shadow:0 0 8px rgba(135,232,87,.25)}
+#pantalla-juego .cambio-ronda.negativo{color:#ff9a82;text-shadow:0 0 8px rgba(255,89,66,.24)}
+#pantalla-juego .cambio-ronda.ia-positivo{color:#9bdfff;text-shadow:0 0 8px rgba(74,191,255,.26)}
+
+/* =====================================================================
+   V21 · AJUSTE UX / LEGIBILIDAD / EVENTOS / FORTALEZAS
+   ---------------------------------------------------------------------
+   Objetivos:
+   - despejar y dar protagonismo al núcleo NEXO;
+   - mejorar lectura de ronda, crisis, declaraciones y resultado;
+   - avatares más grandes y evolución visible;
+   - eventos especiales centrados, realistas y emocionales;
+   - VELOCIDAD y PRECISIÓN siempre utilizables;
+   - botón SIGUIENTE RONDA sin desbordar su marco.
+   ===================================================================== */
+
+/* ----- AVATARES: sin etiquetas HU / IA / H/IA horneadas por CSS global ----- */
+#pantalla-juego .avatar::after,
+#pantalla-juego .avatar-humano::after,
+#pantalla-juego .avatar-ia::after{display:none!important;content:none!important}
+
+#pantalla-juego .etiqueta-hibridacion{
+  display:block;margin:5px 0 11px;
+  color:rgba(207,242,218,.82);font-size:9px;font-weight:760;
+  letter-spacing:.20em;text-transform:uppercase;
+}
+#pantalla-juego .etiqueta-humanizacion{color:rgba(191,231,250,.82)}
+
+/* ----- HUD SUPERIOR: una lectura lineal + barra del planeta larga debajo ----- */
+#pantalla-juego .cabecera-partida-cinematica{
+  top:0;left:304px;right:226px;width:auto;
+  display:grid!important;
+  grid-template-columns:145px minmax(360px,1.22fr) minmax(380px,1fr)!important;
+  grid-template-rows:auto 52px;
+  align-items:stretch;
+  gap:0;
+  background:linear-gradient(180deg,rgba(1,10,15,.84),rgba(2,12,16,.58) 74%,rgba(1,8,12,.24));
+  border-bottom:1px solid rgba(98,207,218,.28);
+  box-shadow:0 16px 34px rgba(0,0,0,.20);
+}
+#pantalla-juego .hud-segmento{
+  min-height:82px!important;padding:10px 18px 8px!important;
+  border-right:1px solid rgba(150,220,228,.13)!important;
+}
+#pantalla-juego .hud-ronda{grid-column:1;grid-row:1;text-align:center;justify-content:center}
+#pantalla-juego .hud-ronda .contador-ronda{
+  margin:0!important;font-size:19px!important;line-height:1.16!important;
+  letter-spacing:.12em!important;font-weight:850!important;color:#fff!important;
+  white-space:nowrap;
+}
+#pantalla-juego .hud-crisis{
+  grid-column:2;grid-row:1;position:relative;overflow:hidden;
+  padding-left:25px!important;
+  background:
+    radial-gradient(circle at 0 50%,rgba(255,143,48,.17),transparent 42%),
+    linear-gradient(90deg,rgba(255,121,38,.055),transparent 58%);
+  box-shadow:inset 3px 0 0 rgba(255,157,65,.66);
+}
+#pantalla-juego .hud-crisis::after{
+  content:"";position:absolute;left:-36px;top:50%;width:95px;height:95px;transform:translateY(-50%);
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,182,78,.28),rgba(255,111,35,.10) 38%,transparent 70%);
+  filter:blur(5px);animation:v21-crisis-respiro 2.6s ease-in-out infinite alternate;
+}
+@keyframes v21-crisis-respiro{from{opacity:.42;transform:translateY(-50%) scale(.88)}to{opacity:1;transform:translateY(-50%) scale(1.08)}}
+#pantalla-juego .hud-crisis .etiqueta-crisis{font-size:11px!important;letter-spacing:.20em!important;color:#ffbd66!important}
+#pantalla-juego .hud-crisis #nombre-crisis{
+  font-size:clamp(25px,1.75vw,34px)!important;line-height:1.02!important;
+  text-shadow:0 0 18px rgba(255,151,69,.15),0 3px 12px rgba(0,0,0,.70)!important;
+}
+#pantalla-juego .hud-crisis .descripcion-crisis{
+  margin-top:6px!important;max-width:650px!important;
+  font-size:12.5px!important;line-height:1.30!important;color:rgba(241,248,249,.90)!important;
+}
+#pantalla-juego .hud-impacto{
+  grid-column:3;grid-row:1;justify-content:center;text-align:center;
+  background:linear-gradient(90deg,transparent,rgba(30,133,158,.045));
+}
+#pantalla-juego .hud-impacto .hud-kicker{font-size:10px!important;color:rgba(215,236,240,.74)!important}
+#pantalla-juego .puntos-en-juego-lineal{
+  font-size:13.5px!important;line-height:1.28!important;font-weight:780!important;color:#f6fbfc!important;
+}
+#pantalla-juego .hud-impacto .regla-ronda{display:none!important}
+#pantalla-juego .hud-planeta{
+  grid-column:1/-1!important;grid-row:2!important;
+  min-height:52px!important;padding:4px 26px 8px!important;border-right:0!important;
+  display:grid!important;grid-template-columns:170px minmax(460px,1fr);align-items:center;gap:16px;
+  background:linear-gradient(90deg,transparent,rgba(4,21,27,.68) 18%,rgba(3,21,27,.72) 82%,transparent);
+}
+#pantalla-juego .hud-planeta .estado-planeta-mini{
+  margin:0!important;text-align:right!important;font-size:10px!important;letter-spacing:.15em!important;
+}
+#pantalla-juego .hud-planeta .estado-planeta-mini strong{display:block;font-size:28px!important;line-height:1!important;margin-top:1px}
+#pantalla-juego .hud-planeta .bloque-barra-planeta{width:100%!important;max-width:none!important}
+#pantalla-juego .hud-planeta .barra-planeta-logica{height:15px!important}
+#pantalla-juego .hud-planeta .numeros-barra-planeta{font-size:9px!important;margin-top:4px!important}
+
+/* Modificador de crisis: más legible y sin convertir el HUD en un panel pesado. */
+#pantalla-juego .hud-modificador{
+  position:absolute;top:100%;left:145px;right:0;z-index:5;
+  margin:0!important;min-height:40px;padding:7px 14px!important;
+  grid-template-columns:auto auto 1fr!important;
+  border:1px solid rgba(128,213,219,.20)!important;border-top:0!important;
+  border-radius:0 0 10px 10px!important;
+  background:rgba(3,15,20,.92)!important;backdrop-filter:blur(8px);
+}
+#pantalla-juego .hud-modificador .etiqueta-crisis{font-size:8.5px!important}
+#pantalla-juego .hud-modificador strong{font-size:11px!important}
+#pantalla-juego .hud-modificador p{font-size:9px!important;line-height:1.22!important}
+
+/* Evento persistente: señal compacta, centrada justo bajo la franja superior. */
+#pantalla-juego .hud-evento-activo{
+  top:100%!important;left:22%!important;right:22%!important;min-height:38px!important;
+  grid-template-columns:auto auto 1fr!important;gap:10px!important;padding:7px 14px!important;
+  border:1px solid rgba(205,153,255,.32)!important;border-top:0!important;border-radius:0 0 11px 11px!important;
+  background:linear-gradient(90deg,rgba(25,8,34,.92),rgba(5,23,30,.92),rgba(17,9,31,.92))!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.32),0 0 24px rgba(172,99,236,.12)!important;
+}
+#pantalla-juego .hud-evento-activo span{font-size:8.5px!important}
+#pantalla-juego .hud-evento-activo strong{font-size:11.5px!important}
+#pantalla-juego .hud-evento-activo p{font-size:9.5px!important}
+
+/* ----- LATERALES: retratos mayores, más arriba y con espacio para fortalezas ----- */
+#pantalla-juego .panel-personaje{
+  top:106px!important;bottom:8px!important;width:392px!important;max-width:392px!important;
+  padding:0 15px 12px!important;overflow-y:auto!important;overflow-x:visible!important;
+  scrollbar-width:none;overscroll-behavior:contain;
+  background:linear-gradient(180deg,rgba(2,10,14,.02) 0%,rgba(2,10,14,.30) 37%,rgba(2,9,13,.84) 100%)!important;
+  backdrop-filter:blur(5px)!important;
+}
+#pantalla-juego .panel-personaje::-webkit-scrollbar{width:0;height:0}
+#pantalla-juego .panel-personaje-humano{left:8px!important}
+#pantalla-juego .panel-personaje-ia{right:8px!important}
+#pantalla-juego .cabecera-personaje,
+#pantalla-juego .panel-personaje-ia .cabecera-personaje{
+  min-height:292px!important;grid-template-columns:238px 1fr!important;gap:14px!important;align-items:center!important;
+}
+#pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 238px!important}
+#pantalla-juego .retrato-personaje{
+  width:238px!important;height:292px!important;overflow:visible!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#pantalla-juego .avatar{
+  width:100%!important;height:100%!important;background-size:cover!important;background-position:center top!important;
+  border-radius:0!important;clip-path:none!important;border:0!important;
+  filter:drop-shadow(0 18px 20px rgba(0,0,0,.52));
+}
+#pantalla-juego .identidad-personaje h3{font-size:24px!important;line-height:1.12!important;letter-spacing:.14em!important}
+#pantalla-juego .microetiqueta{font-size:10.5px!important;letter-spacing:.10em!important;color:#c2d1d5!important}
+#pantalla-juego .porcentaje-personaje{font-size:42px!important;margin-top:5px!important}
+#pantalla-juego .bloque-barra-personaje{margin-top:3px!important}
+#pantalla-juego .bloque-fortalezas{margin-top:7px!important;padding-top:7px!important}
+#pantalla-juego .titulo-lista{font-size:10px!important;letter-spacing:.11em!important}
+#pantalla-juego .lista-fortalezas-propias li{font-size:9.5px!important;padding:4px 8px!important}
+#pantalla-juego .lista-capacidades-detallada{gap:5px!important}
+#pantalla-juego .lista-capacidades-detallada li{padding:7px 9px!important;background:rgba(0,11,15,.54)!important}
+#pantalla-juego .lista-capacidades-detallada li strong{font-size:10px!important}
+#pantalla-juego .lista-capacidades-detallada li small{font-size:8.5px!important;line-height:1.25!important;color:rgba(220,237,240,.76)!important}
+
+/* Evolución visual: el asset cambia cada 25%; reforzamos el cambio con luz. */
+#pantalla-juego .avatar.nivel-1{filter:brightness(1.04) saturate(1.08) drop-shadow(0 0 16px rgba(83,221,205,.20)) drop-shadow(0 18px 20px rgba(0,0,0,.5))}
+#pantalla-juego .avatar.nivel-2{filter:brightness(1.08) saturate(1.12) drop-shadow(0 0 22px rgba(78,214,230,.30)) drop-shadow(0 18px 20px rgba(0,0,0,.5))}
+#pantalla-juego .avatar.nivel-3{filter:brightness(1.12) saturate(1.17) drop-shadow(0 0 28px rgba(94,223,220,.42)) drop-shadow(0 18px 20px rgba(0,0,0,.5))}
+
+/* ----- PLANETA: cada 25% debe ser inequívocamente distinto ----- */
+#pantalla-juego.planeta-saludable .capa-mundo-base{opacity:1!important;filter:brightness(1.10) saturate(1.12)!important}
+#pantalla-juego.planeta-fragil .capa-mundo-base{opacity:.18!important}
+#pantalla-juego.planeta-fragil .capa-mundo-fragil{opacity:1!important;filter:brightness(.96) saturate(.88) contrast(1.03)!important}
+#pantalla-juego.planeta-critico .capa-mundo-base{opacity:.05!important}
+#pantalla-juego.planeta-critico .capa-mundo-fragil{opacity:0!important}
+#pantalla-juego.planeta-critico .capa-mundo-critico{opacity:1!important;filter:brightness(.86) saturate(.72) contrast(1.10)!important}
+#pantalla-juego.planeta-colapso .capa-mundo-base,
+#pantalla-juego.planeta-colapso .capa-mundo-fragil,
+#pantalla-juego.planeta-colapso .capa-mundo-critico{opacity:0!important}
+#pantalla-juego.planeta-colapso .capa-mundo-colapso{opacity:1!important;filter:brightness(.76) saturate(.72) contrast(1.17)!important}
+#pantalla-juego.planeta-catastrofe .capa-mundo-base,
+#pantalla-juego.planeta-catastrofe .capa-mundo-fragil,
+#pantalla-juego.planeta-catastrofe .capa-mundo-critico,
+#pantalla-juego.planeta-catastrofe .capa-mundo-colapso{opacity:0!important}
+#pantalla-juego.planeta-catastrofe .capa-mundo-catastrofe{opacity:1!important;filter:brightness(.68) saturate(.95) contrast(1.24)!important}
+
+/* ----- DECLARACIÓN: títulos visibles y regla compacta legible ----- */
+#pantalla-juego .zona-central-cinematica{left:404px!important;right:404px!important}
+#pantalla-juego .zona-declaraciones-nexo{
+  bottom:308px!important;width:min(900px,96%)!important;min-height:150px!important;
+  padding:12px 16px 54px!important;grid-template-columns:1fr 58px 1.18fr!important;gap:18px!important;
+  border:1px solid rgba(83,207,202,.18)!important;border-radius:13px!important;
+  background:linear-gradient(90deg,rgba(3,18,16,.80),rgba(3,17,23,.70) 54%,rgba(4,22,35,.82))!important;
+  box-shadow:0 14px 35px rgba(0,0,0,.27),inset 0 0 30px rgba(69,200,207,.025)!important;
+  backdrop-filter:blur(5px)!important;
+}
+#pantalla-juego .declaracion-humano,
+#pantalla-juego .declaracion-ia-cinematica{width:100%!important;max-width:none!important}
+#pantalla-juego .etiqueta-declaracion,
+#pantalla-juego .zona-apuesta .etiqueta-declaracion,
+#pantalla-juego .declaracion-ia-cinematica .etiqueta-declaracion{
+  margin:0 0 9px!important;font-size:13px!important;line-height:1!important;
+  letter-spacing:.22em!important;font-weight:820!important;color:#e7f5f2!important;
+  text-shadow:0 0 12px rgba(105,223,211,.28)!important;
+}
+#pantalla-juego .botones-declaracion{gap:12px!important}
+#pantalla-juego .zona-apuesta .boton-apuesta{
+  min-width:145px!important;height:61px!important;font-size:20px!important;border-radius:11px!important;
+}
+#pantalla-juego .declaracion-ia-cinematica{min-height:92px!important;padding:12px 18px!important}
+#pantalla-juego .declaracion-ia-cinematica h3{font-size:36px!important;line-height:1!important}
+#pantalla-juego .versus-declaraciones{width:48px!important;height:48px!important;font-size:14px!important}
+#pantalla-juego .consecuencia{
+  left:50%!important;bottom:8px!important;width:calc(100% - 28px)!important;max-width:none!important;
+  padding:10px 14px!important;border:1px solid rgba(111,207,203,.18)!important;border-radius:8px!important;
+  background:rgba(0,8,12,.89)!important;
+  color:#eaf4f6!important;font-size:12.5px!important;line-height:1.35!important;font-weight:560!important;
+  text-shadow:0 1px 5px rgba(0,0,0,.86)!important;
+}
+
+/* ----- CHISPA CREATIVA: panel persistente centrado y llamativo, no tapa decisiones ----- */
+#pantalla-juego .pistas-partida{
+  top:151px!important;left:50%!important;width:min(700px,68vw)!important;z-index:48!important;
+}
+#pantalla-juego .pista-chispa-nexo{
+  min-height:104px!important;grid-template-columns:1fr 82px!important;gap:14px!important;
+  padding:13px 15px 13px 18px!important;border:1px solid rgba(218,160,255,.62)!important;border-radius:14px!important;
+  background:
+    radial-gradient(circle at 12% 50%,rgba(255,165,66,.14),transparent 28%),
+    linear-gradient(100deg,rgba(25,8,32,.95),rgba(3,18,24,.93) 55%,rgba(20,10,35,.96))!important;
+  box-shadow:0 0 34px rgba(195,110,255,.25),0 14px 34px rgba(0,0,0,.34),inset 0 0 26px rgba(235,161,255,.05)!important;
+  animation:v21-chispa-panel 1.9s ease-in-out infinite alternate;
+}
+@keyframes v21-chispa-panel{from{box-shadow:0 0 25px rgba(195,110,255,.16),0 14px 34px rgba(0,0,0,.34)}to{box-shadow:0 0 42px rgba(229,144,255,.32),0 14px 34px rgba(0,0,0,.34)}}
+#pantalla-juego .texto-pista-chispa span{font-size:9px!important;letter-spacing:.18em!important;color:#d8a9ff!important}
+#pantalla-juego .texto-pista-chispa strong{display:block;margin-top:4px;font-size:19px!important;line-height:1.10!important;color:#fff!important}
+#pantalla-juego .texto-pista-chispa p{margin-top:5px!important;font-size:11.5px!important;line-height:1.3!important;color:#e7eff2!important}
+#pantalla-juego .pista-chispa-nexo img{width:82px!important;height:104px!important;object-fit:contain!important}
+
+/* ----- MANO: más abajo; imagen centrada sin recorte ----- */
+#pantalla-juego .zona-mano-cinematica{
+  bottom:82px!important;width:min(900px,96%)!important;z-index:55!important;
+}
+#pantalla-juego .mano-cartas{min-height:194px!important;padding:9px 12px 0!important;gap:10px!important;align-items:flex-end!important}
+#pantalla-juego .carta-mano{
+  width:120px!important;height:187px!important;flex:0 0 120px!important;
+  background-size:contain!important;background-position:50% 50%!important;background-repeat:no-repeat!important;
+  border-radius:10px!important;overflow:visible!important;
+}
+#pantalla-juego .carta-mano::before{left:6px!important;right:6px!important;top:4px!important;height:31px!important;font-size:24px!important;border-radius:6px 6px 0 0!important}
+#pantalla-juego .carta-mano:nth-child(1){transform:rotate(-2.2deg) translateY(7px)!important}
+#pantalla-juego .carta-mano:nth-child(2){transform:rotate(-1.1deg) translateY(3px)!important}
+#pantalla-juego .carta-mano:nth-child(3){transform:translateY(0)!important}
+#pantalla-juego .carta-mano:nth-child(4){transform:rotate(1.1deg) translateY(3px)!important}
+#pantalla-juego .carta-mano:nth-child(5){transform:rotate(2.2deg) translateY(7px)!important}
+#pantalla-juego .carta-mano:hover:not(:disabled):not(.descartada),
+#pantalla-juego .carta-mano:focus-visible:not(:disabled):not(.descartada){transform:translateY(-24px) scale(1.065) rotate(0)!important}
+#pantalla-juego .carta-mano.seleccionada{transform:translateY(-30px) scale(1.075) rotate(0)!important}
+
+/* Ventaja táctica: paleta NEXO verde-cian y separada de la regla de apuesta. */
+#pantalla-juego .instruccion-principal.instruccion-fortaleza-activa{
+  min-width:min(650px,88%)!important;margin:0 auto 12px!important;padding:9px 18px!important;
+  border-color:rgba(88,221,210,.58)!important;
+  background:linear-gradient(90deg,rgba(5,46,32,.95),rgba(4,27,37,.96) 52%,rgba(7,41,55,.95))!important;
+  box-shadow:0 0 30px rgba(59,208,190,.17),inset 0 0 24px rgba(74,199,238,.045)!important;
+  color:#e8fffb!important;font-size:12.5px!important;letter-spacing:.085em!important;
+}
+#pantalla-juego .instruccion-principal.instruccion-fortaleza-activa::before{color:#8debd0!important}
+
+/* ----- RESOLVER / VELOCIDAD / PRECISIÓN: siempre visibles y clicables ----- */
+#pantalla-juego .acciones-partida{
+  position:absolute!important;z-index:160!important;left:50%!important;bottom:8px!important;transform:translateX(-50%)!important;
+  min-height:70px!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  pointer-events:auto!important;overflow:visible!important;
+}
+#pantalla-juego #btn-confirmar-jugada{
+  position:relative!important;z-index:165!important;pointer-events:auto!important;
+  width:330px!important;min-width:330px!important;height:68px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  overflow:visible!important;white-space:nowrap!important;font-size:17px!important;
+}
+#pantalla-juego #btn-confirmar-jugada.jugada-lista:not(:disabled){
+  filter:brightness(1.18)!important;box-shadow:0 0 28px rgba(81,220,210,.28)!important;
+}
+#pantalla-juego .boton-precision-cartas{
+  z-index:166!important;left:calc(50% + 190px)!important;bottom:10px!important;width:190px!important;min-height:64px!important;
+  border-color:rgba(77,205,235,.55)!important;
+  background:linear-gradient(135deg,rgba(3,35,43,.98),rgba(4,21,35,.98))!important;
+  box-shadow:0 0 24px rgba(54,196,218,.16),inset 0 0 20px rgba(81,210,238,.06)!important;
+}
+#pantalla-juego .zona-velocidad.fortaleza-eleccion{
+  z-index:170!important;left:50%!important;bottom:292px!important;transform:translateX(-50%)!important;
+  width:min(700px,88%)!important;min-height:150px!important;padding:14px 16px!important;
+  border-color:rgba(79,218,210,.60)!important;
+  background:linear-gradient(90deg,rgba(4,40,31,.98),rgba(4,24,36,.98) 52%,rgba(4,34,45,.98))!important;
+  box-shadow:0 20px 48px rgba(0,0,0,.45),0 0 34px rgba(67,211,203,.20)!important;
+  pointer-events:auto!important;
+}
+#pantalla-juego .zona-velocidad .etiqueta-fortaleza-activa{color:#9debd8!important}
+#pantalla-juego .zona-velocidad .cabecera-fortaleza-eleccion strong{font-size:16px!important}
+#pantalla-juego .opcion-velocidad{min-height:64px!important;font-size:13px!important}
+#pantalla-juego .ayuda-fortaleza{font-size:10.5px!important;line-height:1.3!important}
+
+/* ----- MODIFICADOR DE RONDA: texto más legible ----- */
+#pantalla-juego .tarjeta-carta-crisis:not(.oculta){font-size:10px!important}
+#pantalla-juego .tarjeta-carta-crisis .impacto-carta-crisis{font-size:9.5px!important;color:#f3fbfc!important}
+
+/* ----- CONVERGENCIA: bola luminosa circular centrada en la X de fondo ----- */
+#pantalla-juego .nexo-nucleo-partida{
+  top:42.0%!important;left:50%!important;width:300px!important;height:300px!important;transform:translate(-50%,-50%)!important;
+  z-index:22!important;pointer-events:none!important;
+}
+#pantalla-juego .nucleo-luz-convergencia{
+  inset:0!important;border-radius:50%!important;opacity:0;
+  background:radial-gradient(circle,
+    rgba(255,255,255,.98) 0%,
+    rgba(215,255,246,.96) 5%,
+    rgba(108,255,183,.72) 13%,
+    rgba(72,220,255,.52) 24%,
+    rgba(84,211,211,.22) 43%,
+    rgba(64,179,213,.08) 61%,
+    transparent 76%)!important;
+  filter:blur(.8px) drop-shadow(0 0 28px rgba(113,255,213,.45))!important;
+}
+#pantalla-juego .nexo-nucleo-partida.convergencia-activa .nucleo-luz-convergencia{
+  animation:v21-convergencia-bola 1.45s cubic-bezier(.18,.72,.18,1) forwards!important;
+}
+@keyframes v21-convergencia-bola{
+  0%{opacity:0;transform:scale(.12)}
+  16%{opacity:1;transform:scale(.42)}
+  40%{opacity:1;transform:scale(1)}
+  72%{opacity:.72;transform:scale(1.16)}
+  100%{opacity:0;transform:scale(1.30)}
+}
+#pantalla-juego .red-descargas-nucleo{inset:-6%!important;width:112%!important;height:112%!important;filter:drop-shadow(0 0 5px rgba(129,241,224,.35))}
+#pantalla-juego .descarga-nucleo{stroke-width:1.65!important}
+
+/* ----- RESULTADO DE RONDA: panel central, emocional y legible ----- */
+#pantalla-juego .zona-resultado-cinematica{
+  position:absolute!important;z-index:190!important;left:50%!important;top:52%!important;bottom:auto!important;
+  transform:translate(-50%,-50%)!important;width:min(760px,82%)!important;min-height:390px!important;
+  padding:22px 28px 24px!important;border:1px solid rgba(96,218,205,.32)!important;border-radius:18px!important;
+  background:
+    radial-gradient(circle at 50% 15%,rgba(77,213,189,.10),transparent 32%),
+    linear-gradient(145deg,rgba(2,16,20,.91),rgba(3,12,18,.84) 55%,rgba(2,21,24,.91))!important;
+  box-shadow:0 28px 70px rgba(0,0,0,.58),0 0 38px rgba(70,209,202,.16),inset 0 0 34px rgba(99,225,204,.035)!important;
+  backdrop-filter:blur(9px)!important;
+}
+#pantalla-juego .cartas-reveladas{gap:16px!important;margin-top:4px!important}
+#pantalla-juego .carta-revelada{min-width:130px!important;padding:11px 16px!important}
+#pantalla-juego .carta-revelada p{font-size:12px!important}
+#pantalla-juego .carta-revelada span{font-size:31px!important}
+#pantalla-juego .carta-revelada small{font-size:10px!important}
+#pantalla-juego .resultado-ronda{margin:17px 0 8px!important;font-size:29px!important;line-height:1!important;letter-spacing:.04em!important}
+#pantalla-juego .cambios-ronda{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:7px 16px!important;margin:9px 0!important}
+#pantalla-juego .cambio-ronda{font-size:13.5px!important;font-weight:720!important}
+#pantalla-juego .detalle-ronda{max-width:680px!important;margin:10px auto 13px!important;font-size:13px!important;line-height:1.42!important;color:#d6e6ea!important}
+#pantalla-juego #btn-siguiente.boton-siguiente-ronda{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:340px!important;min-width:340px!important;height:70px!important;padding:0 28px!important;
+  font-size:15.5px!important;line-height:1!important;letter-spacing:.08em!important;white-space:nowrap!important;
+  overflow:visible!important;box-sizing:border-box!important;
+  background-size:100% 100%!important;background-position:center!important;
+}
+#pantalla-juego #btn-siguiente.boton-siguiente-ronda.oculta{display:none!important}
+
+/* ----- EVENTOS ESPECIALES: imagen realista + texto horizontal, centro de pantalla ----- */
+#superposicion-evento.superposicion-evento-nexo{
+  z-index:310!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:0!important;background:rgba(0,5,8,.76)!important;backdrop-filter:blur(3px)!important;
+}
+#superposicion-evento.superposicion-evento-nexo.oculta{display:none!important}
+#superposicion-evento .tarjeta-evento-nexo{
+  position:relative!important;left:auto!important;top:auto!important;transform:none!important;
+  width:min(900px,78vw)!important;min-width:0!important;max-width:none!important;height:auto!important;min-height:300px!important;
+  padding:0!important;text-align:left!important;
+  display:grid!important;grid-template-columns:minmax(360px,1.12fr) minmax(330px,.88fr)!important;align-items:stretch!important;
+  border:1px solid rgba(91,225,205,.48)!important;border-radius:18px!important;overflow:visible!important;
+  background:linear-gradient(135deg,rgba(2,18,21,.98),rgba(3,11,18,.98))!important;
+  box-shadow:0 30px 75px rgba(0,0,0,.62),0 0 42px rgba(69,215,201,.18)!important;
+  animation:v21-evento-muelle 1.85s ease-in-out infinite alternate!important;
+}
+#superposicion-evento .tarjeta-evento-nexo::after{
+  content:"";position:absolute;left:8%;right:8%;bottom:-18px;height:34px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse,rgba(72,237,212,.42),rgba(58,176,241,.18) 38%,transparent 72%);
+  filter:blur(12px);opacity:.75;
+}
+@keyframes v21-evento-muelle{from{transform:translateY(2px) scale(.995)}to{transform:translateY(-6px) scale(1.006)}}
+#superposicion-evento .marco-imagen-evento{
+  height:auto!important;min-height:300px!important;border-radius:17px 0 0 17px!important;overflow:hidden!important;background:#020709!important;
+}
+#superposicion-evento .imagen-evento{
+  width:100%!important;height:100%!important;object-fit:cover!important;filter:brightness(.96) contrast(1.08) saturate(1.06)!important;
+}
+#superposicion-evento .halo-evento{box-shadow:inset 0 0 32px rgba(90,234,206,.13)!important}
+#superposicion-evento .contenido-evento{
+  padding:32px 31px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;
+  border-radius:0 17px 17px 0!important;background:linear-gradient(160deg,rgba(3,18,23,.94),rgba(4,12,21,.98))!important;
+}
+#superposicion-evento .evento-sobrelinea{font-size:10px!important;letter-spacing:.24em!important;color:#9debd7!important}
+#superposicion-evento #nombre-evento{font-size:31px!important;line-height:1.02!important;color:#fff!important;margin:6px 0 0!important}
+#superposicion-evento #descripcion-evento{font-size:15px!important;line-height:1.42!important;color:#d7e7ea!important;margin:15px 0 22px!important}
+#superposicion-evento .boton-evento-continuar{
+  width:250px!important;height:62px!important;padding:0 24px!important;border:0!important;border-radius:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp')!important;
+  background-size:100% 100%!important;background-position:center!important;background-color:transparent!important;
+  color:#f4ffff!important;font-size:14px!important;font-weight:850!important;letter-spacing:.11em!important;text-transform:uppercase!important;
+  box-shadow:none!important;overflow:visible!important;
+}
+#superposicion-evento .boton-evento-continuar:hover,
+#superposicion-evento .boton-evento-continuar:focus-visible{
+  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp')!important;
+  transform:translateY(-2px)!important;filter:brightness(1.10)!important;outline:none!important;
+}
+
+/* ----- Fortalezas laterales: efectos de IA legibles y sin corte ----- */
+#pantalla-juego .fortaleza-pista-lateral{min-height:52px!important;font-size:10.5px!important}
+#pantalla-juego .fortaleza-aviso-texto{font-size:10.5px!important;line-height:1.38!important}
+#pantalla-juego .panel-memoria-tactica{margin-top:8px!important}
+#pantalla-juego .entrada-memoria-tactica{font-size:9px!important}
+
+/* Alturas más bajas: reducimos escala de cartas, no la legibilidad principal. */
+@media(max-height:900px) and (min-width:1051px){
+  #pantalla-juego .cabecera-partida-cinematica{left:285px;right:210px;grid-template-columns:130px minmax(310px,1.2fr) minmax(320px,1fr)!important;grid-template-rows:auto 46px}
+  #pantalla-juego .hud-segmento{min-height:72px!important;padding-top:7px!important;padding-bottom:6px!important}
+  #pantalla-juego .hud-crisis #nombre-crisis{font-size:24px!important}
+  #pantalla-juego .hud-crisis .descripcion-crisis{font-size:10.5px!important}
+  #pantalla-juego .panel-personaje{top:98px!important;width:360px!important;max-width:360px!important}
+  #pantalla-juego .cabecera-personaje,#pantalla-juego .panel-personaje-ia .cabecera-personaje{min-height:250px!important;grid-template-columns:205px 1fr!important}
+  #pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 205px!important}
+  #pantalla-juego .retrato-personaje{width:205px!important;height:250px!important}
+  #pantalla-juego .zona-central-cinematica{left:372px!important;right:372px!important}
+  #pantalla-juego .zona-declaraciones-nexo{bottom:270px!important;min-height:135px!important}
+  #pantalla-juego .zona-mano-cinematica{bottom:72px!important}
+  #pantalla-juego .carta-mano{width:104px!important;height:162px!important;flex-basis:104px!important}
+  #pantalla-juego .mano-cartas{min-height:169px!important}
+  #pantalla-juego .zona-resultado-cinematica{min-height:350px!important;width:min(710px,78%)!important}
+  #superposicion-evento .tarjeta-evento-nexo{width:min(820px,78vw)!important;min-height:270px!important;grid-template-columns:minmax(330px,1.1fr) minmax(310px,.9fr)!important}
+  #superposicion-evento .marco-imagen-evento{min-height:270px!important}
+}
+
+@media(max-width:1280px){
+  #pantalla-juego .cabecera-partida-cinematica{left:190px;right:160px;grid-template-columns:120px 1fr 1fr!important}
+  #pantalla-juego .panel-personaje{width:320px!important;max-width:320px!important}
+  #pantalla-juego .cabecera-personaje,#pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:180px 1fr!important;min-height:225px!important}
+  #pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 180px!important}
+  #pantalla-juego .retrato-personaje{width:180px!important;height:225px!important}
+  #pantalla-juego .zona-central-cinematica{left:332px!important;right:332px!important}
+}
+
+/* V21.1 · Si existe modificador, se lee dentro de IMPACTO sin tapar la barra del planeta. */
+#pantalla-juego .hud-impacto .hud-modificador{
+  position:static!important;left:auto!important;right:auto!important;top:auto!important;
+  margin:7px 0 0!important;min-height:0!important;padding:7px 10px!important;
+  grid-template-columns:auto 1fr!important;gap:2px 8px!important;
+  border:1px solid rgba(128,213,219,.20)!important;border-radius:8px!important;
+  background:rgba(2,14,19,.74)!important;backdrop-filter:none!important;
+}
+#pantalla-juego .hud-impacto .hud-modificador p{grid-column:1/-1!important;font-size:9.5px!important;line-height:1.25!important}
+
+@media(max-width:1500px) and (min-width:1051px){
+  #pantalla-juego .cabecera-partida-cinematica{left:225px;right:180px;grid-template-columns:125px minmax(300px,1.15fr) minmax(320px,1fr)!important}
+  #pantalla-juego .panel-personaje{width:335px!important;max-width:335px!important;top:103px!important}
+  #pantalla-juego .cabecera-personaje,#pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:188px 1fr!important;min-height:238px!important}
+  #pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 188px!important}
+  #pantalla-juego .retrato-personaje{width:188px!important;height:238px!important}
+  #pantalla-juego .identidad-personaje h3{font-size:20px!important}
+  #pantalla-juego .porcentaje-personaje{font-size:36px!important}
+  #pantalla-juego .zona-central-cinematica{left:346px!important;right:346px!important}
+  #pantalla-juego .zona-declaraciones-nexo{width:min(780px,95%)!important;bottom:286px!important}
+  #pantalla-juego .zona-apuesta .boton-apuesta{min-width:125px!important;height:56px!important}
+  #pantalla-juego .zona-mano-cinematica{width:min(760px,95%)!important}
+  #pantalla-juego .carta-mano{width:105px!important;height:164px!important;flex-basis:105px!important}
+  #pantalla-juego .mano-cartas{min-height:171px!important;gap:7px!important}
+  #pantalla-juego .pistas-partida{width:min(610px,62vw)!important}
+  #pantalla-juego .zona-resultado-cinematica{width:min(700px,78%)!important}
+}
+
+/* =====================================================================
+   V21.2 · QA FINAL DE MAQUETACIÓN
+   Corrige una herencia antigua del tablero que seguía desplazando los
+   laterales 128 px hacia abajo. Ahora los avatares empiezan justo bajo
+   la franja superior y ganan altura útil para las fortalezas adquiridas.
+   ===================================================================== */
+@media (min-width:1051px){
+  #pantalla-juego .zona-juego.tablero-cinematico{
+    inset:0!important;
+  }
+  #pantalla-juego .panel-personaje{
+    top:210px!important;
+    bottom:8px!important;
+  }
+}
+@media (max-height:900px) and (min-width:1051px){
+  #pantalla-juego .panel-personaje{
+    top:205px!important;
+  }
+}

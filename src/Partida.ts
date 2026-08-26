@@ -151,13 +151,13 @@ export class Partida {
 
   /** Estado visual del planeta, para cambiar el fondo de la pantalla. */
   public getEstadoPlaneta(): string {
-    if (this.saludPlaneta < 15) {
+    if (this.saludPlaneta < 25) {
       return "critico";
     }
-    if (this.saludPlaneta < 30) {
+    if (this.saludPlaneta < 50) {
       return "deteriorado";
     }
-    if (this.saludPlaneta < 45) {
+    if (this.saludPlaneta < 75) {
       return "estable";
     }
     return "recuperado";
@@ -535,6 +535,7 @@ export class Partida {
     const evolucionJugador: number = this.jugador.getEvolucion();
     const evolucionIA: number = this.ia.getEvolucion();
     const diferencia: number = Math.abs(evolucionJugador - evolucionIA);
+    const crisisFinal: number = SALUD_MAXIMA - this.saludPlaneta;
 
     let desenlace: Desenlace;
     let mensaje: string;
@@ -544,7 +545,7 @@ export class Partida {
       mensaje =
         "El planeta ha colapsado. Perdéis los dos: no importa cuánto " +
         "hayáis evolucionado si no queda mundo donde hacerlo.";
-    } else if (this.saludPlaneta > 45 && diferencia <= 5) {
+    } else if (this.saludPlaneta > 75 && diferencia <= 5) {
       desenlace = "CONVERGENCIA TOTAL";
       mensaje =
         "Habéis salvado el planeta sin que ninguno dominase al otro. " +
@@ -552,13 +553,13 @@ export class Partida {
     } else if (evolucionJugador >= evolucionIA) {
       desenlace = "SUPREMACIA HUMANA";
       mensaje =
-        "Te has impuesto a la IA. El planeta sobrevive con " +
-        this.saludPlaneta + " puntos de salud.";
+        "Te has impuesto a la IA. El planeta termina con " +
+        crisisFinal + "% de crisis.";
     } else {
       desenlace = "SUPREMACIA IA";
       mensaje =
-        "La IA se ha impuesto. El planeta sobrevive con " +
-        this.saludPlaneta + " puntos de salud.";
+        "La IA se ha impuesto. El planeta termina con " +
+        crisisFinal + "% de crisis.";
     }
 
     const total: number = evolucionJugador + evolucionIA;
@@ -589,7 +590,7 @@ export class Partida {
     const conquistadas: number = this.jugador.getCapacidades().length;
     let id: string = "superviviente";
 
-    if (conquistadas === 4 && this.saludPlaneta > 45) {
+    if (conquistadas === 4 && this.saludPlaneta > 75) {
       id = "nexo";
     } else if (conquistadas === 4) {
       id = "conquistador";
@@ -597,7 +598,7 @@ export class Partida {
       id = "mente";
     } else if (conquistadas === 2) {
       id = "estratega";
-    } else if (this.saludPlaneta >= 45) {
+    } else if (this.saludPlaneta >= 75) {
       id = "guardian";
     }
 

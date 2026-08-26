@@ -2957,6 +2957,90 @@ h1, h2, h3, h4 {
 }
 
 
+/* ==============================================================
+   INTRODUCCIÓN — COMPOSICIÓN CENTRAL EN ZONA SEGURA
+   El conjunto se centra dentro del paisaje abierto, a la derecha de
+   las figuras Humano/IA, para conservarlas visibles en todo momento.
+   ============================================================== */
+@media (min-width: 901px) {
+  #pantalla-introduccion .contenido-introduccion {
+    left: 63%;
+    right: auto;
+    width: min(50vw, 720px);
+    margin: 0;
+    transform: translate(-50%, -50%);
+    align-items: center;
+    text-align: center;
+  }
+
+  #pantalla-introduccion .cabecera-introduccion,
+  #pantalla-introduccion .relato-introduccion {
+    width: 100%;
+  }
+
+  #pantalla-introduccion .sobrelinea-introduccion {
+    text-align: center;
+  }
+
+  #pantalla-introduccion .sobrelinea-introduccion::after {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  #pantalla-introduccion .cabecera-intro-fila {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #pantalla-introduccion .btn-saltar-intro {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  #pantalla-introduccion .bloque-intro p {
+    max-width: 62ch;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: left;
+    text-wrap: pretty;
+  }
+
+  #pantalla-introduccion .bloque-intro p:first-child {
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  #pantalla-introduccion .progreso-intro,
+  #pantalla-introduccion .controles-intro {
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  #pantalla-introduccion .contenido-introduccion {
+    align-items: center;
+    text-align: center;
+  }
+
+  #pantalla-introduccion .sobrelinea-introduccion,
+  #pantalla-introduccion .bloque-intro p:first-child {
+    text-align: center;
+  }
+
+  #pantalla-introduccion .bloque-intro p {
+    text-align: left;
+  }
+
+  #pantalla-introduccion .sobrelinea-introduccion::after {
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+
 
 /* =====================================================================
    PORTADA — LOGO NEXO · TIPOGRAFÍA ORIGINAL HD + UN SOLO PULSO · v11
@@ -3555,14 +3639,14 @@ h1, h2, h3, h4 {
    6. LEMA
    --------------------------------------------------------------------- */
 #pantalla-inicio .lema-juego {
-  max-width: 550px;
+  max-width: 620px;
 
   color: rgba(219, 233, 237, 0.88);
 
   font-size:
     clamp(0.90rem, 1.18vw, 1.04rem);
 
-  line-height: 1.5;
+  line-height: 1.35;
 
   margin:
     auto
@@ -3572,6 +3656,37 @@ h1, h2, h3, h4 {
   text-shadow:
     0 2px 12px
     rgba(0, 0, 0, 0.86);
+}
+
+#pantalla-inicio .lema-linea {
+  display: block;
+}
+
+#pantalla-inicio .lema-linea + .lema-linea {
+  margin-top: 0.22rem;
+}
+
+#pantalla-inicio .lema-decision {
+  margin-top: 0.7rem;
+  color: #b7f3e7;
+  font-size: 1.06em;
+  font-weight: 750;
+  letter-spacing: 0.055em;
+  text-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.94),
+    0 0 14px rgba(91, 226, 201, 0.28);
+}
+
+#pantalla-inicio .lema-cierre {
+  margin-top: 0.7rem;
+  color: #ffffff;
+  font-size: 1.12em;
+  font-weight: 800;
+  letter-spacing: 0.085em;
+  text-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.96),
+    0 0 16px rgba(236, 255, 251, 0.22);
+  transform: translateY(clamp(1rem, 2.4vh, 1.15rem));
 }
 
 
@@ -3630,6 +3745,59 @@ h1, h2, h3, h4 {
   #pantalla-inicio .logo-nexo-animado::after {
     animation: none;
     opacity: 0;
+  }
+}
+
+
+/* ---------------------------------------------------------------------
+   9. COMPOSICIÓN CENTRAL DE PORTADA
+   Mantiene el contenido en el corredor visual central para dejar visibles
+   las representaciones humana y tecnológica de los laterales del fondo.
+   --------------------------------------------------------------------- */
+#pantalla-inicio .contenido-inicio {
+  position: relative;
+  width: min(92vw, 760px);
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vh, 2rem) 0;
+  justify-content: flex-start;
+}
+
+#pantalla-inicio .logo-nexo-animado {
+  position: absolute;
+  top: 21vh;
+  left: 50%;
+  width: min(68vw, 680px);
+  min-width: 0;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+#pantalla-inicio .lema-juego {
+  width: min(100%, 520px);
+  margin: auto auto clamp(1.75rem, 3.5vh, 2.5rem);
+}
+
+#pantalla-inicio .boton-jugar-imagen {
+  margin: 0 auto;
+}
+
+@media (max-width: 760px) {
+  #pantalla-inicio .contenido-inicio {
+    width: min(92vw, 620px);
+    padding-top: clamp(1rem, 3vh, 1.5rem);
+    padding-bottom: clamp(1rem, 3vh, 1.5rem);
+  }
+
+  #pantalla-inicio .logo-nexo-animado {
+    top: 18vh;
+    width: min(88vw, 620px);
+  }
+
+  #pantalla-inicio .lema-juego {
+    width: min(88vw, 500px);
+    font-size: clamp(0.76rem, 3.2vw, 0.92rem);
+    margin-bottom: clamp(1.35rem, 3vh, 2rem);
   }
 }
 
