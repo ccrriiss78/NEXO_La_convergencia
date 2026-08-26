@@ -76,6 +76,12 @@ export type ResumenRonda = {
   puntosPlaneta: number;
   puntosJugador: number;
   puntosIA: number;
+  saludPlanetaAntes: number;
+  saludPlanetaDespues: number;
+  evolucionJugadorAntes: number;
+  evolucionJugadorDespues: number;
+  evolucionIAAntes: number;
+  evolucionIADespues: number;
   capacidadConquistada: string;
   explicacion: string;
   // true si la IA usó Intuición y cambió su apuesta a última hora.

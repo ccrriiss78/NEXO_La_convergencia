@@ -167,6 +167,9 @@ export class Jugador {
 
   public sumarEvolucion(puntos: number): void {
     this.evolucion = this.evolucion + puntos;
+    if (this.evolucion < 0) {
+      this.evolucion = 0;
+    }
   }
 
   public getCapacidades(): string[] {

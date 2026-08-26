@@ -74,9 +74,9 @@ export class Partida {
 
   private terminada: boolean;
 
-  constructor(nombreJugador: string, avatarJugador: string, totalRondas: number) {
+  constructor(nombreJugador: string, avatarJugador: string, totalRondas: number, avatarIA: string = "ia-01") {
     this.jugador = new Jugador(nombreJugador, false, avatarJugador);
-    this.ia = new Jugador("IA", true, "ia");
+    this.ia = new Jugador("IA", true, avatarIA);
 
     this.ronda = 0;
     this.totalRondas = totalRondas;
@@ -151,13 +151,13 @@ export class Partida {
 
   /** Estado visual del planeta, para cambiar el fondo de la pantalla. */
   public getEstadoPlaneta(): string {
-    if (this.saludPlaneta <= 15) {
+    if (this.saludPlaneta < 15) {
       return "critico";
     }
-    if (this.saludPlaneta <= 30) {
+    if (this.saludPlaneta < 30) {
       return "deteriorado";
     }
-    if (this.saludPlaneta <= 45) {
+    if (this.saludPlaneta < 45) {
       return "estable";
     }
     return "recuperado";
@@ -377,84 +377,79 @@ export class Partida {
     apuestaJugador: Apuesta,
     apuestaIA: Apuesta
   ): ResumenRonda {
-    // 1. Puntos base de la ronda, modificados por las cartas positivas.
-    let puntos: number = suma;
-    if (this.hayCartaCrisis("circular")) {
-      puntos = puntos + 3;
-    }
-    if (this.hayCartaCrisis("renovable")) {
-      puntos = puntos * 2;
-    }
+    const saludPlanetaAntes: number = this.saludPlaneta;
+    const evolucionJugadorAntes: number = this.jugador.getEvolucion();
+    const evolucionIAAntes: number = this.ia.getEvolucion();
+    const puntosBase: number = suma;
 
-    // 2. A dónde van esos puntos según el resultado.
     let puntosPlaneta: number = 0;
     let puntosJugador: number = 0;
     let puntosIA: number = 0;
     let explicacion: string = "";
 
     if (resultado === "CONVERGENCIA") {
-      puntosPlaneta = puntos;
-      if (this.hayEvento("cumbre")) {
-        puntosPlaneta = puntosPlaneta * 2;
-      }
-      if (this.hayCartaCrisis("sequia")) {
-        puntosPlaneta = -puntos;
-      }
-      explicacion = "Los dos habéis acertado: habéis leído la crisis igual.";
+      puntosPlaneta = puntosBase;
+      explicacion = "Los dos habéis acertado: hay convergencia y el planeta puede recuperarse.";
     } else if (resultado === "RIVALIDAD") {
       if (ganador === "HUMANO") {
-        puntosJugador = puntos;
-        explicacion = "Te has impuesto a la IA, pero el planeta no mejora.";
+        puntosJugador = puntosBase;
+        puntosIA = -puntosBase;
+        explicacion = "Te has impuesto a la IA: tu evolución avanza y la suya retrocede.";
       } else {
-        puntosIA = puntos;
-        explicacion = "La IA se ha impuesto y te ha quitado una capacidad.";
-      }
-      if (this.hayCartaCrisis("incendio")) {
-        puntosPlaneta = puntosPlaneta - 3;
-      }
-      if (this.hayCartaCrisis("sequia")) {
-        puntosPlaneta = puntosPlaneta - puntos;
+        puntosIA = puntosBase;
+        puntosJugador = -puntosBase;
+        explicacion = "La IA se ha impuesto: su evolución avanza y la tuya retrocede.";
       }
     } else {
       puntosPlaneta = -PENALIZACION_FRACASO;
       if (this.hayEvento("sinretorno")) {
         puntosPlaneta = -6;
       }
-      if (this.hayCartaCrisis("incendio")) {
-        puntosPlaneta = puntosPlaneta - 3;
-      }
-      explicacion = "Nadie ha entendido la crisis. El planeta lo paga.";
+      explicacion = "Nadie ha entendido la crisis. El planeta pierde equilibrio.";
     }
 
-    // 3. El Punto de Inflexión duplica lo que le pase al planeta.
+    if (resultado === "CONVERGENCIA" && this.hayCartaCrisis("renovable")) {
+      puntosPlaneta = puntosPlaneta * 2;
+    }
+    if (resultado === "CONVERGENCIA" && this.hayCartaCrisis("circular")) {
+      puntosPlaneta = puntosPlaneta + 3;
+    }
+    if (this.hayCartaCrisis("incendio") && resultado !== "CONVERGENCIA") {
+      puntosPlaneta = puntosPlaneta - 3;
+    }
+    if (this.hayCartaCrisis("sequia")) {
+      if (resultado === "CONVERGENCIA") {
+        puntosPlaneta = -puntosBase;
+      } else {
+        puntosPlaneta = puntosPlaneta - puntosBase;
+      }
+    }
+    if (resultado === "CONVERGENCIA" && this.hayEvento("cumbre")) {
+      puntosPlaneta = puntosPlaneta * 2;
+    }
     if (this.hayCartaCrisis("inflexion")) {
       puntosPlaneta = puntosPlaneta * 2;
     }
 
-    // 4. Se aplican los puntos a los tres marcadores.
     this.saludPlaneta = this.saludPlaneta + puntosPlaneta;
-    if (this.saludPlaneta > SALUD_MAXIMA) {
-      this.saludPlaneta = SALUD_MAXIMA;
-    }
-    if (this.saludPlaneta < 0) {
-      this.saludPlaneta = 0;
-    }
+    if (this.saludPlaneta > SALUD_MAXIMA) this.saludPlaneta = SALUD_MAXIMA;
+    if (this.saludPlaneta < 0) this.saludPlaneta = 0;
     this.jugador.sumarEvolucion(puntosJugador);
     this.ia.sumarEvolucion(puntosIA);
 
-    // 5. Conquista de capacidad (el Punto de Inflexión la impide).
+    // Mostramos el cambio realmente aplicado después de respetar el mínimo 0.
+    puntosPlaneta = this.saludPlaneta - saludPlanetaAntes;
+    puntosJugador = this.jugador.getEvolucion() - evolucionJugadorAntes;
+    puntosIA = this.ia.getEvolucion() - evolucionIAAntes;
+
     let capacidadConquistada: string = "";
     if (resultado === "RIVALIDAD" && !this.hayCartaCrisis("inflexion")) {
       if (ganador === "HUMANO") {
         const ficha = this.jugador.conquistarSiguiente(CAPACIDADES_IA);
-        if (ficha !== null) {
-          capacidadConquistada = ficha.nombre;
-        }
+        if (ficha !== null) capacidadConquistada = ficha.nombre;
       } else {
         const ficha = this.ia.conquistarSiguiente(CAPACIDADES_HUMANAS);
-        if (ficha !== null) {
-          capacidadConquistada = ficha.nombre;
-        }
+        if (ficha !== null) capacidadConquistada = ficha.nombre;
       }
     }
 
@@ -471,6 +466,12 @@ export class Partida {
       puntosPlaneta: puntosPlaneta,
       puntosJugador: puntosJugador,
       puntosIA: puntosIA,
+      saludPlanetaAntes: saludPlanetaAntes,
+      saludPlanetaDespues: this.saludPlaneta,
+      evolucionJugadorAntes: evolucionJugadorAntes,
+      evolucionJugadorDespues: this.jugador.getEvolucion(),
+      evolucionIAAntes: evolucionIAAntes,
+      evolucionIADespues: this.ia.getEvolucion(),
       capacidadConquistada: capacidadConquistada,
       explicacion: explicacion,
       cambioDeIdeaIA: false
