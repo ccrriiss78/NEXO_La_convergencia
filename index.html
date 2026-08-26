@@ -5,7 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO — La Convergencia</title>
-  <link rel="stylesheet" href="./css/style.css?v=config-v12-botones-jugar">
+  <link rel="stylesheet" href="./css/style.css?v=config-v12-botones-jugar-v9">
+  <!-- Pantalla de partida aislada para que su diseño sea fácil de estudiar/modificar -->
+  <link rel="stylesheet" href="./css/partida.css?v=partida-cinematica-v16-centro-libre">
 </head>
 <body>
 
@@ -427,139 +429,247 @@
 
 
   <!-- ============================================================
-       PANTALLA 4: JUEGO · DISEÑO PROPIO + LÓGICA INTEGRADA
+       PANTALLA 4: PARTIDA · EXPERIENCIA CINEMATOGRÁFICA / SEMI-DIEGÉTICA · V7
+       ------------------------------------------------------------------------
+       La interfaz rodea la escena: esfera y mundo quedan libres en el centro.
+       Se conservan los IDs que necesita la lógica del juego.
   ============================================================ -->
   <section id="pantalla-juego" class="pantalla planeta-estable">
-    <header id="marcadores" class="cabecera-juego">
-      <div class="marcador marcador-humano">
-        <span class="etiqueta-marcador">Evolución Humana</span>
-        <div class="barra-progreso">
-          <div id="barra-evolucion-humana" class="relleno-barra relleno-humano"></div>
-        </div>
-        <span id="valor-evolucion-humana" class="valor-marcador">0</span>
-      </div>
 
-      <div class="marcador marcador-planeta">
-        <span class="etiqueta-marcador">Salud del Planeta</span>
-        <div class="barra-progreso">
-          <div id="barra-salud-planeta" class="relleno-barra relleno-planeta"></div>
-        </div>
-        <span id="valor-salud-planeta" class="valor-marcador">30 / 60</span>
-      </div>
+    <!-- CAPAS REVERSIBLES DEL PLANETA. El JS solo cambia la clase planeta-*; CSS
+         mezcla las imágenes con opacidad. No hay canvas ni animación compleja. -->
+    <div class="escena-partida-capas" aria-hidden="true">
+      <div class="capa-mundo capa-mundo-base"></div>
+      <div class="capa-mundo capa-mundo-fragil"></div>
+      <div class="capa-mundo capa-mundo-critico"></div>
+      <div class="capa-mundo capa-mundo-colapso"></div>
+      <div class="capa-mundo capa-mundo-catastrofe"></div>
+<div class="vigneta-partida"></div>
+    </div>
 
-      <div class="marcador marcador-ia">
-        <span class="etiqueta-marcador">Evolución IA</span>
-        <div class="barra-progreso">
-          <div id="barra-evolucion-ia" class="relleno-barra relleno-ia"></div>
+    <!-- LOGO ESTÁTICO: usa exactamente el asset de portada. Aquí NO se anima la X. -->
+    <img
+      class="logo-partida-estatico"
+      src="./assets/images/portada/logo/nexo-logo-completo-x-estatica-v7.webp"
+      alt="NEXO — La Convergencia"
+    >
+
+    <!-- CRISIS DE RONDA: contexto + modificador y consecuencias visibles ANTES de jugar. -->
+    <header id="marcadores" class="cabecera-juego cabecera-partida-cinematica">
+      <div class="cabecera-ronda-crisis">
+        <div class="linea-ronda-planeta">
+          <p id="contador-ronda" class="contador-ronda">Ronda 1 de 12</p>
+          <p class="estado-planeta-mini">Crisis planeta <strong id="valor-salud-planeta">50%</strong></p>
         </div>
-        <span id="valor-evolucion-ia" class="valor-marcador">0</span>
+        <div id="tarjeta-crisis" class="tarjeta-crisis tarjeta-crisis-cinematica">
+          <span class="etiqueta-crisis">CRISIS DE LA RONDA</span>
+          <strong id="nombre-crisis">—</strong>
+          <p id="descripcion-crisis" class="descripcion-crisis">—</p>
+        </div>
+        <div id="tarjeta-carta-crisis" class="tarjeta-carta-crisis tarjeta-crisis-extra oculta">
+          <span id="tipo-carta-crisis" class="etiqueta-crisis">MODIFICADOR</span>
+          <strong id="nombre-carta-crisis">—</strong>
+          <p id="descripcion-carta-crisis">—</p>
+          <p id="impacto-carta-crisis" class="impacto-carta-crisis">—</p>
+        </div>
+        <p id="regla-ronda" class="regla-ronda">Convergencia: + suma al planeta · Fracaso: −3 planeta</p>
+        <div class="puntos-en-juego-nexo" aria-live="polite">
+          <span>IMPACTO SOBRE EL PLANETA</span>
+          <strong id="puntos-en-juego">CONVERGENCIA: suma de las 2 cartas · FRACASO: −3</strong>
+        </div>
+
+        <!-- BARRA DEL PLANETA · V5
+             Se mantiene el mismo id que ya actualiza la lógica del juego.
+             Solo hacemos visible la barra y sus marcas 0/25/50/75/100. -->
+        <div class="bloque-barra-planeta" aria-label="Crisis actual del planeta">
+          <span class="etiqueta-barra-planeta">CRISIS DEL PLANETA</span>
+          <div class="barra-planeta-logica">
+            <div id="barra-salud-planeta"></div>
+            <span class="marca-planeta marca-planeta-25"></span>
+            <span class="marca-planeta marca-planeta-50"></span>
+            <span class="marca-planeta marca-planeta-75"></span>
+          </div>
+          <div class="numeros-barra-planeta"><span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span></div>
+        </div>
       </div>
     </header>
 
-    <div id="tablero" class="zona-juego tablero-integrado">
-      <aside class="lado avatar-lateral avatar-humano-lateral">
-        <div id="avatar-humano" class="avatar avatar-humano tipo-nexo-01 nivel-0" aria-hidden="true"></div>
-        <h3 id="nombre-humano">NEXO 01</h3>
-        <p class="titulo-lista">Capacidades conquistadas</p>
-        <ul id="capacidades-humano" class="lista-capacidades"></ul>
+    <!-- NÚCLEO NEXO V12
+         La X procede del mismo asset estático de la portada.
+         Bajo ella hay una esfera raster propia. Las líneas SVG solo sirven
+         para las descargas entre nodos durante la CONVERGENCIA. -->
+    <div id="nexo-nucleo-partida" class="nexo-nucleo-partida" aria-hidden="true">
+      <img class="nucleo-esfera-partida nucleo-esfera-reposo" src="./assets/images/partida/nucleo/esfera-nexo-v15-reposo.png" alt="">
+      <img class="nucleo-esfera-partida nucleo-esfera-convergencia" src="./assets/images/partida/nucleo/esfera-nexo-v15-convergencia.png" alt="">
+      <svg class="red-descargas-nucleo" viewBox="0 0 100 100" focusable="false">
+        <line class="descarga-nucleo descarga-verde" x1="21" y1="47" x2="35" y2="31"></line>
+        <line class="descarga-nucleo descarga-verde" x1="35" y1="31" x2="48" y2="44"></line>
+        <line class="descarga-nucleo descarga-verde" x1="28" y1="65" x2="48" y2="44"></line>
+        <line class="descarga-nucleo descarga-verde" x1="23" y1="55" x2="42" y2="69"></line>
+        <line class="descarga-nucleo descarga-azul" x1="79" y1="46" x2="65" y2="30"></line>
+        <line class="descarga-nucleo descarga-azul" x1="65" y1="30" x2="52" y2="44"></line>
+        <line class="descarga-nucleo descarga-azul" x1="72" y1="66" x2="52" y2="44"></line>
+        <line class="descarga-nucleo descarga-azul" x1="78" y1="55" x2="58" y2="69"></line>
+        <line class="descarga-nucleo descarga-centro" x1="35" y1="31" x2="50" y2="50"></line>
+        <line class="descarga-nucleo descarga-centro" x1="65" y1="30" x2="50" y2="50"></line>
+        <line class="descarga-nucleo descarga-centro" x1="28" y1="65" x2="50" y2="50"></line>
+        <line class="descarga-nucleo descarga-centro" x1="72" y1="66" x2="50" y2="50"></line>
+      </svg>
+      <img class="nucleo-x-partida" src="./assets/images/partida/nucleo/x-nexo-estatica-transparente-v15.png" alt="">
+    </div>
+
+    <div id="tablero" class="zona-juego tablero-cinematico">
+
+      <!-- ======================= HUMANO ======================= -->
+      <aside class="panel-personaje panel-personaje-humano">
+        <div class="cabecera-personaje">
+          <div class="retrato-personaje marco-humano">
+            <div id="avatar-humano" class="avatar avatar-humano nivel-0" aria-label="Avatar Humano"></div>
+          </div>
+          <div class="identidad-personaje">
+            <h3 id="nombre-humano" class="nombre-personaje nombre-humano">HUMANO</h3>
+            <span class="microetiqueta">EVOLUCIÓN HUMANA</span>
+            <strong id="valor-evolucion-humana" class="porcentaje-personaje porcentaje-humano">0%</strong>
+          </div>
+        </div>
+
+        <!-- ANIMACIÓN BARRA: misma animación para ambos bandos; solo cambia el color. -->
+        <div class="bloque-barra-personaje bloque-barra-humano">
+          <div class="barra-evolucion-nexo barra-evolucion-humano">
+            <div id="barra-evolucion-humana" class="relleno-barra-nexo relleno-humano"></div>
+            <span class="marca-barra marca-25"></span><span class="marca-barra marca-50"></span><span class="marca-barra marca-75"></span>
+          </div>
+          <div class="numeros-barra"><span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span></div>
+        </div>
+
+        <div class="bloque-fortalezas fortalezas-humano">
+          <p class="titulo-lista">FORTALEZAS PROPIAS</p>
+          <ul class="lista-fortalezas-propias"><li>Creatividad</li><li>Intuición</li><li>Empatía</li><li>Adaptación</li></ul>
+        </div>
+        <div class="bloque-fortalezas fortalezas-adquiridas-humano">
+          <p class="titulo-lista">ADQUIRIDAS DE LA IA</p>
+          <ul id="capacidades-humano" class="lista-capacidades"></ul>
+        </div>
+        <div id="panel-memoria" class="panel-memoria oculta">
+          <p class="titulo-lista">MEMORIA · ÚLTIMAS JUGADAS IA</p>
+          <ul id="lista-memoria"></ul>
+        </div>
       </aside>
 
-      <main id="centro" class="zona-central">
-        <p id="contador-ronda" class="contador-ronda">Ronda 1 de 12</p>
-
-        <div id="tarjeta-crisis" class="tarjeta-crisis">
-          <p class="etiqueta-crisis">Crisis de la ronda</p>
-          <h3 id="nombre-crisis">—</h3>
-        </div>
-
-        <div id="tarjeta-carta-crisis" class="tarjeta-carta-crisis oculta">
-          <span id="tipo-carta-crisis" class="etiqueta-crisis">Carta de crisis</span>
-          <h4 id="nombre-carta-crisis">—</h4>
-          <p id="descripcion-carta-crisis">—</p>
-        </div>
-
-        <p id="pista-analisis" class="pista oculta"></p>
-        <p id="pista-chispa" class="pista oculta"></p>
-
-        <div id="cartas-ia" class="cartas-ia">
-          <p class="instruccion">Cartas que la IA todavía puede jugar</p>
-          <div id="lista-cartas-ia" class="mano-pequena"></div>
-          <p id="carta-vista-ia" class="pista oculta"></p>
-        </div>
-
-        <div id="declaracion-ia" class="declaracion-ia">
-          <span class="etiqueta-marcador">La IA ha declarado</span>
-          <h3 id="apuesta-declarada">—</h3>
-        </div>
-
-        <div id="zona-apuesta" class="zona-apuesta">
-          <p class="instruccion">Elige tu apuesta</p>
-          <button id="btn-apuesta-par" class="boton boton-apuesta" type="button" data-apuesta="par">PAR</button>
-          <button id="btn-apuesta-impar" class="boton boton-apuesta" type="button" data-apuesta="impar">IMPAR</button>
-          <p id="consecuencia-apuesta" class="consecuencia"></p>
-        </div>
-
-        <div id="zona-mano" class="zona-mano">
-          <p id="instruccion-mano" class="instruccion">Tu carta</p>
-          <div id="mano-cartas" class="mano-cartas"></div>
-        </div>
-
-        <div id="acciones" class="acciones">
-          <button id="btn-confirmar-jugada" class="boton boton-principal" type="button" disabled>Confirmar</button>
-          <button id="btn-cambiar" class="boton boton-poder oculta" type="button">Cambiar carta · Precisión</button>
-          <button id="btn-siguiente" class="boton boton-principal oculta" type="button">Siguiente ronda</button>
-        </div>
-
-        <div id="zona-velocidad" class="zona-velocidad oculta">
-          <p class="instruccion">Velocidad · elige con qué resultado te quedas</p>
-          <div class="opciones-velocidad">
-            <button id="btn-veloz-a" class="boton boton-poder" type="button"></button>
-            <button id="btn-veloz-b" class="boton boton-poder" type="button"></button>
+      <!-- ======================= CENTRO / DECISIÓN ======================= -->
+      <main id="centro-partida" class="zona-central zona-central-cinematica">
+        <div class="pistas-partida">
+          <p id="pista-analisis" class="pista oculta"></p>
+          <div id="pista-chispa" class="pista-chispa-nexo oculta" aria-live="polite">
+            <div class="texto-pista-chispa">
+              <span>EVENTO · CHISPA CREATIVA</span>
+              <strong>La IA ha elegido esta carta</strong>
+              <p id="texto-chispa">Su apuesta PAR/IMPAR permanece oculta.</p>
+            </div>
+            <img id="carta-chispa-ia" src="./assets/images/partida/cartas/ia/carta-ia-1.webp" alt="Carta elegida por la IA">
           </div>
         </div>
 
-        <div id="zona-resolucion" class="zona-resolucion oculta" aria-live="polite">
+        <!-- Este bloque desaparece entero al resolver, evitando solapamientos. -->
+        <div id="zona-decision-activa" class="zona-decision-activa">
+          <div id="zona-declaraciones" class="zona-declaraciones-nexo">
+            <section id="zona-apuesta" class="zona-apuesta declaracion-humano">
+              <p class="etiqueta-declaracion">TÚ DECLARAS</p>
+              <div class="botones-declaracion">
+                <button id="btn-apuesta-par" class="boton boton-apuesta" type="button" data-apuesta="par">PAR</button>
+                <button id="btn-apuesta-impar" class="boton boton-apuesta" type="button" data-apuesta="impar">IMPAR</button>
+              </div>
+            </section>
+            <div class="versus-declaraciones" aria-hidden="true">VS</div>
+            <section id="declaracion-ia" class="declaracion-ia declaracion-ia-cinematica">
+              <span class="etiqueta-declaracion">LA IA DECLARA</span>
+              <h3 id="apuesta-declarada">—</h3>
+            </section>
+            <p id="consecuencia-apuesta" class="consecuencia"></p>
+          </div>
+
+          <!-- CARTAS HUMANO. Se muestran en perspectiva para parecer apoyadas sobre la mesa. -->
+          <div id="zona-mano" class="zona-mano zona-mano-cinematica">
+            <p id="instruccion-mano" class="instruccion instruccion-principal">ELIGE TU CARTA Y DECLARA</p>
+            <div id="mano-cartas" class="mano-cartas"></div>
+          </div>
+
+          <!-- BOTÓN RESOLVER. Solo se habilita con PAR/IMPAR + carta seleccionada. -->
+          <div id="acciones" class="acciones acciones-partida">
+            <button id="btn-confirmar-jugada" class="boton boton-confirmar-nexo" type="button" disabled>RESOLVER RONDA</button>
+            <button id="btn-cambiar" class="boton boton-poder oculta" type="button">Cambiar carta · Precisión</button>
+          </div>
+
+          <div id="zona-velocidad" class="zona-velocidad oculta">
+            <p class="instruccion">Velocidad · elige con qué resultado te quedas</p>
+            <div class="opciones-velocidad">
+              <button id="btn-veloz-a" class="boton boton-poder" type="button"></button>
+              <button id="btn-veloz-b" class="boton boton-poder" type="button"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESOLUCIÓN. Sustituye a la decisión; nunca se superpone con PAR/IMPAR. -->
+        <div id="zona-resolucion" class="zona-resolucion zona-resultado-cinematica oculta" aria-live="polite">
           <div class="cartas-reveladas">
-            <div class="carta-revelada">
-              <p>Tu carta</p>
-              <span id="valor-carta-jugador">?</span>
-              <small id="apuesta-jugador">—</small>
-            </div>
+            <div class="carta-revelada"><p>Tu carta</p><span id="valor-carta-jugador">?</span><small id="apuesta-jugador">—</small></div>
             <span class="signo-suma">+</span>
-            <div class="carta-revelada">
-              <p>Carta IA</p>
-              <span id="valor-carta-ia">?</span>
-              <small id="apuesta-ia">—</small>
-            </div>
+            <div class="carta-revelada"><p>Carta IA</p><span id="valor-carta-ia">?</span><small id="apuesta-ia">—</small></div>
             <span class="signo-suma">=</span>
-            <div class="carta-revelada">
-              <p>Suma</p>
-              <span id="valor-suma">?</span>
-              <small id="resultado-paridad">—</small>
-            </div>
+            <div class="carta-revelada"><p>Suma</p><span id="valor-suma">?</span><small id="resultado-paridad">—</small></div>
           </div>
           <p id="resultado-ronda" class="resultado-ronda">—</p>
+          <div class="cambios-ronda">
+            <span id="cambio-planeta-ronda" class="cambio-ronda">Planeta 0</span>
+            <span id="cambio-humano-ronda" class="cambio-ronda">Humano 0</span>
+            <span id="cambio-ia-ronda" class="cambio-ronda">IA 0</span>
+          </div>
           <p id="detalle-ronda" class="detalle-ronda">—</p>
+          <button id="btn-siguiente" class="boton boton-siguiente-ronda oculta" type="button">Siguiente ronda</button>
         </div>
       </main>
 
-      <aside class="lado avatar-lateral avatar-ia-lateral">
-        <div id="avatar-ia" class="avatar avatar-ia nivel-0" aria-hidden="true"></div>
-        <h3>Inteligencia Artificial</h3>
-        <p class="titulo-lista">Capacidades conquistadas</p>
-        <ul id="capacidades-ia" class="lista-capacidades"></ul>
+      <!-- ======================= IA ======================= -->
+      <aside class="panel-personaje panel-personaje-ia">
+        <div class="cabecera-personaje cabecera-personaje-ia">
+          <div class="identidad-personaje identidad-personaje-ia">
+            <h3 class="nombre-personaje nombre-ia">IA</h3>
+            <span class="microetiqueta">EVOLUCIÓN IA</span>
+            <strong id="valor-evolucion-ia" class="porcentaje-personaje porcentaje-ia">0%</strong>
+          </div>
+          <div class="retrato-personaje marco-ia">
+            <div id="avatar-ia" class="avatar avatar-ia nivel-0" aria-label="Avatar IA"></div>
+          </div>
+        </div>
 
-        <div id="panel-memoria" class="panel-memoria oculta">
-          <p class="titulo-lista">Memoria · últimas jugadas de la IA</p>
-          <ul id="lista-memoria"></ul>
+        <div class="bloque-barra-personaje bloque-barra-ia">
+          <div class="barra-evolucion-nexo barra-evolucion-ia">
+            <div id="barra-evolucion-ia" class="relleno-barra-nexo relleno-ia"></div>
+            <span class="marca-barra marca-25"></span><span class="marca-barra marca-50"></span><span class="marca-barra marca-75"></span>
+          </div>
+          <div class="numeros-barra"><span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span></div>
+        </div>
+
+        <div class="bloque-fortalezas fortalezas-ia">
+          <p class="titulo-lista">FORTALEZAS PROPIAS</p>
+          <ul class="lista-fortalezas-propias"><li>Memoria</li><li>Precisión</li><li>Análisis</li><li>Velocidad</li></ul>
+        </div>
+        <div class="bloque-fortalezas fortalezas-adquiridas-ia">
+          <p class="titulo-lista">ADQUIRIDAS DEL HUMANO</p>
+          <ul id="capacidades-ia" class="lista-capacidades"></ul>
+        </div>
+
+        <!-- CARTAS IA: se ven los números disponibles; las usadas desaparecen. -->
+        <div id="cartas-ia" class="cartas-ia cartas-ia-cinematica">
+          <p class="instruccion">CARTAS DISPONIBLES IA</p>
+          <div id="lista-cartas-ia" class="mano-pequena"></div>
+          <p id="carta-vista-ia" class="pista oculta"></p>
         </div>
       </aside>
     </div>
 
     <div class="controles-sistema-juego" aria-label="Controles de la partida">
-      <button id="btn-ajustes" class="boton-icono-ajustes" type="button" aria-label="Abrir ajustes" aria-expanded="false" title="Ajustes">
-        <span aria-hidden="true">⚙</span>
-      </button>
+      <button id="btn-ajustes" class="boton-icono-ajustes" type="button" aria-label="Abrir ajustes" aria-expanded="false" title="Ajustes"><span aria-hidden="true">⚙</span></button>
       <button id="btn-abandonar" class="boton boton-secundario boton-abandonar-juego" type="button">Abandonar</button>
     </div>
   </section>
@@ -589,13 +699,16 @@
     </div>
   </div>
 
-  <!-- Evento especial: conserva los nombres visuales de tu HTML. -->
-  <div id="superposicion-evento" class="superposicion oculta">
-    <div class="tarjeta-evento">
-      <p class="etiqueta-crisis">Evento especial</p>
-      <h3 id="nombre-evento">—</h3>
-      <p id="descripcion-evento">—</p>
-      <button id="btn-cerrar-evento" class="boton boton-principal" type="button">Continuar</button>
+  <!-- EVENTO ESPECIAL CINEMATOGRÁFICO. Cada evento carga una ilustración propia. -->
+  <div id="superposicion-evento" class="superposicion superposicion-evento-nexo oculta">
+    <div class="tarjeta-evento tarjeta-evento-nexo">
+      <img id="imagen-evento" class="imagen-evento" src="./assets/images/partida/eventos/evento-punto-sin-retorno.webp" alt="">
+      <div class="contenido-evento">
+        <p class="etiqueta-crisis">EVENTO ESPECIAL</p>
+        <h3 id="nombre-evento">—</h3>
+        <p id="descripcion-evento">—</p>
+        <button id="btn-cerrar-evento" class="boton boton-principal boton-evento-continuar" type="button">CONTINUAR</button>
+      </div>
     </div>
   </div>
 
@@ -645,6 +758,6 @@
 
   <!-- NEXO V5 · efecto visual aislado de la lógica del juego -->
   <script type="module" src="./src/efecto-energia-esfera.js?v=config-v10-esfera-alineada"></script>
-  <script type="module" src="./dist/main.js?v=integracion-1"></script>
+  <script type="module" src="./dist/main.js?v=partida-cinematica-v16-centro-libre"></script>
 </body>
 </html>

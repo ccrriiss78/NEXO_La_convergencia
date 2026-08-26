@@ -1,0 +1,568 @@
+/* =====================================================================
+   NEXO — PANTALLA DE PARTIDA CINEMATOGRÁFICA · V15
+   ---------------------------------------------------------------------
+   Esta hoja SOLO gobierna la pantalla de partida y sus overlays.
+   La lógica de selección/resolución sigue en dist/main.js.
+
+   ANIMACIONES marcadas en comentarios:
+   - cartas: flotación / hover / selección
+   - barras: pulso al cruzar 25%
+   - avatar: evolución avance/retroceso
+   - convergencia: esfera + X + descargas
+   - fracaso/recuperación: feedback global
+   ===================================================================== */
+
+#pantalla-juego{
+  --verde:#91e542; --verde-claro:#dfff9a; --verde-prof:#173c1d;
+  --azul:#27b5ff; --azul-claro:#a9eaff; --azul-prof:#092d46;
+  --oro:#e7ab58; --blanco:#eefaff; --suave:rgba(228,242,247,.72);
+  --oscuro:rgba(2,9,14,.82); --cristal:rgba(2,12,17,.62);
+  position:relative; width:100%; height:100vh; min-height:680px; overflow:hidden;
+  isolation:isolate; background:#02070b; color:var(--blanco);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+}
+#pantalla-juego.activa{display:block;padding:0}
+#pantalla-juego *{box-sizing:border-box}
+
+/* ---------- MUNDO: fondo base + estados reversibles ---------- */
+.escena-partida-capas,.capa-mundo,.vigneta-partida{position:absolute;inset:0;pointer-events:none}
+.escena-partida-capas{z-index:-5;overflow:hidden}
+.capa-mundo{background:center/cover no-repeat;opacity:0;transition:opacity 1.15s ease,filter 1.15s ease}
+.capa-mundo-base{background-image:url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');opacity:1}
+.capa-mundo-fragil{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-25-49-equilibrio-fragil.webp')}
+.capa-mundo-critico{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-50-74-equilibrio-critico.webp')}
+.capa-mundo-colapso{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-75-99-colapso-inminente.webp')}
+.capa-mundo-catastrofe{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-100-catastrofe.webp')}
+#pantalla-juego.planeta-fragil .capa-mundo-fragil{opacity:.62}
+#pantalla-juego.planeta-critico .capa-mundo-critico{opacity:.78}
+#pantalla-juego.planeta-colapso .capa-mundo-colapso{opacity:.92}
+#pantalla-juego.planeta-catastrofe .capa-mundo-catastrofe{opacity:1}
+.vigneta-partida{z-index:1;background:linear-gradient(90deg,rgba(0,5,7,.82) 0%,rgba(0,8,10,.34) 17%,transparent 31%,transparent 69%,rgba(0,7,12,.34) 83%,rgba(0,5,9,.84) 100%),linear-gradient(180deg,rgba(0,0,0,.22),transparent 22%,transparent 68%,rgba(0,0,0,.66) 100%)}
+
+/* ---------- LOGO auténtico de portada ---------- */
+.logo-partida-estatico{position:absolute;z-index:30;top:15px;left:24px;width:225px;max-width:15vw;height:auto;pointer-events:none;filter:drop-shadow(0 0 12px rgba(72,220,207,.16))}
+
+/* ---------- CABECERA: ronda + crisis + puntos + planeta ---------- */
+.cabecera-partida-cinematica{position:absolute;z-index:24;top:0;left:50%;transform:translateX(-50%);width:min(920px,58vw);pointer-events:none}
+.cabecera-ronda-crisis{padding:13px 26px 14px;background:linear-gradient(180deg,rgba(2,10,16,.95),rgba(3,12,17,.78) 75%,rgba(3,12,17,.48));border:1px solid rgba(151,211,224,.22);border-top:0;border-radius:0 0 24px 24px;box-shadow:0 18px 48px rgba(0,0,0,.34);text-align:center;backdrop-filter:blur(8px)}
+.linea-ronda-planeta{display:flex;justify-content:center;align-items:center;gap:38px;margin:0 0 6px}
+#pantalla-juego .contador-ronda,#pantalla-juego .estado-planeta-mini{margin:0;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:rgba(238,249,252,.88);font-weight:600}
+#pantalla-juego .estado-planeta-mini strong{font-size:18px;color:white;letter-spacing:.06em}
+.tarjeta-crisis-cinematica{display:grid!important;grid-template-columns:auto auto;justify-content:center;align-items:baseline;gap:4px 14px!important;margin:0!important;padding:0!important;background:none!important;border:0!important}
+.etiqueta-crisis{color:var(--oro)!important;font-size:12px!important;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+#nombre-crisis{font-size:clamp(22px,1.7vw,30px)!important;line-height:1.05;color:white!important;letter-spacing:.01em}
+.descripcion-crisis{grid-column:1/-1;margin:6px 0 0!important;font-size:13px!important;line-height:1.25;color:rgba(235,246,249,.78)!important}
+.tarjeta-crisis-extra{margin:8px auto 0!important;padding:8px 13px!important;max-width:760px;border:1px solid rgba(169,221,229,.12)!important;border-radius:12px;background:rgba(0,8,12,.36)!important;display:grid!important;grid-template-columns:auto auto 1fr;gap:2px 10px;align-items:center}
+.tarjeta-crisis-extra strong{font-size:13px}.tarjeta-crisis-extra>p{margin:0;font-size:11px;color:var(--suave)}
+.impacto-carta-crisis{grid-column:1/-1;text-align:center!important;font-weight:700!important}
+.crisis-positiva .etiqueta-crisis,.crisis-positiva .impacto-carta-crisis{color:#b8f87f!important}.crisis-negativa .etiqueta-crisis,.crisis-negativa .impacto-carta-crisis{color:#ff9a7d!important}
+.regla-ronda{margin:7px 0 2px!important;font-size:11px!important;color:rgba(229,242,246,.57)!important}
+.puntos-en-juego-nexo{margin:8px auto 5px;padding:7px 16px;width:max-content;max-width:90%;border-top:1px solid rgba(145,229,66,.45);border-bottom:1px solid rgba(39,181,255,.45);background:linear-gradient(90deg,rgba(145,229,66,.05),rgba(255,255,255,.03),rgba(39,181,255,.06));box-shadow:0 0 22px rgba(72,211,218,.08)}
+.puntos-en-juego-nexo span{display:block;font-size:10px;letter-spacing:.22em;color:#b9cbd0}.puntos-en-juego-nexo strong{display:block;margin-top:2px;font-size:14px;color:white;letter-spacing:.035em}
+.bloque-barra-planeta{width:min(640px,82%);margin:6px auto 0}.etiqueta-barra-planeta{display:block;margin-bottom:4px;font-size:10px;letter-spacing:.2em;color:#c8d9dc}
+.barra-planeta-logica{position:relative;display:block!important;height:13px;border:1px solid rgba(217,238,242,.35);border-radius:99px;background:rgba(1,8,11,.8);overflow:visible}
+#barra-salud-planeta{height:100%;width:50%;border-radius:99px;background:linear-gradient(90deg,#8bea49,#cbe448,#ffb34b,#ff5c48);box-shadow:0 0 12px rgba(151,226,82,.42);transition:width .65s ease}
+.marca-planeta{position:absolute;top:-4px;width:1px;height:20px;background:rgba(225,241,244,.34)}.marca-planeta-25{left:25%}.marca-planeta-50{left:50%}.marca-planeta-75{left:75%}
+.numeros-barra-planeta{display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:rgba(224,238,241,.58)}
+
+/* ---------- TABLERO: laterales integrados + centro libre ---------- */
+.tablero-cinematico{position:absolute;z-index:12;inset:165px 10px 18px;display:grid;grid-template-columns:minmax(265px,330px) minmax(600px,1fr) minmax(265px,330px);gap:14px;align-items:end;pointer-events:none}
+.panel-personaje{pointer-events:auto;align-self:end;width:100%;max-width:330px;padding:11px 12px 12px;background:linear-gradient(180deg,rgba(2,11,15,.20),rgba(2,9,13,.76));backdrop-filter:blur(7px);box-shadow:0 12px 45px rgba(0,0,0,.28)}
+.panel-personaje-humano{justify-self:start;border-left:1px solid rgba(145,229,66,.48);border-bottom:1px solid rgba(145,229,66,.2)}
+.panel-personaje-ia{justify-self:end;border-right:1px solid rgba(39,181,255,.48);border-bottom:1px solid rgba(39,181,255,.2)}
+.cabecera-personaje{display:grid;grid-template-columns:145px 1fr;gap:12px;align-items:center}.panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 145px}.panel-personaje-ia .retrato-personaje{grid-column:2}.panel-personaje-ia .identidad-personaje{grid-column:1;grid-row:1;text-align:right}
+.retrato-personaje{position:relative;height:174px;overflow:hidden;background:rgba(1,7,10,.66);clip-path:polygon(8% 0,100% 0,100% 92%,92% 100%,0 100%,0 8%)}
+.marco-humano{border:1px solid rgba(145,229,66,.5);box-shadow:0 0 24px rgba(145,229,66,.09)}.marco-ia{border:1px solid rgba(39,181,255,.5);box-shadow:0 0 24px rgba(39,181,255,.1)}
+.avatar{width:100%;height:100%;background:center/cover no-repeat;transition:filter .5s ease,transform .5s ease}
+.avatar-humano.humano-hombre.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-0-24.webp')}.avatar-humano.humano-hombre.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-25-49.webp')}.avatar-humano.humano-hombre.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-50-74.webp')}.avatar-humano.humano-hombre.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-75-100.webp')}
+.avatar-humano.humano-mujer.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-0-24.webp')}.avatar-humano.humano-mujer.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-25-49.webp')}.avatar-humano.humano-mujer.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-50-74.webp')}.avatar-humano.humano-mujer.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-75-100.webp')}
+.avatar-ia.ia-01.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-0-24.webp')}.avatar-ia.ia-01.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-25-49.webp')}.avatar-ia.ia-01.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-50-74.webp')}.avatar-ia.ia-01.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-75-100.webp')}
+.avatar-ia.ia-02.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-0-24.webp')}.avatar-ia.ia-02.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-25-49.webp')}.avatar-ia.ia-02.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-50-74.webp')}.avatar-ia.ia-02.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-75-100.webp')}
+.identidad-personaje h3{margin:0;color:white;font-size:18px;letter-spacing:.17em;text-transform:uppercase}.nombre-humano{color:var(--verde-claro)!important}.nombre-ia{color:var(--azul-claro)!important}.microetiqueta{display:block;margin-top:7px;font-size:10px;letter-spacing:.08em;color:#a9babf}.porcentaje-personaje{display:block;margin-top:2px;font-size:34px;line-height:1}.porcentaje-humano{color:var(--verde)}.porcentaje-ia{color:var(--azul)}
+.bloque-barra-personaje{margin-top:8px}.barra-evolucion-nexo{position:relative;height:10px;border:1px solid rgba(223,241,244,.30);border-radius:99px;background:rgba(1,7,10,.84)}.relleno-barra-nexo{height:100%;width:0;border-radius:99px;transition:width .6s ease}.relleno-humano{background:linear-gradient(90deg,#79d93c,#d8ff7a);box-shadow:0 0 12px rgba(145,229,66,.48)}.relleno-ia{background:linear-gradient(90deg,#168fdd,#62d3ff);box-shadow:0 0 12px rgba(39,181,255,.5)}
+.marca-barra{position:absolute;top:-4px;width:1px;height:17px;background:rgba(225,242,244,.34)}.marca-25{left:25%}.marca-50{left:50%}.marca-75{left:75%}.numeros-barra{display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:rgba(220,237,240,.59)}
+.bloque-fortalezas{margin-top:8px;padding-top:8px;border-top:1px solid rgba(215,236,240,.12)}.titulo-lista{margin:0 0 6px;font-size:10px;letter-spacing:.09em;color:#b9c7ca;text-transform:uppercase}.lista-fortalezas-propias,.lista-capacidades,#lista-memoria{list-style:none;margin:0;padding:0}.lista-fortalezas-propias{display:flex;flex-wrap:wrap;gap:5px}.lista-fortalezas-propias li,.lista-capacidades li{padding:4px 8px;border-radius:7px;font-size:10px}.panel-personaje-humano .lista-fortalezas-propias li{border:1px solid rgba(145,229,66,.34);color:#e8ffd7}.panel-personaje-ia .lista-fortalezas-propias li{border:1px solid rgba(39,181,255,.35);color:#dff6ff}.lista-capacidades li{border:1px solid rgba(106,179,190,.24);color:#c7d7da;font-style:italic}.panel-memoria{margin-top:8px;padding:8px;border:1px solid rgba(145,229,66,.19);border-radius:10px;background:rgba(2,13,12,.4)}#lista-memoria li{font-size:10px;color:#b9c9cc;line-height:1.5}
+
+/* ---------- CENTRO: decisión + cartas ---------- */
+.zona-central-cinematica{position:relative;align-self:end;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;pointer-events:none;padding-bottom:2px}
+.zona-decision-activa{width:100%;display:flex;flex-direction:column;align-items:center;pointer-events:auto}
+.zona-declaraciones-nexo{position:relative;z-index:18;width:min(840px,95%);display:grid;grid-template-columns:1fr 52px 1.45fr;align-items:center;gap:10px;padding:10px 15px 8px;background:linear-gradient(90deg,rgba(2,18,15,.82),rgba(4,14,18,.78) 44%,rgba(4,22,35,.86));border-top:1px solid rgba(157,224,216,.28);border-bottom:1px solid rgba(103,189,208,.25);box-shadow:0 16px 34px rgba(0,0,0,.3);backdrop-filter:blur(8px)}
+.etiqueta-declaracion{margin:0 0 7px;font-size:10px;letter-spacing:.15em;color:#b7c8cc;text-align:center}.botones-declaracion{display:flex;justify-content:center;gap:12px}.boton-apuesta{min-width:112px;padding:11px 18px;border:1px solid rgba(145,229,66,.52);border-radius:10px;background:rgba(3,16,12,.72);color:#efffde;font-size:17px;font-weight:700;cursor:pointer;transition:.22s ease}.boton-apuesta:hover,.boton-apuesta:focus-visible{transform:translateY(-2px);box-shadow:0 0 22px rgba(145,229,66,.25);outline:none}.boton-apuesta.seleccionada,.boton-apuesta.activo{background:linear-gradient(180deg,#659e2e,#376d1d);box-shadow:0 0 20px rgba(145,229,66,.38)}
+.versus-declaraciones{justify-self:center;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(210,234,239,.24);background:rgba(0,8,12,.72);font-size:12px;color:#dbecef}.declaracion-ia-cinematica{min-height:70px;display:grid;place-items:center;padding:8px 16px;border:1px solid rgba(39,181,255,.5);border-radius:12px;background:rgba(4,29,45,.58);box-shadow:inset 0 0 26px rgba(39,181,255,.05)}.declaracion-ia-cinematica .etiqueta-declaracion{margin:0}.declaracion-ia-cinematica h3{margin:0;color:#9cddff;font-size:34px;letter-spacing:.16em;text-shadow:0 0 18px rgba(39,181,255,.38)}.consecuencia{grid-column:1/-1;margin:2px 0 0!important;text-align:center;font-size:9px!important;line-height:1.3;color:rgba(223,239,243,.60)!important}
+.zona-mano-cinematica{position:relative;z-index:20;width:100%;pointer-events:auto;text-align:center}.instruccion-principal{margin:7px 0 5px;color:#e7f8fb;font-size:11px;letter-spacing:.16em;text-transform:uppercase}.mano-cartas{position:relative;display:flex;justify-content:center;align-items:flex-end;gap:7px;min-height:190px;padding:0 14px 2px;perspective:1000px;pointer-events:auto}
+
+/* ANIMACIÓN CARTAS · sencilla CSS. Visible pero no requiere canvas. */
+.carta-mano{position:relative;z-index:1;width:128px;height:190px;flex:0 0 128px;border:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-color:transparent;font-size:0;color:transparent;cursor:pointer;transform-origin:50% 92%;filter:drop-shadow(0 13px 13px rgba(0,0,0,.46));animation:carta-flotacion 3.5s ease-in-out infinite;transition:transform .22s ease,filter .22s ease,opacity .25s ease;pointer-events:auto}
+.carta-mano:nth-child(1){transform:rotate(-6deg) translateY(8px);animation-delay:-.2s}.carta-mano:nth-child(2){transform:rotate(-3deg) translateY(2px);animation-delay:-.7s}.carta-mano:nth-child(3){transform:translateY(-3px);animation-delay:-1.2s}.carta-mano:nth-child(4){transform:rotate(3deg) translateY(2px);animation-delay:-1.7s}.carta-mano:nth-child(5){transform:rotate(6deg) translateY(8px);animation-delay:-2.2s}
+@keyframes carta-flotacion{0%,100%{filter:drop-shadow(0 13px 13px rgba(0,0,0,.46)) brightness(.96)}50%{filter:drop-shadow(0 18px 17px rgba(0,0,0,.55)) brightness(1.08)}}
+.carta-mano:hover:not(:disabled):not(.descartada),.carta-mano:focus-visible:not(:disabled):not(.descartada){z-index:12;animation:none;transform:translateY(-26px) scale(1.08) rotate(0)!important;filter:drop-shadow(0 25px 22px rgba(0,0,0,.55)) drop-shadow(0 0 17px rgba(145,229,66,.52)) brightness(1.15);outline:none}
+.carta-mano.seleccionada{z-index:13;animation:carta-seleccionada 1.15s ease-in-out infinite;transform:translateY(-33px) scale(1.09) rotate(0)!important;filter:drop-shadow(0 0 18px rgba(145,229,66,.75)) brightness(1.2)}
+@keyframes carta-seleccionada{50%{filter:drop-shadow(0 0 30px rgba(145,229,66,.88)) brightness(1.28)}}
+.carta-mano.descartada,.carta-mano:disabled{opacity:.17;filter:grayscale(.9) brightness(.55);animation:none;cursor:not-allowed}
+.acciones-partida{position:relative;z-index:21;display:flex;justify-content:center;margin-top:1px;pointer-events:auto}.boton-confirmar-nexo{width:300px;height:68px;border:0;background:center/contain no-repeat url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp');font-size:0;color:transparent;cursor:pointer;transition:transform .22s ease,filter .22s ease}.boton-confirmar-nexo:hover:not(:disabled),.boton-confirmar-nexo:focus-visible:not(:disabled){background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp');transform:scale(1.045);filter:brightness(1.1);outline:none}.boton-confirmar-nexo:disabled{opacity:.28;filter:grayscale(.4) brightness(.7);cursor:not-allowed}.boton-poder{margin-left:8px}
+
+/* ---------- IA: cartas disponibles ---------- */
+.mano-ia{margin-top:8px;padding-top:9px;border-top:1px solid rgba(210,234,239,.12)}.mano-ia .titulo-lista{text-align:left}.lista-cartas-ia{display:flex;gap:5px;justify-content:flex-start}.carta-pequena{width:48px;height:78px;border:0;border-radius:4px;background:center/cover no-repeat;box-shadow:0 7px 13px rgba(0,0,0,.35);font-size:0}.carta-vista-ia{margin:7px 0 0;font-size:10px;color:#b6e7ff}.panel-personaje-ia .lista-cartas-ia{justify-content:center}
+
+/* ---------- NÚCLEO NEXO independiente ---------- */
+.nexo-nucleo-partida{position:absolute;z-index:9;left:50%;top:37%;width:160px;height:160px;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 0 14px rgba(113,225,222,.14))}
+.nucleo-esfera-partida,.nucleo-x-partida,.red-descargas-nucleo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.nucleo-esfera-convergencia{opacity:0}.nucleo-x-partida{inset:24%;width:52%;height:52%;left:24%;top:24%;filter:drop-shadow(0 0 7px rgba(130,230,224,.28))}.red-descargas-nucleo{opacity:0;overflow:visible}.descarga-nucleo{stroke-width:1.4;stroke-linecap:round;stroke-dasharray:5 8}.descarga-verde{stroke:#a4ff69}.descarga-azul{stroke:#65d7ff}.descarga-centro{stroke:#eafff7}
+.nexo-nucleo-partida.convergencia-activa{animation:nucleo-expansion .95s ease-out}.nexo-nucleo-partida.convergencia-activa .nucleo-esfera-reposo{opacity:.08}.nexo-nucleo-partida.convergencia-activa .nucleo-esfera-convergencia{opacity:1;animation:esfera-explosion .95s ease-out}.nexo-nucleo-partida.convergencia-activa .nucleo-x-partida{animation:x-explosion .95s ease-out}.nexo-nucleo-partida.convergencia-activa .red-descargas-nucleo{opacity:1;animation:red-descargas .95s ease-out}.nexo-nucleo-partida.convergencia-activa .descarga-nucleo{animation:descarga-viaje .48s linear infinite}
+@keyframes nucleo-expansion{50%{transform:translate(-50%,-50%) scale(1.24)}}@keyframes esfera-explosion{35%{filter:brightness(1.8) drop-shadow(0 0 30px white);transform:scale(1.3)}100%{filter:brightness(1);transform:scale(1)}}@keyframes x-explosion{35%{transform:scale(1.65);filter:brightness(1.7) drop-shadow(0 0 22px white)}100%{transform:scale(1)}}@keyframes red-descargas{0%{transform:scale(.6);opacity:0}35%{opacity:1}100%{transform:scale(1.35);opacity:0}}@keyframes descarga-viaje{to{stroke-dashoffset:-26}}
+
+/* ---------- Pistas / Chispa ---------- */
+.pistas-partida{position:absolute;z-index:26;left:50%;bottom:335px;transform:translateX(-50%);width:min(720px,90%);pointer-events:none}.pista{padding:7px 10px;border-left:2px solid #d6b2ff;background:rgba(6,10,14,.66);font-size:11px}.pista-chispa-nexo{display:grid;grid-template-columns:1fr 94px;gap:14px;align-items:center;padding:12px 15px;border:1px solid rgba(211,164,255,.48);border-radius:13px;background:linear-gradient(90deg,rgba(15,8,20,.92),rgba(5,17,23,.91));box-shadow:0 0 35px rgba(178,97,255,.14);pointer-events:none}.texto-pista-chispa span{font-size:10px;letter-spacing:.17em;color:#d9b1ff}.texto-pista-chispa strong{display:block;margin-top:3px;font-size:19px;color:white}.texto-pista-chispa p{margin:5px 0 0;font-size:12px;color:#cedce0}.pista-chispa-nexo img{width:88px;height:128px;object-fit:cover;filter:drop-shadow(0 0 14px rgba(184,107,255,.3))}
+
+/* ---------- Resultado: sustituye decisión, no se solapa ---------- */
+.zona-resultado-cinematica,.zona-resultado{position:relative;z-index:24;width:min(780px,94%);margin:0 auto 20px;padding:15px 18px;background:rgba(2,12,17,.9);border:1px solid rgba(113,196,212,.25);box-shadow:0 18px 45px rgba(0,0,0,.35);pointer-events:auto}.cartas-reveladas,.ecuacion-ronda{display:flex;justify-content:center;align-items:center;gap:16px}.resultado-carta{min-width:124px;padding:8px 15px;border:1px solid rgba(177,215,222,.2);border-radius:12px;text-align:center}.resultado-carta strong{font-size:28px}.resultado-final-ronda{text-align:center}.resultado-final-ronda h3{margin:10px 0 4px;font-size:24px}.resultado-final-ronda p{margin:3px 0;color:#c9dade;font-size:12px}
+
+/* ---------- Eventos especiales con imagen raster ---------- */
+#modal-evento{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(0,5,9,.74);backdrop-filter:blur(7px)}#modal-evento.oculta{display:none}.contenido-evento{position:relative;width:min(760px,90vw);overflow:hidden;border:1px solid rgba(145,210,220,.34);border-radius:18px;background:#071016;box-shadow:0 30px 90px rgba(0,0,0,.55)}.imagen-evento{display:block;width:100%;height:280px;object-fit:cover;filter:brightness(.7) contrast(1.08)}.texto-evento{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;background:linear-gradient(180deg,transparent 15%,rgba(2,9,13,.42) 48%,rgba(2,9,13,.96) 100%)}.texto-evento h2{margin:4px 0 8px;font-size:30px}.texto-evento p{font-size:15px;line-height:1.45}.texto-evento .boton{align-self:center;margin-top:18px;min-width:180px;padding:11px 20px}
+
+/* ---------- Feedback global ---------- */
+#pantalla-juego.feedback-fracaso{animation:fracaso-vibracion .42s ease-in-out}#pantalla-juego.feedback-fracaso::after,#pantalla-juego.feedback-recuperacion::after{content:'';position:absolute;inset:0;z-index:80;pointer-events:none}#pantalla-juego.feedback-fracaso::after{background:radial-gradient(circle at center,transparent 25%,rgba(150,22,10,.34));animation:flash-fracaso .65s ease-out}#pantalla-juego.feedback-recuperacion::after{background:radial-gradient(circle at center,rgba(212,255,226,.26),rgba(92,229,191,.12) 32%,transparent 70%);animation:flash-recuperacion .72s ease-out}
+#pantalla-juego.feedback-fracaso-fuerte{animation:fracaso-vibracion-fuerte .62s ease-in-out}#pantalla-juego.feedback-recuperacion-fuerte::after{background:radial-gradient(circle at center,rgba(240,255,247,.5),rgba(90,238,196,.19) 35%,transparent 74%);animation:flash-recuperacion .9s ease-out}
+@keyframes fracaso-vibracion{20%{transform:translate(-3px,1px)}40%{transform:translate(3px,-1px)}60%{transform:translate(-2px,1px)}80%{transform:translate(2px,0)}}@keyframes fracaso-vibracion-fuerte{15%{transform:translate(-7px,2px)}30%{transform:translate(7px,-2px)}45%{transform:translate(-5px,2px)}60%{transform:translate(5px,-1px)}75%{transform:translate(-3px,1px)}}@keyframes flash-fracaso{from{opacity:1}to{opacity:0}}@keyframes flash-recuperacion{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+
+/* ANIMACIÓN EVOLUCIÓN AVATAR / BARRA */
+.avatar-evoluciona{animation:avatar-evolucion .82s ease}.avatar-avanza{box-shadow:0 0 34px rgba(126,238,183,.36)}.avatar-retrocede{filter:saturate(.7) contrast(1.08)}@keyframes avatar-evolucion{0%{transform:scale(1);filter:brightness(1)}35%{transform:scale(1.065);filter:brightness(1.65)}100%{transform:scale(1);filter:brightness(1)}}.barra-evoluciona{animation:barra-pulso .78s ease}@keyframes barra-pulso{35%{filter:brightness(1.9);box-shadow:0 0 20px currentColor}}
+
+/* ---------- Controles sistema ---------- */
+.controles-sistema-juego{position:absolute;z-index:35;right:17px;top:12px;display:flex;gap:10px}.controles-sistema-juego button{border:1px solid rgba(90,190,220,.32);background:rgba(1,10,15,.62);color:#d9edf2;border-radius:11px;padding:10px 13px;cursor:pointer}.controles-sistema-juego .btn-abandonar{border-color:rgba(224,75,75,.38);color:#f2b4b4;background:rgba(38,5,8,.62)}
+
+/* Utilidades */
+.oculta{display:none!important}.pantalla:not(.activa){display:none}.zona-velocidad{position:relative;z-index:30;pointer-events:auto}
+
+/* ---------- Responsive ---------- */
+@media(max-width:1350px){.logo-partida-estatico{width:190px}.cabecera-partida-cinematica{width:min(820px,61vw)}.tablero-cinematico{grid-template-columns:285px minmax(500px,1fr) 285px}.cabecera-personaje{grid-template-columns:120px 1fr}.panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 120px}.retrato-personaje{height:150px}.carta-mano{width:112px;height:168px;flex-basis:112px}.mano-cartas{min-height:172px}.nexo-nucleo-partida{width:135px;height:135px}}
+@media(max-height:820px){.cabecera-ronda-crisis{padding-top:8px;padding-bottom:9px}.descripcion-crisis{font-size:11px!important}.puntos-en-juego-nexo{margin-top:4px}.tablero-cinematico{inset:145px 8px 8px}.retrato-personaje{height:136px}.carta-mano{width:102px;height:154px;flex-basis:102px}.mano-cartas{min-height:156px}.zona-declaraciones-nexo{padding-top:7px}.boton-confirmar-nexo{height:56px}.nexo-nucleo-partida{top:35%;width:120px;height:120px}}
+@media(max-width:1050px){#pantalla-juego{overflow:auto;min-height:920px}.tablero-cinematico{position:relative;inset:auto;padding:175px 12px 18px;grid-template-columns:1fr 1fr}.zona-central-cinematica{grid-column:1/-1;grid-row:1}.panel-personaje{max-width:none}.nexo-nucleo-partida{top:315px}.cabecera-partida-cinematica{width:78vw}.logo-partida-estatico{width:155px}.controles-sistema-juego{top:8px}.carta-mano{width:105px;height:162px;flex-basis:105px}}
+
+/* =====================================================================
+   V16 · CENTRO LIBRE + DECLARACIÓN NEXO
+   ---------------------------------------------------------------------
+   Ajustes visuales solicitados:
+   - Cabecera más compacta para liberar la esfera/centro de la escena.
+   - Puntos: sin intervalos desconocidos; se muestra la REGLA REAL.
+   - PAR / IMPAR e IA comparten un mismo lenguaje de cristal fotográfico.
+   - Hover completo (sin cortar el borde superior).
+   - Cartas: un único encuadre base para todas; el número se superpone.
+   ===================================================================== */
+
+/* ---------- Fondo y lectura general ---------- */
+#pantalla-juego .vigneta-partida{
+  background:
+    linear-gradient(90deg,rgba(0,5,7,.72) 0%,rgba(0,8,10,.20) 16%,transparent 29%,transparent 71%,rgba(0,7,12,.20) 84%,rgba(0,5,9,.74) 100%),
+    linear-gradient(180deg,rgba(0,0,0,.12),transparent 24%,transparent 72%,rgba(0,0,0,.54) 100%);
+}
+
+/* ---------- Cabecera compacta: deja libre el centro ---------- */
+#pantalla-juego .cabecera-partida-cinematica{
+  top:0;
+  width:min(720px,44vw);
+  z-index:32;
+}
+#pantalla-juego .cabecera-ronda-crisis{
+  padding:9px 20px 10px;
+  border:1px solid rgba(152,217,229,.20);
+  border-top:0;
+  border-radius:0 0 18px 18px;
+  background:
+    linear-gradient(180deg,rgba(2,10,15,.92),rgba(3,12,17,.72)),
+    url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background-size:auto,1200px auto;
+  background-position:center,50% 24%;
+  background-blend-mode:normal,soft-light;
+  box-shadow:0 14px 34px rgba(0,0,0,.25),inset 0 -1px rgba(100,220,230,.08);
+  backdrop-filter:blur(2px);
+}
+#pantalla-juego .linea-ronda-planeta{gap:34px;margin-bottom:5px}
+#pantalla-juego .contador-ronda,
+#pantalla-juego .estado-planeta-mini{font-size:12px;letter-spacing:.19em}
+#pantalla-juego .estado-planeta-mini strong{font-size:17px}
+#pantalla-juego .tarjeta-crisis-cinematica{
+  grid-template-columns:auto auto;
+  gap:2px 12px!important;
+}
+#pantalla-juego .etiqueta-crisis{font-size:11px!important}
+#pantalla-juego #nombre-crisis{
+  font-size:clamp(23px,1.55vw,29px)!important;
+  line-height:1.05;
+  text-shadow:0 0 16px rgba(255,255,255,.07);
+}
+#pantalla-juego .descripcion-crisis{
+  margin-top:5px!important;
+  font-size:12px!important;
+  line-height:1.28;
+  color:rgba(240,249,251,.82)!important;
+}
+#pantalla-juego .tarjeta-crisis-extra{
+  margin:6px auto 0!important;
+  padding:5px 10px!important;
+  max-width:630px;
+  grid-template-columns:auto auto 1fr;
+  border:0!important;
+  border-left:1px solid rgba(145,229,66,.34)!important;
+  border-right:1px solid rgba(39,181,255,.34)!important;
+  border-radius:0!important;
+  background:linear-gradient(90deg,rgba(145,229,66,.04),rgba(255,255,255,.025),rgba(39,181,255,.045))!important;
+}
+#pantalla-juego .tarjeta-crisis-extra strong{font-size:12px}
+#pantalla-juego .tarjeta-crisis-extra>p{font-size:10px}
+/* Regla duplicada: la quitamos visualmente; el impacto queda en la franja inferior. */
+#pantalla-juego .regla-ronda{display:none!important}
+#pantalla-juego .puntos-en-juego-nexo{
+  margin:7px auto 4px;
+  width:min(610px,94%);
+  max-width:none;
+  padding:6px 16px 7px;
+  border:0;
+  border-top:1px solid rgba(145,229,66,.33);
+  border-bottom:1px solid rgba(39,181,255,.34);
+  border-radius:0;
+  background:
+    linear-gradient(90deg,rgba(145,229,66,.08),rgba(5,21,24,.73) 22%,rgba(5,21,24,.73) 78%,rgba(39,181,255,.08));
+  box-shadow:0 0 18px rgba(66,206,220,.06);
+  clip-path:none;
+}
+#pantalla-juego .puntos-en-juego-nexo span{
+  font-size:9px;letter-spacing:.23em;color:#bcd0d4
+}
+#pantalla-juego .puntos-en-juego-nexo strong{
+  margin-top:2px;
+  font-size:13px;
+  line-height:1.25;
+  letter-spacing:.025em;
+}
+#pantalla-juego .bloque-barra-planeta{width:min(530px,80%);margin-top:4px}
+#pantalla-juego .etiqueta-barra-planeta{font-size:9px;margin-bottom:3px}
+#pantalla-juego .barra-planeta-logica{height:11px}
+#pantalla-juego .numeros-barra-planeta{font-size:8px;margin-top:3px}
+
+/* ---------- Tablero: laterales abajo y centro visual libre ---------- */
+@media (min-width:1051px){
+  #pantalla-juego.activa{padding:0;gap:0}
+  #pantalla-juego .zona-juego.tablero-cinematico{
+    position:absolute;
+    inset:128px 10px 10px;
+    width:auto;max-width:none;min-height:0;
+    display:grid;
+    grid-template-columns:minmax(270px,315px) minmax(650px,1fr) minmax(270px,315px);
+    gap:18px;
+    align-items:end;
+    padding:0;margin:0;
+    overflow:visible;
+  }
+  #pantalla-juego .zona-central.zona-central-cinematica{
+    width:100%;max-width:none;min-width:0;height:100%;min-height:0;
+    padding:0 0 3px;
+    border:0;border-radius:0;background:transparent;box-shadow:none;
+    overflow:visible;
+    display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+    pointer-events:auto;
+  }
+}
+#pantalla-juego .panel-personaje{
+  align-self:end;
+  height:min(470px,50vh);
+  min-height:405px;
+  max-width:315px;
+  padding:10px 11px 11px;
+  display:flex;flex-direction:column;
+  background:linear-gradient(180deg,rgba(2,11,15,.08),rgba(2,9,13,.69));
+  backdrop-filter:blur(3px);
+}
+#pantalla-juego .panel-personaje-humano{justify-self:start}
+#pantalla-juego .panel-personaje-ia{justify-self:end}
+#pantalla-juego .cabecera-personaje{grid-template-columns:120px 1fr;gap:11px;min-height:150px}
+#pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 120px}
+#pantalla-juego .retrato-personaje{height:150px}
+#pantalla-juego .nombre-personaje{font-size:18px;line-height:1.22}
+#pantalla-juego .porcentaje-personaje{font-size:31px}
+#pantalla-juego .panel-personaje .mano-ia{margin-top:auto}
+#pantalla-juego .panel-personaje .panel-memoria{margin-top:auto}
+
+/* ---------- Núcleo: reserva el hueco central ---------- */
+#pantalla-juego .nexo-nucleo-partida{
+  top:34%;
+  width:250px;
+  height:250px;
+}
+
+/* ---------- Zona de decisión: abajo, no encima de la esfera ---------- */
+#pantalla-juego .zona-decision-activa{
+  width:min(850px,96%);
+  overflow:visible;
+}
+#pantalla-juego .zona-declaraciones-nexo{
+  width:min(810px,96%);
+  grid-template-columns:1fr 48px 1fr;
+  gap:14px;
+  padding:15px 17px 11px;
+  overflow:visible;
+  background:
+    linear-gradient(90deg,rgba(4,19,15,.80),rgba(5,16,19,.75) 48%,rgba(4,25,39,.80));
+  border:0;
+  border-top:1px solid rgba(140,222,205,.28);
+  border-bottom:1px solid rgba(76,190,220,.26);
+  box-shadow:0 14px 34px rgba(0,0,0,.24);
+  backdrop-filter:blur(2px);
+  clip-path:none;
+}
+#pantalla-juego .zona-apuesta,
+#pantalla-juego .botones-declaracion{overflow:visible}
+#pantalla-juego .etiqueta-declaracion{font-size:10px;letter-spacing:.18em;margin-bottom:7px}
+#pantalla-juego .botones-declaracion{gap:14px}
+
+/* PAR / IMPAR: cristal fotográfico de NEXO, sin raster vectorial. */
+#pantalla-juego .zona-apuesta .boton-apuesta{
+  position:relative;
+  min-width:142px;
+  height:54px;
+  padding:0 22px;
+  overflow:hidden;
+  border:1px solid rgba(145,229,66,.48);
+  border-radius:12px;
+  background:
+    linear-gradient(180deg,rgba(18,42,29,.34),rgba(1,13,10,.90)),
+    url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background-size:auto,760px auto;
+  background-position:center,27% 72%;
+  background-blend-mode:normal,soft-light;
+  box-shadow:
+    inset 0 1px 0 rgba(235,255,225,.15),
+    inset 0 -12px 22px rgba(26,98,45,.12),
+    0 8px 20px rgba(0,0,0,.28);
+  color:#f2ffe9;
+  font-size:19px;
+  font-weight:780;
+  letter-spacing:.055em;
+  text-shadow:0 2px 7px rgba(0,0,0,.88);
+  cursor:pointer;
+  transition:transform .20s ease,filter .20s ease,border-color .20s ease,box-shadow .20s ease;
+}
+#pantalla-juego .zona-apuesta .boton-apuesta::before{
+  content:"";
+  position:absolute;inset:4px 7px auto 7px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(220,255,203,.58),transparent);
+  opacity:.55;
+}
+#pantalla-juego .zona-apuesta .boton-apuesta::after{
+  content:"";
+  position:absolute;top:-70%;left:-42%;width:36%;height:240%;
+  transform:rotate(18deg);
+  background:linear-gradient(90deg,transparent,rgba(221,255,222,.22),transparent);
+  transition:left .35s ease;
+  pointer-events:none;
+}
+#pantalla-juego .zona-apuesta .boton-apuesta:hover,
+#pantalla-juego .zona-apuesta .boton-apuesta:focus-visible{
+  transform:translateY(-3px) scale(1.035);
+  border-color:rgba(176,255,105,.92);
+  filter:brightness(1.18) saturate(1.08);
+  box-shadow:
+    inset 0 1px rgba(250,255,242,.22),
+    inset 0 0 22px rgba(127,224,82,.11),
+    0 0 22px rgba(145,229,66,.30),
+    0 12px 24px rgba(0,0,0,.28);
+  outline:none;
+}
+#pantalla-juego .zona-apuesta .boton-apuesta:hover::after,
+#pantalla-juego .zona-apuesta .boton-apuesta:focus-visible::after{left:112%}
+#pantalla-juego .zona-apuesta .boton-apuesta.seleccionada,
+#pantalla-juego .zona-apuesta .boton-apuesta.activo{
+  transform:translateY(-2px) scale(1.025);
+  border-color:#b9ff77;
+  background:
+    linear-gradient(180deg,rgba(74,130,54,.52),rgba(2,21,13,.92)),
+    url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background-size:auto,760px auto;
+  background-position:center,27% 72%;
+  box-shadow:inset 0 0 28px rgba(145,229,66,.17),0 0 24px rgba(145,229,66,.35);
+  color:#fff;
+}
+
+/* IA: misma pieza visual que PAR/IMPAR, pero con identidad azul. */
+#pantalla-juego .declaracion-ia-cinematica{
+  position:relative;
+  min-height:78px;
+  overflow:hidden;
+  border:1px solid rgba(66,192,255,.55);
+  border-radius:12px;
+  background:
+    linear-gradient(180deg,rgba(23,54,75,.38),rgba(2,18,29,.90)),
+    url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background-size:auto,760px auto;
+  background-position:center,76% 62%;
+  background-blend-mode:normal,soft-light;
+  box-shadow:
+    inset 0 1px rgba(230,249,255,.15),
+    inset 0 -15px 26px rgba(29,126,190,.12),
+    0 10px 25px rgba(0,0,0,.24);
+}
+#pantalla-juego .declaracion-ia-cinematica::before{
+  content:"";
+  position:absolute;inset:5px 9px auto 9px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(177,235,255,.55),transparent);
+}
+#pantalla-juego .declaracion-ia-cinematica .etiqueta-declaracion{margin:0;position:relative;z-index:2}
+#pantalla-juego .declaracion-ia-cinematica h3{
+  position:relative;z-index:2;
+  margin:1px 0 0;
+  color:#a9e7ff;
+  font-size:34px;
+  letter-spacing:.17em;
+  text-shadow:0 0 20px rgba(39,181,255,.42),0 2px 7px rgba(0,0,0,.8);
+}
+#pantalla-juego .versus-declaraciones{
+  width:40px;height:40px;
+  border-color:rgba(190,229,235,.22);
+  background:rgba(1,10,14,.78);
+  box-shadow:inset 0 0 16px rgba(84,193,208,.05);
+}
+#pantalla-juego .consecuencia{
+  grid-column:1/-1;
+  max-width:780px;
+  margin:6px auto 0!important;
+  padding-top:7px;
+  border-top:1px solid rgba(226,242,246,.10);
+  font-size:11px!important;
+  line-height:1.35;
+  color:rgba(235,247,250,.80)!important;
+}
+
+/* ---------- Cartas: un solo encuadre y número superpuesto ---------- */
+#pantalla-juego .zona-mano-cinematica,
+#pantalla-juego .mano-cartas{overflow:visible}
+#pantalla-juego .instruccion-principal{margin:6px 0 3px;font-size:10px}
+#pantalla-juego .mano-cartas{
+  gap:8px;
+  min-height:188px;
+  padding:13px 14px 0;
+  align-items:flex-end;
+}
+#pantalla-juego .carta-mano{
+  position:relative;
+  width:112px;height:174px;flex:0 0 112px;
+  overflow:hidden;
+  border-radius:8px;
+  background-size:contain!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  isolation:isolate;
+}
+/* Tapamos el número horneado de la carta maestra y pintamos el valor real. */
+#pantalla-juego .carta-mano::before{
+  display:flex!important;
+  content:attr(data-valor)!important;
+  position:absolute;
+  z-index:3;
+  left:3px;right:3px;top:2px;
+  height:31px;
+  align-items:center;justify-content:center;
+  background:linear-gradient(180deg,rgba(0,9,11,.98),rgba(0,9,11,.90) 74%,rgba(0,9,11,.18));
+  color:#f4fff0;
+  font-size:24px;
+  font-weight:800;
+  line-height:1;
+  text-shadow:0 0 10px rgba(145,229,66,.35);
+  pointer-events:none;
+}
+#pantalla-juego .carta-mano::after{display:none!important}
+#pantalla-juego .carta-mano:nth-child(1){transform:rotate(-3deg) translateY(5px)}
+#pantalla-juego .carta-mano:nth-child(2){transform:rotate(-1.5deg) translateY(1px)}
+#pantalla-juego .carta-mano:nth-child(3){transform:translateY(-2px)}
+#pantalla-juego .carta-mano:nth-child(4){transform:rotate(1.5deg) translateY(1px)}
+#pantalla-juego .carta-mano:nth-child(5){transform:rotate(3deg) translateY(5px)}
+#pantalla-juego .carta-mano:hover:not(:disabled):not(.descartada),
+#pantalla-juego .carta-mano:focus-visible:not(:disabled):not(.descartada){z-index:32}
+#pantalla-juego .carta-mano.seleccionada{z-index:34}
+
+/* Mini-cartas IA: mismo encuadre base y número real encima. */
+#pantalla-juego .carta-pequena{
+  position:relative;
+  width:46px;height:72px;
+  overflow:hidden;
+  background-size:contain!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+#pantalla-juego .carta-pequena::before{
+  content:attr(data-valor);
+  position:absolute;z-index:3;left:1px;right:1px;top:0;height:15px;
+  display:grid;place-items:center;
+  background:rgba(0,10,15,.90);
+  color:#dff7ff;font-size:11px;font-weight:800;
+}
+
+/* ---------- Acción ---------- */
+#pantalla-juego .acciones-partida{margin-top:4px;min-height:70px;overflow:visible;pointer-events:auto}
+#pantalla-juego .acciones .boton-confirmar-nexo,
+#pantalla-juego #btn-siguiente.boton-siguiente-ronda{
+  position:relative;z-index:45;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:330px;height:76px;
+  margin:0 auto;padding:0 34px;
+  border:0;border-radius:0;
+  background-color:transparent;
+  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp');
+  background-repeat:no-repeat;background-position:center;background-size:contain;
+  overflow:visible;
+  color:#f5feff;
+  font-size:18px;font-weight:760;letter-spacing:.105em;text-transform:uppercase;
+  text-shadow:0 2px 9px #000,0 0 12px rgba(93,220,230,.28);
+  cursor:pointer;pointer-events:auto;
+  transition:transform .20s ease,filter .20s ease;
+}
+#pantalla-juego .acciones .boton-confirmar-nexo:hover:not(:disabled),
+#pantalla-juego .acciones .boton-confirmar-nexo:focus-visible:not(:disabled),
+#pantalla-juego #btn-siguiente.boton-siguiente-ronda:hover,
+#pantalla-juego #btn-siguiente.boton-siguiente-ronda:focus-visible{
+  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp');
+  background-size:contain;
+  transform:translateY(-3px) scale(1.025);
+  filter:brightness(1.13) drop-shadow(0 0 14px rgba(62,211,225,.33));
+  outline:none;
+}
+#pantalla-juego .acciones .boton-confirmar-nexo:disabled{opacity:.28;filter:grayscale(.42) brightness(.72);cursor:not-allowed;transform:none}
+#pantalla-juego #btn-siguiente.boton-siguiente-ronda{margin-top:9px;z-index:70;opacity:1}
+#pantalla-juego #btn-siguiente.oculta{display:none!important}
+#pantalla-juego #zona-resolucion{position:relative;z-index:60;pointer-events:auto!important;overflow:visible}
+#pantalla-juego #zona-resolucion *{pointer-events:auto}
+
+/* ---------- Responsive portátil ---------- */
+@media (max-height:860px) and (min-width:1051px){
+  #pantalla-juego .cabecera-partida-cinematica{width:min(680px,42vw)}
+  #pantalla-juego .cabecera-ronda-crisis{padding:7px 18px 8px}
+  #pantalla-juego #nombre-crisis{font-size:24px!important}
+  #pantalla-juego .descripcion-crisis{font-size:11px!important}
+  #pantalla-juego .tarjeta-crisis-extra{margin-top:4px!important;padding:4px 8px!important}
+  #pantalla-juego .puntos-en-juego-nexo{margin-top:5px;padding:5px 12px}
+  #pantalla-juego .bloque-barra-planeta{margin-top:3px}
+  #pantalla-juego .zona-juego.tablero-cinematico{inset:112px 8px 7px}
+  #pantalla-juego .panel-personaje{height:390px;min-height:390px;max-width:285px}
+  #pantalla-juego .cabecera-personaje{grid-template-columns:104px 1fr;min-height:128px}
+  #pantalla-juego .panel-personaje-ia .cabecera-personaje{grid-template-columns:1fr 104px}
+  #pantalla-juego .retrato-personaje{height:128px}
+  #pantalla-juego .zona-declaraciones-nexo{padding:11px 14px 9px}
+  #pantalla-juego .zona-apuesta .boton-apuesta{min-width:128px;height:48px;font-size:17px}
+  #pantalla-juego .declaracion-ia-cinematica{min-height:68px}
+  #pantalla-juego .declaracion-ia-cinematica h3{font-size:30px}
+  #pantalla-juego .mano-cartas{min-height:164px;padding-top:10px}
+  #pantalla-juego .carta-mano{width:100px;height:156px;flex-basis:100px}
+  #pantalla-juego .acciones .boton-confirmar-nexo,
+  #pantalla-juego #btn-siguiente.boton-siguiente-ronda{width:300px;height:68px;font-size:16px}
+  #pantalla-juego .nexo-nucleo-partida{width:220px;height:220px;top:33%}
+}
+
+@media(max-width:1050px){
+  #pantalla-juego{overflow:auto;min-height:920px}
+  #pantalla-juego .tablero-cinematico{position:relative;inset:auto;padding:160px 12px 18px;grid-template-columns:1fr 1fr}
+  #pantalla-juego .zona-central-cinematica{grid-column:1/-1;grid-row:1}
+  #pantalla-juego .panel-personaje{max-width:none}
+  #pantalla-juego .nexo-nucleo-partida{top:300px}
+  #pantalla-juego .cabecera-partida-cinematica{width:76vw}
+  #pantalla-juego .logo-partida-estatico{width:155px}
+  #pantalla-juego .controles-sistema-juego{top:8px}
+  #pantalla-juego .carta-mano{width:96px;height:149px;flex-basis:96px}
+}

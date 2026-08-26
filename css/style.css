@@ -1327,39 +1327,15 @@ h1, h2, h3, h4 {
   color: var(--color-texto-secundario);
 }
 
-.mano-cartas {
-  display: flex;
-  justify-content: center;
-  gap: 0.6rem;
-  margin-bottom: var(--espacio-md);
-}
 
-.carta-mano {
-  width: 55px;
-  height: 75px;
-  border-radius: 8px;
-  border: 1px solid var(--color-borde);
-  background-color: var(--color-fondo-panel);
-  color: var(--color-texto);
-  font-size: 1.4rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease;
-}
 
-.carta-mano:hover {
-  transform: translateY(-6px);
-}
 
-.carta-mano.seleccionada {
-  border-color: var(--color-humano-claro);
-  color: var(--color-humano-claro);
-}
 
-.carta-mano:disabled {
-  opacity: 0.25;
-  cursor: not-allowed;
-}
+
+
+
+
+
 
 /* =====================================================================
    PANTALLA 6 — EVENTO ESPECIAL (superposición)
@@ -1479,15 +1455,9 @@ h1, h2, h3, h4 {
     margin-top: 0;
   }
 
-  .mano-cartas {
-    flex-wrap: wrap;
-  }
+  
 
-  .carta-mano {
-    width: 48px;
-    height: 65px;
-    font-size: 1.2rem;
-  }
+  
 
   .cartas-reveladas {
     flex-wrap: wrap;
@@ -1655,14 +1625,7 @@ h1, h2, h3, h4 {
   text-align: left;
 }
 
-.cartas-ia,
-.declaracion-ia,
-.zona-apuesta,
-.zona-mano,
-.zona-velocidad {
-  width: 100%;
-  margin-top: 0.85rem;
-}
+
 
 .cartas-ia {
   padding: 0.65rem;
@@ -1730,18 +1693,9 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 14px rgba(133, 219, 146, 0.2);
 }
 
-.zona-mano {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.7rem;
-}
 
-.carta-mano.descartada {
-  opacity: 0.24;
-  cursor: not-allowed;
-  transform: none;
-}
+
+
 
 .acciones,
 .opciones-velocidad {
@@ -1915,13 +1869,7 @@ h1, h2, h3, h4 {
     margin-bottom: 0.45rem;
   }
 
-  #pantalla-juego .cartas-ia,
-  #pantalla-juego .declaracion-ia,
-  #pantalla-juego .zona-apuesta,
-  #pantalla-juego .zona-mano,
-  #pantalla-juego .zona-velocidad {
-    margin-top: 0.42rem;
-  }
+  
 
   #pantalla-juego .cartas-ia,
   #pantalla-juego .declaracion-ia {
@@ -1932,19 +1880,11 @@ h1, h2, h3, h4 {
     font-size: clamp(1.1rem, 2.4vh, 1.4rem);
   }
 
-  #pantalla-juego .zona-mano {
-    gap: 0.35rem;
-  }
+  
 
-  #pantalla-juego .mano-cartas {
-    margin-bottom: 0.35rem;
-  }
+  
 
-  #pantalla-juego .carta-mano {
-    width: clamp(42px, 5.4vh, 50px);
-    height: clamp(58px, 7.3vh, 68px);
-    font-size: 1.15rem;
-  }
+  
 
   #pantalla-juego .acciones,
   #pantalla-juego .opciones-velocidad {
