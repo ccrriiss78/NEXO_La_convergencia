@@ -1,23 +1,27 @@
 # NEXO — La Convergencia
 
-Videojuego de cartas para un jugador contra una Inteligencia Artificial, inspirado en la Morra y ambientado en una crisis ecológica global.
+Videojuego de cartas Humano vs IA basado en la mecánica PAR / IMPAR de la Morra y ambientado en una crisis ecológica global.
 
-## Estado de esta versión
+## Estado actual del proyecto
 
-Este README describe el comportamiento real de **NEXO V21**. Sustituye los documentos de propuesta y las notas de versiones intermedias.
+Este README documenta el comportamiento del juego integrado hasta **V22.37**. Sustituye las descripciones funcionales de versiones anteriores cuando exista alguna diferencia.
 
-La versión incluye:
+La versión actual incluye:
 
 - portada e introducción narrativa en cuatro bloques;
-- configuración de avatares y duración;
+- configuración de nombre, avatar Humano, avatar IA y duración de partida;
 - partidas de 8, 12 o 16 rondas y modo libre;
-- declaración previa de la IA;
-- resultados de Convergencia, Rivalidad y Fracaso;
-- evolución reversible de Humano e IA;
-- Crisis del Planeta, cartas de crisis y eventos;
-- capacidades conquistables;
-- evolución visual de avatares y planeta;
-- desenlaces, perfiles finales y persistencia local.
+- declaración previa PAR / IMPAR de la IA;
+- resultados de **Convergencia, Rivalidad y Fracaso**;
+- Crisis del Planeta y evolución reversible de Humano e IA;
+- cuatro estados visuales de evolución para cada avatar;
+- cinco cartas/modificadores de crisis y cinco eventos especiales;
+- ocho fortalezas conquistables con activaciones contextuales;
+- Manual / Cómo jugar accesible durante la experiencia;
+- avisos visuales diferenciados para modificadores positivos, negativos y mixtos;
+- desenlaces y perfiles finales;
+- persistencia local de jugadores y preferencias;
+- pruebas automáticas con `npm test`.
 
 ## Historia
 
@@ -25,36 +29,17 @@ Los primeros años del siglo XXII están marcados por sucesivas crisis ecológic
 
 La integración de la tecnología y la IA ha mejorado profundamente la vida humana, pero también ha incrementado la demanda de energía, agua, minerales e infraestructuras. Esa presión creciente sobre los recursos ha contribuido al deterioro del planeta.
 
-La humanidad desarrolla la IA más avanzada jamás creada: capaz de analizar millones de datos, anticipar escenarios y encontrar soluciones imposibles para una mente humana. Sin embargo, carece de creatividad, intuición, empatía y juicio moral. La humanidad conserva esas capacidades, pero necesita la precisión y la potencia de cálculo de la IA.
+La humanidad desarrolla una IA capaz de analizar enormes cantidades de datos, anticipar escenarios y encontrar soluciones imposibles para una sola mente humana. Sin embargo, carece de capacidades como creatividad, intuición, empatía y adaptación humana. La humanidad conserva esas fortalezas, pero necesita la memoria, precisión, análisis y velocidad de procesamiento de la IA.
 
-Ninguna dispone por sí sola de todo lo necesario. Humano e IA deberán encontrar una solución capaz de frenar y revertir la crisis antes de que alcance un punto irreversible. Pueden converger y combinar sus capacidades o evolucionar mediante la rivalidad, incorporando cada una las fortalezas de la otra. De esa tensión nace el **Protocolo NEXO**.
-
-## Portada e introducción
-
-El lema actual de la portada es:
-
-> Un planeta ante un futuro devastador.  
-> Dos inteligencias decidirán su destino.  
-> Converger o rivalizar.  
-> El futuro es ahora.
-
-La introducción conserva una navegación manual de cuatro bloques:
-
-1. Crisis planetaria y presión tecnológica sobre los recursos.
-2. Potencia y límites de la Inteligencia Artificial.
-3. Capacidades humanas y necesidad de una solución conjunta.
-4. Convergencia, Rivalidad y nacimiento del Protocolo NEXO.
-
-El contenido narrativo, el progreso, los botones y la cabecera forman una composición común situada en la zona segura del fondo para mantener visibles las figuras Humano e IA.
+Ninguna dispone por sí sola de todo lo necesario. Humano e IA deberán encontrar una solución capaz de frenar la crisis antes de que alcance un punto irreversible. Pueden converger y combinar sus capacidades o rivalizar y conquistar las fortalezas del contrario. De esa tensión nace el **Protocolo NEXO**.
 
 ## Objetivo
 
-El objetivo no es limitarse a sobrevivir. Humano e IA deben intentar frenar y revertir el deterioro planetario mientras deciden qué relación construir entre ellos.
+El objetivo es mantener al planeta con vida mientras Humano e IA evolucionan y deciden qué relación construir.
 
-La partida obliga a equilibrar dos impulsos:
-
-- **Convergencia:** ambos interpretan correctamente la ronda y el planeta se recupera.
-- **Rivalidad:** uno se impone, evoluciona y conquista una capacidad del contrario, mientras el perdedor retrocede.
+- **Convergencia:** ambos aciertan la paridad de la suma y la Crisis del Planeta mejora según las reglas de la ronda.
+- **Rivalidad:** solo uno acierta; el vencedor evoluciona y puede conquistar una fortaleza del contrario.
+- **Fracaso:** ninguno acierta; la Crisis del Planeta empeora.
 
 La evolución individual puede proporcionar ventajas, pero no sirve de nada si el planeta colapsa.
 
@@ -62,7 +47,8 @@ La evolución individual puede proporcionar ventajas, pero no sirve de nada si e
 
 Antes de comenzar se puede elegir:
 
-- avatar humano;
+- nombre del jugador;
+- avatar Humano;
 - avatar de la IA;
 - duración de 8, 12 o 16 rondas;
 - modo libre (`∞`).
@@ -71,166 +57,282 @@ La selección predeterminada es de 12 rondas.
 
 ## Flujo de una ronda
 
-1. Comienza una nueva crisis ecológica.
-2. Puede aparecer una carta de crisis que modifica la puntuación de esa ronda.
-3. Cada cuatro rondas se activa un evento especial no repetido mientras queden eventos disponibles.
-4. La IA selecciona su carta y **declara primero** PAR o IMPAR.
-5. El jugador ve esa declaración y elige su propia apuesta y carta.
-6. Se revelan las cartas y se calcula la suma.
-7. La paridad real se compara con ambas apuestas.
-8. Se aplica Convergencia, Rivalidad o Fracaso.
-9. La interfaz muestra los cambios de Crisis, evolución y capacidades.
-10. El jugador avanza a la siguiente ronda.
+1. Se presenta una crisis ecológica.
+2. Puede aparecer una carta de crisis que modifica las reglas de esa ronda.
+3. Cada cuatro rondas puede activarse un evento especial.
+4. La IA selecciona su carta y declara primero PAR o IMPAR.
+5. El jugador ve esa declaración y elige su apuesta y carta.
+6. Las fortalezas disponibles pueden aportar información o alterar la decisión cuando cumplen su condición de activación.
+7. Se revelan las cartas y se calcula la suma.
+8. Se resuelve Convergencia, Rivalidad o Fracaso.
+9. Se actualizan Crisis del Planeta, evolución y fortalezas conquistadas.
+10. Se muestra el panel de resolución y se avanza a la siguiente ronda.
 
-La mano contiene las cartas del 1 al 5. Cada carta usada se descarta; al agotarse el ciclo, la mano vuelve a estar disponible.
+La mano contiene cartas del 1 al 5. Las cartas usadas se descartan y se recuperan al comenzar un nuevo ciclo de mano.
 
-## Resolución
+## Resolución base
 
 | Resultado | Condición | Efecto base |
 |---|---|---|
-| **Convergencia** | Ambos aciertan la paridad | La salud del planeta aumenta en la suma de las cartas. Ninguno evoluciona. |
-| **Rivalidad humana** | Solo acierta el jugador | El Humano avanza la suma, la IA retrocede la misma cantidad y el Humano conquista la siguiente capacidad disponible. |
-| **Rivalidad IA** | Solo acierta la IA | La IA avanza la suma, el Humano retrocede la misma cantidad y la IA conquista la siguiente capacidad disponible. |
-| **Fracaso** | Ninguno acierta | La salud del planeta pierde 3 puntos. |
+| **Convergencia** | Humano e IA aciertan la paridad | La Crisis del Planeta se reduce según la suma de las cartas, salvo que un modificador indique otra cosa. |
+| **Rivalidad humana** | Solo acierta el Humano | El Humano evoluciona, la IA retrocede y el Humano puede conquistar la siguiente fortaleza IA disponible. |
+| **Rivalidad IA** | Solo acierta la IA | La IA evoluciona, el Humano retrocede y la IA puede conquistar la siguiente fortaleza humana disponible. |
+| **Fracaso** | Ninguno acierta | La Crisis del Planeta aumenta 3 puntos, salvo modificadores o eventos. |
 
-La evolución nunca baja de 0. La salud del planeta se mantiene entre 0 y 100.
+Los porcentajes se mantienen dentro de sus límites válidos.
 
 ## Crisis del Planeta
 
-Internamente el juego conserva la **salud** del planeta, que comienza en 50 y puede alcanzar un máximo de 100. La interfaz muestra el valor inverso como **Crisis del Planeta**:
+El juego conserva internamente la salud del planeta y la interfaz la presenta como **Crisis del Planeta**:
 
 - salud 100 = crisis 0 %;
 - salud 50 = crisis 50 %;
 - salud 0 = crisis 100 % y colapso.
 
-La presentación visual del planeta cambia por tramos conforme aumenta la crisis.
+Las ocho crisis narrativas son:
 
-Las ocho crisis narrativas son incendios forestales, contaminación oceánica, sequía prolongada, pérdida de biodiversidad, desertificación, residuos electrónicos, calentamiento global y escasez energética.
+- Incendios forestales
+- Contaminación oceánica
+- Sequía prolongada
+- Pérdida de biodiversidad
+- Desertificación
+- Residuos electrónicos
+- Calentamiento global
+- Escasez energética
 
-## Cartas de crisis
+### Evolución visual del planeta
 
-Una carta de crisis aparece aproximadamente en una de cada tres rondas y se revela antes de que el jugador decida:
+La pantalla de partida utiliza un fondo base y capas independientes para representar el deterioro del planeta sin crear combinaciones de fondos para cada estado de Humano e IA.
 
-| Carta | Efecto ejecutable |
-|---|---|
-| **Energía Renovable** | Duplica la recuperación obtenida por Convergencia. |
-| **Economía Circular** | Añade 3 puntos a la recuperación por Convergencia. |
-| **Incendio Forestal** | Si no hay Convergencia, añade 3 puntos de daño al planeta. |
-| **Sequía** | La suma de las cartas aumenta la crisis, incluso si hay Convergencia. |
-| **Punto de Inflexión** | Duplica cualquier cambio del planeta e impide conquistar capacidades. |
+Assets actuales:
 
-## Eventos
+- `fondo-partida-v15-ciudad-integrada-salud-inicial.webp`
+- `capa-planeta-v15-25-49-equilibrio-fragil.webp`
+- `capa-planeta-v15-50-74-equilibrio-critico.webp`
+- `capa-planeta-v15-75-99-colapso-inminente.webp`
+- `capa-planeta-v15-100-catastrofe.webp`
 
-Los eventos aparecen cada cuatro rondas y modifican una sola ronda:
+Estas capas pueden revisarse artísticamente en futuras iteraciones sin cambiar la lógica del juego.
+
+## Cartas de crisis / modificadores
+
+Una carta de crisis puede aparecer antes de que el jugador tome su decisión:
+
+| Carta | Tipo | Efecto ejecutable |
+|---|---|---|
+| **Energía Renovable** | Positiva | Duplica la reducción de Crisis obtenida por Convergencia. |
+| **Economía Circular** | Positiva | Añade 3 puntos extra a la reducción de Crisis por Convergencia. |
+| **Incendio Forestal** | Negativa | Si no hay Convergencia, la Crisis aumenta 3 puntos adicionales. |
+| **Sequía** | Negativa | La suma de las cartas aumenta la Crisis incluso si hay Convergencia. |
+| **Punto de Inflexión** | Mixta | Duplica cualquier cambio de Crisis e impide conquistar fortalezas esa ronda. |
+
+### Aviso visual de modificadores — V22.37
+
+El panel **IMPACTO EN ESTA RONDA** cambia de jerarquía visual según el tipo de modificador:
+
+- **Negativo:** borde y halo rojo, con varios pulsos de entrada para atraer la atención.
+- **Positivo:** halo verde/cian más suave.
+- **Mixto:** halo ámbar/naranja.
+
+El efecto de entrada no es continuo y respeta `prefers-reduced-motion`.
+
+## Eventos especiales
+
+Los eventos aparecen cada cuatro rondas y afectan a una sola ronda:
 
 | Evento | Efecto ejecutable |
 |---|---|
-| **Tormenta solar** | Desactiva todas las capacidades conquistadas. |
-| **Cumbre de emergencia** | Duplica la recuperación obtenida por Convergencia. |
-| **Sobrecarga de datos** | Oculta la pista de Análisis y hace que la carta de la IA valga `+1`. |
+| **Tormenta solar** | Desactiva temporalmente las fortalezas conquistadas. |
+| **Cumbre de emergencia** | Duplica la reducción de Crisis obtenida por Convergencia. |
+| **Sobrecarga de datos** | Bloquea Análisis y Precisión y hace que la carta IA cuente `+1` en la suma. |
 | **Chispa creativa** | Revela la carta de la IA antes de apostar. |
-| **Punto sin retorno** | Un Fracaso causa 6 puntos de daño en lugar de 3. |
+| **Punto sin retorno** | Un Fracaso aumenta la Crisis 6 puntos en lugar de 3. |
 
-### Discrepancia conocida
+## Fortalezas conquistables
 
-El texto interno de **Sobrecarga de datos** afirma que también bloquea Precisión. En V21, el código ejecutable no bloquea el control de Precisión: únicamente bloquea la pista de Análisis y suma `+1` al valor de la carta de la IA. Este README documenta el comportamiento real.
+Las fortalezas se conquistan en orden durante una Rivalidad. No se seleccionan manualmente.
 
-## Capacidades
+### Regla de interfaz: ADQUIRIDA ≠ ACTIVA
 
-Las capacidades se conquistan en orden fijo durante una Rivalidad. No existe una pantalla de selección.
+Una fortaleza conquistada permanece disponible durante la partida, pero **el aviso grande de activación solo debe aparecer cuando esa fortaleza está interviniendo realmente en la ronda**.
 
-### Capacidades de la IA que puede conquistar el Humano
+Los laterales utilizan títulos inequívocos:
 
-1. **Memoria:** muestra las tres últimas cartas y apuestas de la IA.
-2. **Precisión:** permite cambiar la carta una vez por ciclo de mano después de confirmar y antes de revelar.
-3. **Análisis predictivo:** muestra si la IA tiende a declarar PAR o IMPAR.
-4. **Velocidad:** permite seleccionar dos cartas y elegir cuál de los dos resultados aplicar.
+- panel Humano: **CONQUISTADAS POR EL HUMANO**;
+- panel IA: **CONQUISTADAS POR LA IA**.
 
-### Capacidades humanas que puede conquistar la IA
+Los avisos contextuales aparecen en el lateral del jugador que posee actualmente la fortaleza, aunque la información obtenida se refiera al rival. Las fortalezas que requieren una decisión directa del jugador, como Precisión, pueden utilizar además un panel central de interacción.
 
-1. **Creatividad:** intenta reutilizar una carta y, en ocasiones, una apuesta con la que ya ganó.
-2. **Intuición:** cada tres rondas puede cambiar su apuesta en el último momento.
-3. **Empatía:** si la salud del planeta baja de 25, revela su carta para favorecer una posible Convergencia.
-4. **Adaptación:** después de dos derrotas seguidas, cambia su apuesta respecto a la anterior.
+### Fortalezas IA que puede conquistar el Humano
 
-Los avatares tienen cuatro niveles visuales: sin capacidades, con 1–2, con 3 y con las 4 capacidades conquistadas.
+1. **Memoria**  
+   Conserva un registro de las últimas jugadas de la IA y permite consultar sus apuestas y cartas recientes. El registro puede permanecer disponible, pero no se presenta permanentemente como una activación nueva.
+
+2. **Precisión**  
+   Una vez por ciclo de mano, después de confirmar la jugada, revela **la carta real de la IA**, no su apuesta PAR/IMPAR. La carta IA queda fijada para esa resolución y el jugador puede:
+   - mantener su carta original;
+   - corregirla antes de resolver.
+
+3. **Análisis predictivo**  
+   Analiza las cartas que todavía puede jugar la IA y recomienda una opción para buscar Convergencia y otra para buscar Rivalidad. El dato mostrado representa **combinaciones posibles**, no una probabilidad estadística sobre la conducta futura de la IA.
+
+4. **Velocidad**  
+   Permite seleccionar **dos cartas**. NEXO compara los resultados que producirían ambas opciones y aplica automáticamente la más beneficiosa para el Humano teniendo en cuenta los cambios reales de evolución y Crisis de la ronda. Las dos cartas seleccionadas se descartan.
+
+### Fortalezas humanas que puede conquistar la IA
+
+1. **Creatividad**  
+   Tras **dos derrotas consecutivas frente al Humano**, la IA rompe su patrón y cambia su apuesta respecto a la anterior. Un Fracaso no cuenta como derrota frente al Humano.
+
+2. **Intuición**  
+   Aproximadamente cada tres rondas, la IA utiliza la elección humana como pista. Si existe una carta disponible que mejora el ajuste a la apuesta que ya había declarado, puede sustituir su carta. El aviso aparece solo si realmente se produce el ajuste.
+
+3. **Empatía**  
+   Cuando el planeta entra en una situación crítica, la IA revela su carta para favorecer que el Humano pueda buscar una posible Convergencia. No fuerza automáticamente la Convergencia.
+
+4. **Adaptación**  
+   Si dispone de ella, la IA recupera y reutiliza una carta con la que anteriormente consiguió una victoria, aprovechando una opción que ya funcionó.
+
+## Evolución visual de los avatares
+
+Existen cuatro personajes base:
+
+- Humano hombre → IA
+- Humano mujer → IA
+- IA femenina → Humano
+- IA masculina → Humano
+
+Cada personaje tiene cuatro estados visuales reversibles:
+
+- 0–24 %
+- 25–49 %
+- 50–74 %
+- 75–100 %
+
+La evolución se representa mediante assets WebP específicos; no depende de filtros, halos o transformaciones CSS para simular el cambio del personaje.
+
+Los 16 retratos se encuentran en:
+
+`assets/images/partida/avatares-evolucion/`
+
+Cuando la barra sube o baja y cruza un umbral, se muestra el asset correspondiente al tramo actual.
+
+## Manual / Cómo jugar
+
+El juego incorpora un manual independiente para evitar sobrecargar la introducción narrativa. Puede consultarse desde la experiencia y explica:
+
+- objetivo general;
+- flujo de ronda;
+- PAR / IMPAR;
+- Convergencia, Rivalidad y Fracaso;
+- ocho fortalezas;
+- cartas de crisis;
+- eventos especiales;
+- condiciones de final de partida.
 
 ## Final de partida
 
-Una partida termina cuando ocurre una de estas condiciones:
+Una partida termina cuando ocurre alguna de estas condiciones:
 
-- la salud del planeta llega a 0;
+- el planeta colapsa;
 - finaliza el número de rondas elegido;
-- en modo libre, la salud del planeta llega a 100;
+- en modo libre se alcanza el estado de recuperación establecido;
 - el jugador abandona la partida.
 
-Los desenlaces se calculan en este orden:
+Los desenlaces contemplan:
 
-1. **Colapso:** salud del planeta igual a 0.
-2. **Convergencia Total:** salud superior a 75 y diferencia entre las evoluciones de Humano e IA igual o inferior a 5.
-3. **Supremacía Humana:** el Humano tiene una evolución igual o superior a la IA y no se cumplen las condiciones anteriores.
-4. **Supremacía IA:** la IA tiene más evolución y no se cumplen las condiciones anteriores.
+1. **Colapso**
+2. **Convergencia Total**
+3. **Supremacía Humana**
+4. **Supremacía IA**
+5. **Equilibrio inestable**
 
-La pantalla final muestra también un perfil de evolución calculado a partir de las capacidades conquistadas y el estado del planeta.
-
-## Pantallas
-
-1. **Portada:** identidad de NEXO, lema y acceso al juego.
-2. **Introducción:** historia dividida en cuatro bloques, con avance, retroceso y opción de omitir.
-3. **Configuración:** nombre, avatares y duración.
-4. **Partida:** crisis, declaraciones, cartas, capacidades, evolución y Crisis del Planeta.
-5. **Final:** desenlace, perfil y resumen.
-
-Los eventos y la resolución de ronda se muestran como capas o zonas de la partida, no como modos independientes.
+La pantalla final muestra también un perfil de evolución relacionado con fortalezas conquistadas y estado del planeta.
 
 ## Persistencia y sonido
 
-El navegador utiliza `localStorage` para conservar:
+El navegador utiliza `localStorage` para conservar información local como:
 
-- la mejor marca;
-- los perfiles obtenidos;
-- el estado de activación del sonido;
-- el volumen elegido.
+- jugadores creados;
+- mejor marca de cada jugador;
+- perfiles obtenidos;
+- estado del sonido;
+- volumen.
 
-Los datos son locales al navegador y no se envían a ningún servidor.
+Los datos permanecen en el navegador y no se envían a ningún servidor.
 
-## Estructura del proyecto
+La estructura actual incluye una migración para guardados anteriores y mantiene identificadores internos independientes del nombre visible del jugador.
+
+## Estructura principal del proyecto
 
 ```text
-NEXO_v21/
+NEXO_La_convergencia_cris/
 ├── index.html
 ├── css/
 │   ├── style.css
 │   └── partida.css
 ├── src/
-│   ├── main.ts
-│   ├── Partida.ts
+│   ├── Carta.ts
 │   ├── Jugador.ts
+│   ├── Partida.ts
 │   ├── ia.ts
-│   └── tipos.ts
+│   ├── tipos.ts
+│   ├── main.ts
+│   └── efecto-energia-esfera.js
 ├── dist/
 │   ├── main.js
-│   ├── Partida.js
+│   ├── Carta.js
 │   ├── Jugador.js
+│   ├── Partida.js
 │   ├── ia.js
+│   ├── tipos.js
+│   ├── Evento.js
 │   ├── interfaz.js
 │   ├── datos.js
 │   └── almacenamiento.js
-└── assets/
-    └── images/
+├── tests/
+│   ├── functional.mjs
+│   ├── fortalezas.mjs
+│   ├── player-storage.mjs
+│   └── player-migration.mjs
+├── assets/
+│   ├── audio/
+│   └── images/
+├── package.json
+├── package-lock.json
+└── tsconfig.json
 ```
 
-`src/` contiene el código fuente principal y `dist/` los módulos JavaScript que ejecuta el navegador.
+`dist/` contiene los módulos JavaScript que ejecuta actualmente el navegador. Parte de la arquitectura mantiene archivos fuente TypeScript en `src/`, por lo que los cambios funcionales deben mantener sincronizados los archivos correspondientes cuando proceda.
 
-## Ejecución
+## Ejecución local
 
-Al utilizar módulos JavaScript, conviene abrir el proyecto mediante un servidor local, por ejemplo con la extensión **Live Server** de VS Code. También puede utilizarse:
+Puede abrirse con **Live Server** desde VS Code.
+
+También puede utilizarse:
 
 ```bash
-python -m http.server 8000
+npm run serve
 ```
 
-Después se abre `http://localhost:8000` en el navegador.
+El script incluido utiliza un servidor HTTP local en el puerto `8765`.
+
+## Pruebas
+
+Ejecutar:
+
+```bash
+npm test
+```
+
+Actualmente se ejecutan cuatro grupos de pruebas:
+
+1. `tests/functional.mjs` — comprobaciones funcionales principales.
+2. `tests/fortalezas.mjs` — lógica y coherencia de las ocho fortalezas.
+3. `tests/player-storage.mjs` — progreso independiente de jugadores.
+4. `tests/player-migration.mjs` — migración de guardados anteriores.
+
+Antes de realizar un commit importante conviene ejecutar `npm test` y comprobar manualmente en navegador los cambios visuales o de interacción.
 
 ## Tecnologías
 
@@ -239,7 +341,10 @@ Después se abre `http://localhost:8000` en el navegador.
 - TypeScript
 - JavaScript ES Modules
 - Web Storage (`localStorage`)
+- Node.js únicamente para scripts de prueba/desarrollo
 
-## Alcance de V21
+## Estado de trabajo tras V22.37
 
-V21 es una versión jugable completa. Las referencias internas a números de versiones anteriores en comentarios o nombres de recursos describen la evolución técnica de determinados elementos visuales; no representan pantallas o modos alternativos activos.
+La versión documentada incorpora las mejoras acumuladas de avatares evolutivos, fortalezas, manual, Precisión, Velocidad, organización de avisos por propietario y alertas visuales de modificadores.
+
+Los próximos cambios artísticos del planeta pueden desarrollarse como una fase independiente para poder versionarlos en Git mediante commits específicos sin mezclar de nuevo lógica, interfaz y assets.
