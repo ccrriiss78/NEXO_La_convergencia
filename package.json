@@ -4,7 +4,8 @@
   "description": "Juego de cartas Humano vs IA basado en la Morra, desarrollo con TypeScript\r NEXO\r LA CONVERGENCIA\r Dos inteligencias · Un planeta · Una misma evolución\r Documento de diseño de la propuesta fusionada\r Videojuego de cartas basado en la mecánica tradicional de la Morra (PAR / IMPAR)\r Agosto 2026",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/functional.mjs && node tests/fortalezas.mjs && node tests/player-storage.mjs && node tests/player-migration.mjs",
+    "serve": "python -m http.server 8765"
   },
   "repository": {
     "type": "git",
@@ -13,7 +14,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/Freundxarxa/NEXO_La_convergencia/issues"
   },

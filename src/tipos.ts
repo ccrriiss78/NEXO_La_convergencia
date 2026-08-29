@@ -21,7 +21,8 @@ export type Desenlace =
   | "COLAPSO"
   | "CONVERGENCIA TOTAL"
   | "SUPREMACIA HUMANA"
-  | "SUPREMACIA IA";
+  | "SUPREMACIA IA"
+  | "EQUILIBRIO INESTABLE";
 
 /**
  * Ficha de una carta de crisis (las que modifican la puntuación de la ronda).
@@ -84,8 +85,8 @@ export type ResumenRonda = {
   evolucionIADespues: number;
   capacidadConquistada: string;
   explicacion: string;
-  // true si la IA usó Intuición y cambió su apuesta a última hora.
-  cambioDeIdeaIA: boolean;
+  // true si la IA usó Intuición para revisar su carta antes de revelar.
+  intuicionIA: boolean;
 };
 
 /** Resultado final de la partida, con desenlace y perfil de evolución. */
