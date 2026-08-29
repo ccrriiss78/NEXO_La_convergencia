@@ -258,22 +258,6 @@ h1, h2, h3, h4 {
   background-repeat: no-repeat;
   background-size: cover;
 }
-
-.nodo-convergencia {
-  position: absolute;
-  z-index: 1;
-  top: clamp(6rem, 13.5vh, 8.2rem);
-  left: clamp(14rem, 22.7vw, 26.5rem);
-  width: clamp(170px, 12vw, 225px);
-  height: auto;
-  opacity: 0.94;
-  filter:
-    drop-shadow(0 0 10px rgba(113, 232, 199, 0.40))
-    drop-shadow(0 0 24px rgba(71, 184, 228, 0.22));
-  pointer-events: none;
-  user-select: none;
-}
-
 .contenido-introduccion {
 
   position: relative;
@@ -809,11 +793,7 @@ h1, h2, h3, h4 {
 }
 
 @media (max-width: 1100px) {
-  .nodo-convergencia {
-    display: none;
-  }
-
-  .contenido-introduccion {
+.contenido-introduccion {
     width: min(56vw, 650px);
     margin-left: auto;
     margin-right: clamp(1rem, 5vw, 3.5rem);
@@ -1406,9 +1386,29 @@ h1, h2, h3, h4 {
 }
 
 .capacidades-conquistadas li {
-  padding: 0.4rem 0;
+  padding: 0.55rem 0.65rem;
   color: var(--color-texto-secundario);
   border-bottom: 1px solid var(--color-borde);
+  background: rgba(5, 18, 24, 0.55);
+  border-radius: 7px;
+}
+
+#pantalla-final .capacidades-conquistadas li strong,
+#pantalla-final .capacidades-conquistadas li small {
+  display: block;
+}
+
+#pantalla-final .capacidades-conquistadas li strong {
+  margin-bottom: 0.22rem;
+  color: #eefcff;
+  font-size: 0.86rem;
+  line-height: 1.2;
+}
+
+#pantalla-final .capacidades-conquistadas li small {
+  color: #aebfc5;
+  font-size: 0.72rem;
+  line-height: 1.35;
 }
 
 /* =====================================================================
@@ -1520,57 +1520,8 @@ h1, h2, h3, h4 {
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
 }
 
-.avatar {
-  width: 104px;
-  height: 104px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--color-borde);
-  background: rgba(4, 16, 22, 0.88);
-  color: var(--color-texto);
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.13em;
-  transition: border-radius 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
-}
-
-.avatar-humano {
-  border-radius: 50%;
-  border-color: var(--color-humano);
-  box-shadow: 0 0 18px rgba(155, 218, 107, 0.18);
-}
-
-.avatar-ia {
-  border-radius: 8px;
-  border-color: var(--color-ia);
-  box-shadow: 0 0 18px rgba(48, 178, 224, 0.18);
-}
-
-.avatar-humano.nivel-0::after { content: "HU"; }
-.avatar-humano.nivel-1::after { content: "HU+"; }
-.avatar-humano.nivel-2::after { content: "H/IA"; }
-.avatar-humano.nivel-3::after { content: "NEXO"; }
-.avatar-ia.nivel-0::after { content: "IA"; }
-.avatar-ia.nivel-1::after { content: "IA+"; }
-.avatar-ia.nivel-2::after { content: "IA/H"; }
-.avatar-ia.nivel-3::after { content: "NEXO"; }
-
-.avatar-humano.nivel-1,
-.avatar-ia.nivel-2 { border-radius: 34%; }
-
-.avatar-humano.nivel-2,
-.avatar-ia.nivel-1 { border-radius: 20%; }
-
-.avatar-humano.nivel-3,
-.avatar-ia.nivel-3 {
-  border-radius: 10px;
-  border-color: #7ee2c9;
-  box-shadow: 0 0 24px rgba(94, 224, 198, 0.34);
-}
-
-.tipo-nexo-01 { border-color: var(--color-humano-claro); }
-.tipo-nexo-02 { border-color: var(--color-ia-claro); }
+/* V22.24: estilos legacy de evolución de avatar eliminados.
+   La pantalla de partida usa exclusivamente css/partida.css y assets WebP por tramo. */
 
 .titulo-lista,
 .instruccion {
@@ -2168,9 +2119,15 @@ h1, h2, h3, h4 {
   }
 
   #pantalla-final .capacidades-conquistadas li {
-    padding: 0.18rem 0;
-    font-size: clamp(0.68rem, 1.35vh, 0.78rem);
-    line-height: 1.2;
+    padding: 0.35rem 0.5rem;
+  }
+
+  #pantalla-final .capacidades-conquistadas li strong {
+    font-size: clamp(0.72rem, 1.45vh, 0.84rem);
+  }
+
+  #pantalla-final .capacidades-conquistadas li small {
+    font-size: clamp(0.64rem, 1.25vh, 0.74rem);
   }
 
   #pantalla-final .coleccion-perfiles {
@@ -2209,6 +2166,100 @@ h1, h2, h3, h4 {
   #pantalla-final .capacidades-conquistadas ul {
     max-height: 46px;
   }
+}
+
+/* =====================================================================
+   JUGADORES LOCALES · CONFIGURACIÓN V22
+   El bloque comparte la franja inferior con las rondas para conservar
+   intacta la composición de avatares Humano / IA.
+   ===================================================================== */
+#pantalla-configuracion .configuracion-inferior {
+  display: grid;
+  grid-template-columns: minmax(230px, .95fr) minmax(285px, 1.05fr);
+  align-items: end;
+  column-gap: clamp(.8rem, 1.8vw, 1.5rem);
+  row-gap: clamp(.35rem, .65vh, .55rem);
+  width: min(94vw, 680px);
+}
+
+#pantalla-configuracion .grupo-jugador,
+#pantalla-configuracion .grupo-rondas {
+  min-width: 0;
+}
+
+#pantalla-configuracion .grupo-jugador {
+  display: grid;
+  gap: .22rem;
+  text-align: left;
+}
+
+#pantalla-configuracion .grupo-jugador label {
+  color: #b7ff55;
+  font-size: clamp(.68rem, .82vw, .84rem);
+  font-weight: 850;
+  letter-spacing: .15em;
+}
+
+#pantalla-configuracion #nombre-jugador {
+  width: 100%;
+  height: 38px;
+  padding: 0 .75rem;
+  border: 1px solid rgba(138, 239, 196, .50);
+  border-radius: 7px;
+  outline: none;
+  background: linear-gradient(90deg, rgba(4, 30, 27, .94), rgba(3, 23, 34, .94));
+  box-shadow: inset 0 0 18px rgba(92, 229, 187, .05), 0 0 18px rgba(72, 219, 193, .08);
+  color: #f2fffc;
+  font: inherit;
+  font-size: .82rem;
+}
+
+#pantalla-configuracion #nombre-jugador:focus {
+  border-color: #9ef1dd;
+  box-shadow: 0 0 22px rgba(77, 220, 199, .22);
+}
+
+#pantalla-configuracion .estado-jugador {
+  min-height: 1.1em;
+  margin: 0;
+  color: #a9c9c7;
+  font-size: clamp(.56rem, .64vw, .68rem);
+  line-height: 1.2;
+}
+
+#pantalla-configuracion .boton-iniciar-nexo {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+#pantalla-juego .nombre-jugador-partida {
+  display: block;
+  max-width: 100%;
+  margin: .08rem 0 .3rem;
+  overflow: hidden;
+  color: #b9f4dc;
+  font-size: clamp(.68rem, .8vw, .86rem);
+  font-weight: 760;
+  letter-spacing: .1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-height: 720px) and (min-width: 761px) {
+  #pantalla-configuracion #nombre-jugador { height: 34px; }
+  #pantalla-configuracion .estado-jugador { font-size: .56rem; }
+}
+
+@media (max-width: 760px) {
+  #pantalla-configuracion .configuracion-inferior {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: min(100%, 460px);
+  }
+  #pantalla-configuracion .grupo-jugador { width: 100%; }
+  #pantalla-configuracion .boton-iniciar-nexo { align-self: center; }
 }
 
 
@@ -2623,6 +2674,123 @@ h1, h2, h3, h4 {
   }
 }
 
+/* V22.20 · Introducción sobre un eje vertical único y centrado en la página. */
+@media (min-width: 901px) {
+  #pantalla-introduccion .contenido-introduccion {
+    top:0!important;
+    left:50%!important;
+    width:min(58vw,760px)!important;
+    height:100svh!important;
+    padding:0!important;
+    transform:translateX(-50%)!important;
+  }
+
+  #pantalla-introduccion .cabecera-introduccion {
+    position:absolute!important;
+    top:clamp(3.8rem,8vh,5.5rem)!important;
+    left:50%!important;
+    width:100%!important;
+    transform:translateX(-50%)!important;
+    text-align:center!important;
+  }
+
+  #pantalla-introduccion .cabecera-intro-fila {
+    position:relative!important;
+    display:flex!important;
+    justify-content:center!important;
+    align-items:center!important;
+    width:100%!important;
+  }
+
+  #pantalla-introduccion .cabecera-introduccion h2 {
+    width:100%!important;
+    margin:0 auto!important;
+    text-align:center!important;
+  }
+
+  #pantalla-introduccion .btn-saltar-intro {
+    position:absolute!important;
+    left:calc(100% + 1.5rem)!important;
+    right:auto!important;
+    top:50%!important;
+    transform:translateY(-50%)!important;
+    white-space:nowrap!important;
+  }
+
+  #pantalla-introduccion .relato-introduccion {
+    position:absolute!important;
+    top:51%!important;
+    left:50%!important;
+    width:100%!important;
+    margin:0!important;
+    transform:translate(-50%,-50%)!important;
+  }
+
+  #pantalla-introduccion .bloque-intro {
+    width:100%!important;
+    margin:0 auto!important;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  #pantalla-introduccion .cabecera-introduccion {top:clamp(1.25rem,4vh,2.25rem)!important}
+  #pantalla-introduccion .relato-introduccion {top:49%!important}
+}
+
+/* V22.4 · Lectura y ritmo narrativo de la introducción. */
+#pantalla-introduccion .relato-introduccion::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -1.1rem -1.5rem;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at center, rgba(1, 8, 12, .38), rgba(1, 8, 12, .18) 62%, transparent 100%);
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+#pantalla-introduccion .bloque-intro.activo {
+  animation: entrada-bloque-intro-v224 430ms cubic-bezier(.2,.72,.25,1) both;
+}
+
+@keyframes entrada-bloque-intro-v224 {
+  from { opacity: 0; transform: translateY(8px); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+#pantalla-introduccion .boton-continuar-imagen.ultimo-paso::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  left: 16%;
+  right: 16%;
+  top: 27%;
+  bottom: 27%;
+  background: linear-gradient(90deg, transparent, rgba(3, 17, 23, .98) 13%, rgba(3, 17, 23, .98) 87%, transparent);
+  pointer-events: none;
+}
+
+#pantalla-introduccion .boton-continuar-imagen.ultimo-paso::after {
+  content: "CONFIGURAR PARTIDA";
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: clamp(.58rem, .67vw, .72rem);
+  font-weight: 750;
+  letter-spacing: .15em;
+  text-shadow: 0 2px 8px #000, 0 0 9px rgba(79, 224, 255, .38);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pantalla-introduccion .bloque-intro.activo {
+    animation: none !important;
+  }
+}
+
 /* En móvil/tablet volvemos al flujo normal para no bloquear contenido. */
 @media (max-width: 900px) {
   .contenido-introduccion {
@@ -2636,62 +2804,6 @@ h1, h2, h3, h4 {
   }
 }
 
-
-/* ==========================================================
-   INTRO v10 — LECTURA + EQUILIBRIO + PULSO HOLOGRÁFICO
-   ========================================================== */
-
-/* Pulso visual sutil del holograma central.
-   Solo CSS: imita un latido suave sin convertirse en foco principal. */
-.nodo-convergencia {
-  transform-origin: center;
-  animation: pulso-nexo 1.2s ease-in-out infinite;
-  will-change: filter, opacity, transform;
-}
-
-@keyframes pulso-nexo {
-  0%, 100% {
-    opacity: 0.88;
-    transform: scale(1);
-    filter:
-      brightness(0.98)
-      drop-shadow(0 0 9px rgba(113, 232, 199, 0.34))
-      drop-shadow(0 0 20px rgba(71, 184, 228, 0.18));
-  }
-
-  12% {
-    opacity: 0.98;
-    transform: scale(1.012);
-    filter:
-      brightness(1.14)
-      drop-shadow(0 0 13px rgba(113, 232, 199, 0.48))
-      drop-shadow(0 0 28px rgba(71, 184, 228, 0.28));
-  }
-
-  24% {
-    opacity: 0.93;
-    transform: scale(1.006);
-    filter:
-      brightness(1.06)
-      drop-shadow(0 0 11px rgba(113, 232, 199, 0.42))
-      drop-shadow(0 0 24px rgba(71, 184, 228, 0.23));
-  }
-
-  42%, 88% {
-    opacity: 0.88;
-    transform: scale(1);
-    filter:
-      brightness(0.98)
-      drop-shadow(0 0 9px rgba(113, 232, 199, 0.34))
-      drop-shadow(0 0 20px rgba(71, 184, 228, 0.18));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nodo-convergencia {
-    animation: none;
-  }
-}
 
 /* Escritorio: la composición sigue en la mitad derecha, pero utiliza
    mejor su ancho y deja márgenes laterales similares y contenidos. */
@@ -2775,185 +2887,6 @@ h1, h2, h3, h4 {
 .cabecera-introduccion h2 {
   border-bottom: 1px solid rgba(112, 236, 191, 0.42);
   padding-bottom: 0.42rem;
-}
-
-
-/* ==========================================================
-   INTRO v11 — X HOLOGRÁFICA JUNTO A “EL PROTOCOLO NEXO”
-   Solo CSS. No requiere cambios en HTML.
-   ========================================================== */
-
-/* Convertimos el título en un bloque con espacio para el símbolo */
-.cabecera-introduccion h2 {
-  position: relative;
-  padding-left: clamp(4.2rem, 4.7vw, 5.2rem);
-}
-
-/* X holográfica construida con pseudo-elemento */
-.cabecera-introduccion h2::before {
-  content: "X";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: clamp(3.5rem, 4vw, 4.5rem);
-  height: clamp(3.5rem, 4vw, 4.5rem);
-
-  display: grid;
-  place-items: center;
-
-  font-size: clamp(2.7rem, 3.2vw, 3.6rem);
-  font-weight: 800;
-  line-height: 1;
-
-  color: transparent;
-  background:
-    linear-gradient(
-      135deg,
-      #79f28b 0%,
-      #6ef0cc 42%,
-      #58d8f5 58%,
-      #56a9ff 100%
-    );
-  -webkit-background-clip: text;
-  background-clip: text;
-
-  text-shadow:
-    0 0 6px rgba(113, 242, 181, 0.25),
-    0 0 12px rgba(94, 224, 225, 0.22),
-    0 0 20px rgba(74, 169, 255, 0.18);
-
-  opacity: 0.78;
-  transform-origin: center;
-  animation: pulso-x-nexo 1.2s ease-in-out infinite;
-
-  pointer-events: none;
-}
-
-/* Halo holográfico muy ligero detrás de la X */
-.cabecera-introduccion h2::after {
-  content: "";
-  position: absolute;
-  left: clamp(0.2rem, 0.25vw, 0.3rem);
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: clamp(3.15rem, 3.7vw, 4.15rem);
-  height: clamp(3.15rem, 3.7vw, 4.15rem);
-
-  border: 1px solid rgba(103, 224, 221, 0.2);
-  border-radius: 50%;
-
-  box-shadow:
-    0 0 10px rgba(108, 237, 194, 0.12),
-    0 0 18px rgba(82, 182, 255, 0.10),
-    inset 0 0 8px rgba(98, 224, 232, 0.08);
-
-  opacity: 0.42;
-  animation: halo-x-nexo 1.2s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* Reponemos la línea decorativa inferior del título con otro selector,
-   porque ::after se usa ahora como halo de la X. */
-.cabecera-introduccion h2 + .linea-titulo-intro,
-.cabecera-introduccion .linea-titulo-intro {
-  display: block;
-}
-
-/* Pulso sutil: más brillo que movimiento */
-@keyframes pulso-x-nexo {
-  0%, 100% {
-    opacity: 0.72;
-    transform: translateY(-50%) scale(1);
-    filter: brightness(1);
-  }
-
-  13% {
-    opacity: 0.96;
-    transform: translateY(-50%) scale(1.025);
-    filter: brightness(1.22)
-            drop-shadow(0 0 7px rgba(103, 237, 194, 0.32))
-            drop-shadow(0 0 11px rgba(78, 177, 255, 0.24));
-  }
-
-  27% {
-    opacity: 0.84;
-    transform: translateY(-50%) scale(1.01);
-    filter: brightness(1.08);
-  }
-
-  45%, 88% {
-    opacity: 0.72;
-    transform: translateY(-50%) scale(1);
-    filter: brightness(1);
-  }
-}
-
-@keyframes halo-x-nexo {
-  0%, 100% {
-    opacity: 0.30;
-    transform: translateY(-50%) scale(0.98);
-  }
-
-  13% {
-    opacity: 0.54;
-    transform: translateY(-50%) scale(1.025);
-  }
-
-  27% {
-    opacity: 0.40;
-    transform: translateY(-50%) scale(1.01);
-  }
-
-  45%, 88% {
-    opacity: 0.30;
-    transform: translateY(-50%) scale(0.98);
-  }
-}
-
-/* En portátiles bajos reducimos un poco el símbolo */
-@media (min-width: 901px) and (max-height: 760px) {
-  .cabecera-introduccion h2 {
-    padding-left: 3.7rem;
-  }
-
-  .cabecera-introduccion h2::before {
-    width: 3.2rem;
-    height: 3.2rem;
-    font-size: 2.5rem;
-  }
-
-  .cabecera-introduccion h2::after {
-    width: 2.9rem;
-    height: 2.9rem;
-  }
-}
-
-/* En móvil, la X sigue presente pero más discreta */
-@media (max-width: 900px) {
-  .cabecera-introduccion h2 {
-    padding-left: 3.25rem;
-  }
-
-  .cabecera-introduccion h2::before {
-    width: 2.8rem;
-    height: 2.8rem;
-    font-size: 2.2rem;
-  }
-
-  .cabecera-introduccion h2::after {
-    width: 2.55rem;
-    height: 2.55rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cabecera-introduccion h2::before,
-  .cabecera-introduccion h2::after {
-    animation: none;
-  }
 }
 
 
@@ -3842,6 +3775,26 @@ h1, h2, h3, h4 {
     );
 }
 
+/* Luces ambientales de la INTRO: realzan la tecnología de la escena narrativa. */
+#pantalla-introduccion .fondo-introduccion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url("../assets/images/introduccion/decoracion/luces-tecnologia-intro.svg") center / cover no-repeat;
+  mix-blend-mode: screen;
+  opacity: .72;
+  filter: saturate(1.18);
+  animation: nexo-luces-tecnologia 6.8s ease-in-out infinite alternate;
+}
+
+@keyframes nexo-luces-tecnologia {
+  0%   { opacity: .48; filter: brightness(.88) blur(.15px) saturate(1.08); }
+  38%  { opacity: .76; filter: brightness(1.20) blur(.05px) saturate(1.24); }
+  67%  { opacity: .58; filter: brightness(1.02) blur(.18px) saturate(1.16); }
+  100% { opacity: .84; filter: brightness(1.32) blur(0) saturate(1.30); }
+}
+
 /* ---------- CABECERA ---------- */
 #pantalla-configuracion .cabecera-configuracion {
   top: clamp(.55rem, 1vh, .9rem);
@@ -4139,7 +4092,8 @@ h1, h2, h3, h4 {
 @media (prefers-reduced-motion: reduce) {
   #pantalla-configuracion .energia-ruta,
   #pantalla-configuracion .nodo-energia,
-  #pantalla-configuracion .energia-pulso-centro {
+  #pantalla-configuracion .energia-pulso-centro,
+  #pantalla-introduccion .fondo-introduccion::before {
     animation: none !important;
   }
 }
@@ -4293,4 +4247,520 @@ h1, h2, h3, h4 {
   #pantalla-configuracion .boton-iniciar-nexo {
     transition: none;
   }
+}
+
+/* V22.2 · Alineación final del jugador y las rondas. */
+#pantalla-configuracion .configuracion-inferior {
+  width: min(94vw, 920px);
+  grid-template-columns: minmax(300px, .95fr) minmax(430px, 1.05fr);
+  column-gap: clamp(1.25rem, 3vw, 2.4rem);
+}
+
+#pantalla-configuracion .grupo-jugador,
+#pantalla-configuracion .grupo-rondas {
+  display: grid;
+  grid-template-rows: 2.4rem clamp(62px, 7.4vh, 82px);
+  align-items: end;
+}
+
+#pantalla-configuracion .grupo-jugador label,
+#pantalla-configuracion .grupo-rondas h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  margin: 0;
+  text-align: center;
+  line-height: 1.15;
+}
+
+#pantalla-configuracion .control-jugador {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 56px;
+  width: 100%;
+  height: clamp(62px, 7.4vh, 82px);
+}
+
+#pantalla-configuracion #nombre-jugador {
+  height: 100%;
+  padding: 0 1rem;
+  border-radius: 9px 0 0 9px;
+  font-size: clamp(.82rem, 1vw, .96rem);
+}
+
+#pantalla-configuracion #selector-jugadores {
+  width: 56px;
+  height: 100%;
+  padding: 0;
+  border: 1px solid rgba(138,239,196,.50);
+  border-left: 0;
+  border-radius: 0 9px 9px 0;
+  outline: 0;
+  background: rgba(3,25,32,.96);
+  color: #aef5dd;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+#pantalla-configuracion #selector-jugadores:disabled {
+  cursor: default;
+  opacity: .38;
+}
+
+#pantalla-configuracion #selector-jugadores option {
+  background: #07171d;
+  color: #eefcff;
+}
+
+#pantalla-configuracion .opciones-rondas {
+  align-items: center;
+  height: clamp(62px, 7.4vh, 82px);
+}
+
+@media (max-width: 900px) {
+  #pantalla-configuracion .configuracion-inferior {
+    width: min(100%, 520px);
+    grid-template-columns: 1fr;
+  }
+}
+
+/* V22.3 · Más aire y correspondencia visual entre avatares y controles. */
+@media (min-width: 1101px) {
+  #pantalla-configuracion .panel-identidad {
+    top: 42%;
+  }
+
+  #pantalla-configuracion .configuracion-inferior {
+    bottom: clamp(.9rem, 2vh, 1.35rem);
+    width: min(94vw, 1780px);
+    display: grid;
+    grid-template-columns: 500px minmax(300px, 1fr) 500px;
+    grid-template-areas:
+      "jugador espacio rondas"
+      ". iniciar .";
+    column-gap: clamp(2rem, 5vw, 7rem);
+    row-gap: clamp(2.7rem, 5.8vh, 3.5rem);
+    align-items: end;
+  }
+
+  #pantalla-configuracion .grupo-jugador {
+    grid-area: jugador;
+    justify-self: center;
+    width: 100%;
+  }
+
+  #pantalla-configuracion .grupo-rondas {
+    grid-area: rondas;
+    justify-self: center;
+    width: 100%;
+  }
+
+  #pantalla-configuracion .opciones-rondas {
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  #pantalla-configuracion .boton-iniciar-nexo {
+    grid-area: iniciar;
+    justify-self: center;
+    transform: translateY(clamp(2.5rem, 6vh, 3.5rem));
+  }
+
+  #pantalla-configuracion .boton-iniciar-nexo:hover,
+  #pantalla-configuracion .boton-iniciar-nexo:focus-visible {
+    transform: translateY(calc(clamp(2.5rem, 6vh, 3.5rem) - 5px)) scale(1.035);
+  }
+
+  #pantalla-configuracion .boton-iniciar-nexo:active {
+    transform: translateY(calc(clamp(2.5rem, 6vh, 3.5rem) - 1px)) scale(1.012);
+  }
+}
+
+@media (min-width: 1101px) and (max-height: 760px) {
+  #pantalla-configuracion .panel-identidad {
+    top: 40%;
+  }
+
+  #pantalla-configuracion .configuracion-inferior {
+    row-gap: 1rem;
+  }
+}
+
+/* V22.12 · Controles simétricos, compactos y legibles sobre el fondo. */
+@media (min-width:1101px) {
+  #pantalla-configuracion .configuracion-inferior{
+    grid-template-columns:440px minmax(300px,1fr) 440px;
+    column-gap:clamp(2rem,4vw,5rem);
+  }
+  #pantalla-configuracion .grupo-jugador,
+  #pantalla-configuracion .grupo-rondas{width:440px!important}
+  #pantalla-configuracion .grupo-jugador label,
+  #pantalla-configuracion .grupo-rondas h3{
+    width:max-content;max-width:100%;margin:0 auto 7px!important;padding:7px 18px!important;
+    min-height:0!important;border:1px solid rgba(92,226,218,.26);border-radius:8px;
+    background:linear-gradient(90deg,rgba(2,18,21,.80),rgba(4,25,31,.93),rgba(2,18,21,.80));
+    box-shadow:inset 0 -2px 0 rgba(62,211,238,.30),0 0 20px rgba(45,213,229,.16);
+    text-shadow:0 2px 5px #000,0 0 12px currentColor;
+  }
+  #pantalla-configuracion .grupo-jugador label{border-color:rgba(157,239,72,.30);box-shadow:inset 0 -2px 0 rgba(150,238,68,.36),0 0 20px rgba(126,226,66,.15)}
+  #pantalla-configuracion .control-jugador{width:440px!important}
+  #pantalla-configuracion .opciones-rondas{width:440px!important;justify-content:center!important;gap:10px!important}
+  #pantalla-configuracion .boton-opcion{width:102px!important;min-width:102px!important}
+}
+
+/* V22.3 · La navegación de la introducción permanece anclada. */
+@media (min-width: 901px) {
+  #pantalla-introduccion .contenido-introduccion {
+    top: 50%;
+    height: min(88vh, 760px);
+    max-height: none;
+    justify-content: flex-start;
+  }
+
+  #pantalla-introduccion .relato-introduccion {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-bottom: 0;
+  }
+
+  #pantalla-introduccion .progreso-intro {
+    flex: 0 0 30px;
+  }
+
+  #pantalla-introduccion .controles-intro {
+    flex: 0 0 auto;
+    height: 64px;
+  }
+
+  #pantalla-introduccion .boton-continuar-imagen:hover,
+  #pantalla-introduccion .boton-continuar-imagen:focus-visible,
+  #pantalla-introduccion .boton-continuar-imagen:active {
+    transform: none;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  #pantalla-introduccion .contenido-introduccion {
+    height: 94vh;
+  }
+}
+
+/* V22.14 · Continuidad de puntero entre JUGAR e INTRODUCCIÓN.
+   El botón principal conserva el mismo centro de pantalla en los cuatro pasos;
+   relato y progreso se ordenan sobre ese eje sin alterar la navegación. */
+@media (min-width: 901px) {
+  #pantalla-introduccion .contenido-introduccion {
+    top: 0;
+    left: 50%;
+    width: min(58vw, 760px);
+    height: 100svh;
+    max-height: none;
+    padding: clamp(1rem, 3vh, 2rem) 0 clamp(8.8rem, 18vh, 9.8rem);
+    transform: translateX(-50%);
+    justify-content: flex-start;
+  }
+
+  #pantalla-introduccion .cabecera-introduccion {
+    flex: 0 0 auto;
+  }
+
+  #pantalla-introduccion .relato-introduccion {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: clamp(.45rem, 1vh, .75rem) 0 0;
+    display: flex;
+    align-items: center;
+  }
+
+  #pantalla-introduccion .bloque-intro {
+    justify-content: center;
+  }
+
+  #pantalla-introduccion .progreso-intro {
+    position: absolute;
+    left: 50%;
+    bottom: calc(clamp(1rem, 3vh, 2rem) + 79px);
+    width: min(48%, 330px);
+    margin: 0;
+    transform: translateX(-50%);
+  }
+
+  #pantalla-introduccion .controles-intro {
+    position: absolute;
+    left: 50%;
+    bottom: calc(clamp(1rem, 3vh, 2rem) + 7px);
+    width: min(76%, 560px);
+    height: 64px;
+    margin: 0;
+    transform: translateX(-50%);
+  }
+
+  #pantalla-introduccion .controles-intro .boton-continuar-imagen {
+    width: min(17vw, 220px);
+    min-width: 185px;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  #pantalla-introduccion .contenido-introduccion {
+    height: 100svh;
+    padding-top: .7rem;
+    padding-bottom: 8rem;
+  }
+
+  #pantalla-introduccion .progreso-intro {
+    bottom: calc(clamp(1rem, 3vh, 2rem) + 70px);
+    height: 24px;
+  }
+
+  #pantalla-introduccion .controles-intro {
+    bottom: calc(clamp(1rem, 3vh, 2rem) + 5px);
+    height: 58px;
+  }
+}
+
+/* V22.15 · Lectura editorial del relato: cuerpo justificado y apertura centrada. */
+#pantalla-introduccion .bloque-intro p:not(:first-child) {
+  text-align: justify;
+  text-align-last: left;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+#pantalla-introduccion .bloque-intro p:first-child {
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* V22.16 · Jerarquía narrativa de videojuego.
+   Se elimina el radar ornamental, que competía con el texto sin informar,
+   y se compacta cabecera + relato como una única unidad de lectura. */
+@media (min-width: 901px) {
+  #pantalla-introduccion .contenido-introduccion {
+    width: min(56vw, 740px);
+    padding-top: clamp(1.75rem, 4vh, 2.6rem);
+  }
+
+  #pantalla-introduccion .relato-introduccion {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    margin-top: clamp(1.1rem, 2.4vh, 1.55rem);
+    display: block;
+  }
+
+  #pantalla-introduccion .bloque-intro {
+    min-height: 0;
+    justify-content: flex-start;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  #pantalla-introduccion .contenido-introduccion {
+    padding-top: clamp(.75rem, 2.2vh, 1.2rem);
+  }
+
+  #pantalla-introduccion .relato-introduccion {
+    margin-top: clamp(.65rem, 1.5vh, .95rem);
+  }
+}
+
+/* V22.21 · Identidad narrativa: sin repetir la X del logotipo de portada. */
+#pantalla-introduccion .cabecera-introduccion h2 {
+  position:relative!important;
+  padding-left:0!important;
+  padding-bottom:.72rem!important;
+  border-bottom:0!important;
+}
+
+#pantalla-introduccion .cabecera-introduccion h2::before {
+  content:none!important;
+  display:none!important;
+  animation:none!important;
+}
+
+#pantalla-introduccion .cabecera-introduccion h2::after {
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:0!important;
+  width:100%!important;
+  height:2px!important;
+  border:0!important;
+  border-radius:999px!important;
+  transform:translateX(-50%)!important;
+  background-image:
+    linear-gradient(90deg,transparent 0%,rgba(255,255,255,.12) 30%,#dffff8 48%,#b4ee73 52%,rgba(255,255,255,.12) 70%,transparent 100%),
+    linear-gradient(90deg,transparent 0%,rgba(255,255,255,.12) 30%,#dffff8 48%,#7bdff2 52%,rgba(255,255,255,.12) 70%,transparent 100%),
+    linear-gradient(90deg,transparent 0%,rgba(80,182,238,.18) 18%,#5fded3 44%,#76e3c6 50%,#5fded3 56%,rgba(80,182,238,.18) 82%,transparent 100%)!important;
+  background-size:24% 100%,24% 100%,100% 100%!important;
+  background-repeat:no-repeat!important;
+  background-position:-32% 0,132% 0,center;
+  box-shadow:0 0 7px rgba(91,224,211,.25)!important;
+  opacity:.72;
+  animation:none!important;
+  pointer-events:none!important;
+}
+
+#pantalla-introduccion.activa .cabecera-introduccion h2::after {
+  animation:energia-linea-intro 1.4s cubic-bezier(.18,.72,.22,1) 1 both!important;
+}
+
+@keyframes energia-linea-intro {
+  0% {background-position:-32% 0,132% 0,center;opacity:.34;filter:brightness(.86)}
+  74% {background-position:50% 0,50% 0,center;opacity:1;filter:brightness(1.42)}
+  100% {background-position:50% 0,50% 0,center;opacity:.68;filter:brightness(1)}
+}
+
+@media (min-width: 901px) {
+  #pantalla-introduccion .cabecera-introduccion {
+    top:clamp(7.5rem,17vh,10rem)!important;
+  }
+  #pantalla-introduccion .progreso-intro {bottom:134px!important}
+  #pantalla-introduccion .controles-intro {bottom:58px!important}
+  #pantalla-introduccion .btn-saltar-intro {
+    position:absolute!important;
+    left:50%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:16px!important;
+    transform:translateX(-50%)!important;
+    min-width:150px!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  #pantalla-introduccion .cabecera-introduccion {top:6rem!important}
+  #pantalla-introduccion .progreso-intro {bottom:126px!important}
+  #pantalla-introduccion .controles-intro {bottom:54px!important}
+  #pantalla-introduccion .btn-saltar-intro {bottom:12px!important}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pantalla-introduccion .cabecera-introduccion h2::after {animation:none!important;opacity:.66!important}
+}
+
+/* =====================================================================
+   V22.26 · MANUAL / CÓMO JUGAR
+   Recurso informativo sencillo: HTML + CSS + mostrar/ocultar con JavaScript.
+   ===================================================================== */
+#pantalla-introduccion .acciones-secundarias-intro{
+  position:absolute;
+  left:50%;
+  bottom:14px;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  z-index:20;
+}
+#pantalla-introduccion .acciones-secundarias-intro .btn-saltar-intro{
+  position:static!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+}
+#pantalla-introduccion .btn-como-jugar{
+  min-width:150px;
+  padding:.58rem 1.05rem;
+  border:1px solid rgba(120,225,216,.55);
+  border-radius:999px;
+  background:rgba(3,20,25,.72);
+  color:#dffcf8;
+  font:700 .72rem/1.1 Inter,Segoe UI,Arial,sans-serif;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 0 18px rgba(73,208,205,.12);
+  transition:transform .18s ease,background .18s ease,border-color .18s ease;
+}
+#pantalla-introduccion .btn-como-jugar:hover,
+#pantalla-introduccion .btn-como-jugar:focus-visible{
+  transform:translateY(-2px);
+  background:rgba(8,42,48,.92);
+  border-color:rgba(172,255,241,.92);
+  outline:none;
+}
+
+.superposicion-manual{
+  position:fixed;
+  inset:0;
+  z-index:220;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(0,7,10,.84);
+  backdrop-filter:blur(8px);
+}
+.panel-manual{
+  width:min(1040px,94vw);
+  max-height:90vh;
+  overflow:hidden;
+  border:1px solid rgba(101,221,217,.42);
+  border-radius:18px;
+  background:linear-gradient(145deg,rgba(5,21,27,.98),rgba(4,11,17,.98));
+  box-shadow:0 24px 80px rgba(0,0,0,.62),0 0 36px rgba(69,202,205,.12);
+  color:#ecf8fa;
+}
+.cabecera-manual{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:19px 24px 17px;
+  border-bottom:1px solid rgba(111,211,210,.20);
+  background:linear-gradient(90deg,rgba(22,65,52,.28),rgba(10,35,56,.30));
+}
+.manual-sobrelinea{
+  margin:0 0 3px;
+  color:#7ee9dd;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.18em;
+}
+.cabecera-manual h3{margin:0;font-size:1.65rem;letter-spacing:.05em}
+.boton-cerrar-manual{
+  width:42px;height:42px;border:1px solid rgba(206,239,241,.28);border-radius:50%;
+  background:rgba(0,10,15,.55);color:#fff;font-size:1.55rem;cursor:pointer;
+}
+.contenido-manual{
+  max-height:calc(90vh - 82px);
+  overflow:auto;
+  padding:22px 26px 30px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.contenido-manual section{
+  padding:16px 17px;
+  border:1px solid rgba(146,213,215,.15);
+  border-radius:12px;
+  background:rgba(5,18,24,.66);
+}
+.contenido-manual h4{margin:0 0 9px;color:#c8fff3;font-size:.88rem;letter-spacing:.08em}
+.contenido-manual p,.contenido-manual li,.contenido-manual dd{font-size:.78rem;line-height:1.5;color:#cbdcdf}
+.contenido-manual ul{margin:0;padding-left:1.15rem}
+.contenido-manual dl{margin:0;display:grid;gap:8px}
+.contenido-manual dl>div{padding:8px 9px;border-left:2px solid rgba(142,229,103,.60);background:rgba(25,58,36,.20)}
+.contenido-manual .manual-ia dl>div{border-left-color:rgba(83,197,255,.68);background:rgba(16,42,61,.24)}
+.contenido-manual dt{font-size:.72rem;font-weight:850;letter-spacing:.08em;color:#fff}
+.contenido-manual dd{margin:2px 0 0}
+
+@media(max-width:760px){
+  .contenido-manual{grid-template-columns:1fr;padding:16px}
+  .superposicion-manual{padding:10px}
+  #pantalla-introduccion .acciones-secundarias-intro{gap:9px;width:92%}
+  #pantalla-introduccion .btn-como-jugar{min-width:128px}
 }
