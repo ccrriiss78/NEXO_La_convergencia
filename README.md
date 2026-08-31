@@ -102,17 +102,24 @@ Las ocho crisis narrativas son:
 
 ### Evolución visual del planeta
 
-La pantalla de partida utiliza un fondo base y capas independientes para representar el deterioro del planeta sin crear combinaciones de fondos para cada estado de Humano e IA.
+La pantalla de partida utiliza un fondo completo por cada tramo de Crisis. Así, el deterioro del planeta se entiende de forma inmediata y no depende de superponer capas visuales.
 
-Assets actuales:
+La partida y la pantalla final usan **dos series deliberadamente distintas** porque cumplen funciones visuales diferentes:
 
-- `fondo-partida-v15-ciudad-integrada-salud-inicial.webp`
-- `capa-planeta-v15-25-49-equilibrio-fragil.webp`
-- `capa-planeta-v15-50-74-equilibrio-critico.webp`
-- `capa-planeta-v15-75-99-colapso-inminente.webp`
-- `capa-planeta-v15-100-catastrofe.webp`
+- durante la partida se conserva la **esfera/núcleo NEXO integrada en el escenario**, ya que desde su centro nace el feedback visual de Convergencia;
+- en la pantalla final se emplean composiciones más abiertas, sin una esfera flotante protagonista, para que el paisaje y el estado del mundo sean el cierre emocional.
 
-Estas capas pueden revisarse artísticamente en futuras iteraciones sin cambiar la lógica del juego.
+Assets de partida:
+
+- `assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp`
+- `assets/images/partida/fondos-planeta/partida-planeta-25-49-equilibrio-fragil.webp`
+- `assets/images/partida/fondos-planeta/partida-planeta-50-74-equilibrio-critico.webp`
+- `assets/images/partida/fondos-planeta/partida-planeta-75-99-colapso-inminente.webp`
+- `assets/images/partida/fondos-planeta/partida-planeta-100-crisis-catastrofica.webp`
+
+La evolución usa **un fondo completo por estado**, nunca capas superpuestas ni filtros de color que intenten simular el deterioro. La degradación está dibujada en los propios assets y el cambio es reversible al subir o bajar la Crisis.
+
+Los cinco estados visuales del planeta se precargan al abrir la página para evitar interrupciones durante los cambios de Crisis. Durante la partida, el fondo principal mantiene la imagen anterior hasta que el nuevo asset termina de cargar, evitando huecos negros al cruzar de un estado visual a otro.
 
 ## Cartas de crisis / modificadores
 
@@ -209,6 +216,8 @@ Cada personaje tiene cuatro estados visuales reversibles:
 - 50–74 %
 - 75–100 %
 
+La evolución representa **hibridación**, no sustitución completa de identidad: incluso en 75–100 %, Humano e IA conservan rasgos reconocibles de su origen. En la IA femenina, los estados 25–49 % y 50–74 % se han diferenciado visualmente para que el primer tramo siga siendo claramente artificial y el segundo muestre una convergencia humano–IA más avanzada.
+
 La evolución se representa mediante assets WebP específicos; no depende de filtros, halos o transformaciones CSS para simular el cambio del personaje.
 
 Los 16 retratos se encuentran en:
@@ -234,12 +243,40 @@ El juego incorpora un manual independiente para evitar sobrecargar la introducci
 
 Una partida termina cuando ocurre alguna de estas condiciones:
 
-- el planeta colapsa;
-- finaliza el número de rondas elegido;
-- en modo libre se alcanza el estado de recuperación establecido;
+El número de rondas elegido representa la **duración máxima**, no una obligación de llegar hasta la última ronda.
+
+- **Crisis 100%:** el planeta colapsa y la derrota es inmediata;
+- **Crisis 0%:** el planeta alcanza la recuperación completa y la partida termina de forma anticipada en cualquier modalidad;
+- si ninguno de esos extremos ocurre, finaliza al agotarse el número de rondas elegido;
+- en modo libre se continúa hasta recuperación completa, colapso o abandono;
 - el jugador abandona la partida.
 
-Los desenlaces contemplan:
+Cuando la Crisis llega a 0%, la resolución se convierte en un momento de cierre: aparece **PLANETA RECUPERADO** y el botón **DESCUBRIR EL DESENLACE**. El desenlace posterior sigue valorando el equilibrio de evolución entre Humano e IA: recuperar el planeta no implica necesariamente que ambos hayan evolucionado de forma equilibrada.
+
+La pantalla final se ha rediseñado para que el planeta tenga la mayor jerarquía narrativa. El título principal describe el estado final del mundo y el desenlace Humano/IA aparece como resultado secundario:
+
+- **0% Crisis:** `PLANETA RECUPERADO` + `OBJETIVO DEL PROTOCOLO NEXO ALCANZADO`;
+- **1–24% Crisis:** `EQUILIBRIO RESTABLECIDO`;
+- **25–49% Crisis:** `EQUILIBRIO FRÁGIL`;
+- **50–74% Crisis:** `EQUILIBRIO CRÍTICO`;
+- **75–99% Crisis:** `COLAPSO INMINENTE`;
+- **100% Crisis:** `COLAPSO PLANETARIO`.
+
+La pantalla final usa una **serie propia de cinco fondos** preparada para el epílogo. No reutiliza los fondos de partida porque en el cierre la esfera central resultaba repetitiva y competía con el mensaje final. La progresión visual sigue el mismo orden de Crisis —verde/azul limpio → pérdida de vitalidad → gris/ocre y humo → tonos cálidos de colapso → rojo/fuego en la catástrofe—, pero con composiciones más abiertas y emocionales.
+
+Assets de la pantalla final:
+
+- `assets/images/final/fondos/final-planeta-0-24-equilibrio-saludable.webp`
+- `assets/images/final/fondos/final-planeta-25-49-equilibrio-fragil.webp`
+- `assets/images/final/fondos/final-planeta-50-74-equilibrio-critico.webp`
+- `assets/images/final/fondos/final-planeta-75-99-colapso-inminente.webp`
+- `assets/images/final/fondos/final-planeta-100-crisis-catastrofica.webp`
+
+Los paneles finales son holográficos y translúcidos, con esquinas técnicas y líneas de luz, de manera que el escenario siga siendo protagonista. El resumen numérico se presenta como una sola franja de lectura y las capacidades dejan de comportarse como tarjetas de dashboard independientes.
+
+El logo de la pantalla final reutiliza el asset oficial de portada `nexo-logo-completo-x-estatica-v7.webp`. El nombre del jugador se muestra de forma explícita junto al perfil alcanzado. Las capacidades conquistadas, el balance Humano/IA, las rondas y la Crisis final se mantienen, pero se presentan mediante paneles y líneas holográficas translúcidas, dejando visible el mundo final y evitando el antiguo bloque tipo dashboard.
+
+Los desenlaces secundarios contemplan:
 
 1. **Colapso**
 2. **Convergencia Total**
@@ -307,15 +344,7 @@ NEXO_La_convergencia_cris/
 
 ## Ejecución local
 
-Puede abrirse con **Live Server** desde VS Code.
-
-También puede utilizarse:
-
-```bash
-npm run serve
-```
-
-El script incluido utiliza un servidor HTTP local en el puerto `8765`.
+Puede abrirse con **Live Server** desde VS Code, que es el flujo de trabajo utilizado en el proyecto.
 
 ## Pruebas
 
@@ -348,3 +377,7 @@ Antes de realizar un commit importante conviene ejecutar `npm test` y comprobar 
 La versión documentada incorpora las mejoras acumuladas de avatares evolutivos, fortalezas, manual, Precisión, Velocidad, organización de avisos por propietario y alertas visuales de modificadores.
 
 Los próximos cambios artísticos del planeta pueden desarrollarse como una fase independiente para poder versionarlos en Git mediante commits específicos sin mezclar de nuevo lógica, interfaz y assets.
+
+### Corrección de interacción — Resolver ronda
+
+Se ha reforzado el botón `RESOLVER RONDA` para que una jugada completa no pueda quedar en un estado visual habilitado sin respuesta. Cuando `Precisión` está disponible, el botón indica `ACTIVAR PRECISIÓN`; en el resto de casos resuelve la ronda normalmente. También se ha elevado la prioridad de interacción del botón para evitar que una capa visual de cartas intercepte el clic.
