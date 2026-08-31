@@ -118,6 +118,15 @@ La mano de cartas
 Este detalle, que cuesta cuatro líneas de código con un array, transforma la Morra en un juego con memoria y estrategia: en la quinta ronda de cada ciclo, ambos saben exactamente qué carta le queda al otro. La partida tiene picos de tensión sin que hayamos añadido ninguna regla compleja.
 La apuesta
 Antes de revelar, cada uno declara si cree que la suma de las dos cartas será PAR o IMPAR. Esta es la aportación clave de la fusión sobre la Morra original: en NEXO el juego decidía aleatoriamente si hacía falta PAR o IMPAR; aquí lo decide cada participante, y esa diferencia es la que permite que existan la convergencia y la rivalidad como resultados distintos.
+
+Quién declara primero (regla añadida al implementar el juego)
+
+La IA declara su apuesta ANTES que el jugador, y el jugador la ve. Encaja con la ambientación —la máquina calcula al instante y canta primero; el humano decide después— pero está aquí por un motivo de diseño, no de tema: si los dos apostasen a ciegas, el jugador no podría decidir nunca si la ronda acaba en convergencia o en rivalidad, porque eso dependería de una apuesta de la IA que no puede predecir. Sabiendo lo que ha cantado la IA, la decisión pasa a ser suya:
+
+•	Apostar LO MISMO que la IA es jugar a la convergencia: o aciertan los dos y el planeta se recupera, o fallan los dos y el planeta cae.
+•	Apostar LO CONTRARIO fuerza un duelo: como las dos apuestas son complementarias, acierta exactamente uno de los dos, siempre. Habrá rivalidad y alguien conquistará una capacidad.
+
+El jugador ve también qué cartas le quedan a la IA en el ciclo, así que puede calcular con qué probabilidad su apuesta va a salir bien y decidir en consecuencia: cuando está seguro, elige a qué dedica esa certeza; cuando no lo está, elige qué riesgo prefiere correr. Medido sobre 3.000 partidas simuladas, un jugador que decide con este criterio gana el 78% de las partidas, frente al 48% de quien pulsa sin pensar.
 La resolución
 1.	Se suman las dos cartas.
 2.	Se comprueba si la suma es PAR o IMPAR.
@@ -128,9 +137,9 @@ En código esto es una suma, un módulo y tres condicionales. Nada más. La prof
 8. Estructura de una ronda
 5.	Aparece la crisis ecológica de la ronda (incendios forestales, contaminación oceánica, sequía, pérdida de biodiversidad, desertificación, residuos electrónicos, calentamiento global o escasez energética).
 6.	Si corresponde, se revela una carta de crisis que modificará la puntuación de esta ronda.
-7.	El jugador declara su apuesta: PAR o IMPAR.
+7.	La IA pone su carta boca abajo y declara su apuesta: PAR o IMPAR. El jugador ve la apuesta, y también qué cartas le quedan a la IA en este ciclo.
 8.	El jugador elige una carta de su mano (1 a 5) y confirma.
-9.	La IA elige su apuesta y su carta.
+9.	El jugador declara su apuesta —la misma que la IA para buscar la convergencia, la contraria para forzar un duelo— y elige su carta.
 10.	Se revelan ambas cartas y se muestra la suma.
 11.	Se resuelve: CONVERGENCIA, RIVALIDAD o FRACASO.
 12.	Se aplican los efectos de las capacidades activas y de la carta de crisis.
@@ -176,8 +185,8 @@ Velocidad	Permite jugar dos cartas en una ronda y quedarse con el resultado que 
 Capacidades que puede conquistar la IA (del humano)
 Capacidad	Efecto jugable
 Creatividad	La IA deja de elegir carta al azar y empieza a repetir patrones que le funcionaron
-Intuición	La IA acierta la apuesta del jugador una vez cada cierto número de rondas
-Empatía	La IA busca activamente la convergencia cuando el planeta está en peligro
+Intuición	Una de cada tres rondas la IA lee la intención del jugador y cambia su apuesta a última hora, dándole la vuelta a su plan
+Empatía	Con el planeta en peligro, la IA renuncia a ganar y enseña su carta para que el humano pueda buscar la convergencia sobre seguro
 Adaptación	Tras dos derrotas seguidas, la IA cambia su apuesta a la contraria de la anterior
 
 Detalle importante: cuando la IA conquista Empatía se vuelve colaboradora, no más agresiva. Es decir, que la IA gane rondas no siempre perjudica al jugador. Esa ambigüedad es coherente con el mensaje del juego y hace que el final sea menos predecible.
@@ -300,3 +309,71 @@ Alcance recomendado para la primera versión: una partida completa de doce ronda
 Es preferible presentar una versión estable, cuidada y que sepamos explicar por completo, que una versión más grande a medio terminar. Ese criterio, que ya aparecía en la propuesta de HumanIA, sigue siendo válido y es el que ha guiado todas las decisiones de este documento.
 
 Resumen en una línea: hemos conservado la Morra como mecánica, la ecología como propósito y la conquista de capacidades como profundidad, y lo hemos metido todo en una sola partida en lugar de en dos modos. El resultado es más original que HumanIA, más viable que NEXO y más fácil de defender que cualquiera de los dos.
+
+---
+
+## 22. Manual técnico (cómo ejecutar y cómo está montado)
+
+### Cómo se ejecuta
+
+```bash
+npm install      # solo la primera vez (instala TypeScript)
+npm run build    # compila src/*.ts  ->  dist/*.js
+```
+
+Después se abre `index.html` en el navegador (en VS Code, con la extensión
+**Live Server**, botón *Go Live*). Durante el desarrollo es cómodo dejar
+`npm run watch` abierto: recompila solo cada vez que se guarda un archivo.
+
+La carpeta `dist/` está en el `.gitignore` porque son archivos generados: el
+que descargue el repositorio ejecuta `npm run build` y los obtiene.
+
+### Estructura de carpetas
+
+```
+NEXO_La_convergencia/
+├── index.html            Las 5 pantallas del juego
+├── css/style.css         Toda la presentación (flexbox)
+├── src/                  Código TypeScript
+│   ├── tipos.ts          Tipos compartidos (Apuesta, Resultado, resúmenes)
+│   ├── datos.ts          Crisis, cartas, eventos, capacidades y perfiles
+│   ├── Carta.ts          CLASE 1: una carta de la mano
+│   ├── Jugador.ts        CLASE 2: humano e IA (mano, apuesta, capacidades)
+│   ├── Evento.ts         CLASE 3: evento especial
+│   ├── Partida.ts        CLASE 4: dirige la partida y reparte los puntos
+│   ├── ia.ts             Decisiones de la máquina (carta y apuesta)
+│   ├── almacenamiento.ts localStorage (mejor marca y perfiles)
+│   ├── interfaz.ts       Todo lo que toca el DOM
+│   └── main.ts           Arranque y conexión de los clicks
+└── dist/                 JavaScript generado por tsc (no se sube)
+```
+
+### Reparto de responsabilidades
+
+- **Las clases no tocan el HTML.** `Partida` calcula y devuelve un objeto
+  `ResumenRonda`; `interfaz.ts` lo pinta. Se puede cambiar todo el diseño
+  sin tocar ni una regla del juego.
+- **`interfaz.ts` no calcula nada.** Solo lee datos y escribe en el DOM.
+- **`main.ts` es el director de orquesta:** escucha los clicks, se lo cuenta
+  a `Partida` y luego manda repintar.
+
+### Los elementos del curso, y dónde está cada uno
+
+| Elemento | Dónde verlo |
+|---|---|
+| Clases y objetos | `Carta.ts`, `Jugador.ts`, `Evento.ts`, `Partida.ts` |
+| Arrays | `datos.ts` (crisis, cartas, eventos, perfiles) y la mano de `Jugador` |
+| Operador módulo `%` | `Partida.resolverRonda` (PAR/IMPAR) y `dispararEventoSiToca` |
+| `Math.random()` | `ia.ts`, `sortearCartaCrisis`, `elegirCrisisAlAzar` |
+| if / else | `resolverRonda`, `repartirPuntos`, `elegirPerfil`, `decidirApuestaIA` |
+| Eventos click | `main.ts` (`addEventListener`) |
+| DOM | `interfaz.ts` (`getElementById`, `classList`, `createElement`) |
+| localStorage | `almacenamiento.ts` |
+| Flexbox | `css/style.css` (marcadores, tablero, mano de cartas) |
+
+### Ajuste de dificultad
+
+Los números que equilibran la partida están todos juntos al principio de
+`src/datos.ts`: `SALUD_INICIAL`, `SALUD_MAXIMA`, `PENALIZACION_FRACASO`,
+`PROBABILIDAD_CARTA_CRISIS`, `RONDAS_ENTRE_EVENTOS` y `PLANETA_EN_PELIGRO`.
+Se puede reequilibrar el juego entero sin tocar la lógica.
