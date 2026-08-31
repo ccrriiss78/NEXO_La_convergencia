@@ -24,20 +24,23 @@
 #pantalla-juego.activa{display:block;padding:0}
 #pantalla-juego *{box-sizing:border-box}
 
-/* ---------- MUNDO: fondo base + estados reversibles ---------- */
+/* ---------- MUNDO: fondo reversible, ruta asignada desde interfaz.js ---------- */
 .escena-partida-capas,.capa-mundo,.vigneta-partida{position:absolute;inset:0;pointer-events:none}
-.escena-partida-capas{z-index:-5;overflow:hidden}
-.capa-mundo{background:center/cover no-repeat;opacity:0;transition:opacity 1.15s ease,filter 1.15s ease}
-.capa-mundo-base{background-image:url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');opacity:1}
-.capa-mundo-fragil{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-25-49-equilibrio-fragil.webp')}
-.capa-mundo-critico{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-50-74-equilibrio-critico.webp')}
-.capa-mundo-colapso{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-75-99-colapso-inminente.webp')}
-.capa-mundo-catastrofe{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-100-catastrofe.webp')}
-#pantalla-juego.planeta-fragil .capa-mundo-fragil{opacity:.62}
-#pantalla-juego.planeta-critico .capa-mundo-critico{opacity:.78}
-#pantalla-juego.planeta-colapso .capa-mundo-colapso{opacity:.92}
-#pantalla-juego.planeta-catastrofe .capa-mundo-catastrofe{opacity:1}
-.vigneta-partida{z-index:1;background:linear-gradient(90deg,rgba(0,5,7,.82) 0%,rgba(0,8,10,.34) 17%,transparent 31%,transparent 69%,rgba(0,7,12,.34) 83%,rgba(0,5,9,.84) 100%),linear-gradient(180deg,rgba(0,0,0,.22),transparent 22%,transparent 68%,rgba(0,0,0,.66) 100%)}
+.escena-partida-capas{
+  z-index:1;overflow:hidden;
+  background:#02070b url('../assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp') center/cover no-repeat;
+}
+.capa-mundo-planeta{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  opacity:1;
+  transition:filter .8s ease,opacity .45s ease;
+  background:#02070b;
+}
+.vigneta-partida{z-index:1;background:linear-gradient(90deg,rgba(0,5,7,.82) 0%,rgba(0,8,10,.34) 17%,transparent 31%,transparent 69%,rgba(0,7,12,.34) 83%,rgba(0,5,9,.84) 100%),linear-gradient(180deg,rgba(0,0,0,.18),transparent 22%,transparent 68%,rgba(0,0,0,.58) 100%)}
 
 /* ---------- LOGO auténtico de portada ---------- */
 .logo-partida-estatico{position:absolute;z-index:30;top:15px;left:24px;width:225px;max-width:15vw;height:auto;pointer-events:none;filter:drop-shadow(0 0 12px rgba(72,220,207,.16))}
@@ -74,10 +77,10 @@
 .retrato-personaje{position:relative;height:174px;overflow:hidden;background:rgba(1,7,10,.66);clip-path:polygon(8% 0,100% 0,100% 92%,92% 100%,0 100%,0 8%)}
 .marco-humano{border:1px solid rgba(145,229,66,.5);box-shadow:0 0 24px rgba(145,229,66,.09)}.marco-ia{border:1px solid rgba(39,181,255,.5);box-shadow:0 0 24px rgba(39,181,255,.1)}
 .avatar{width:100%;height:100%;background:center/cover no-repeat}
-.avatar-humano.humano-hombre.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-0-24.webp?v=avatars-v22-25')}.avatar-humano.humano-hombre.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-25-49.webp?v=avatars-v22-25')}.avatar-humano.humano-hombre.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-50-74.webp?v=avatars-v22-25')}.avatar-humano.humano-hombre.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-75-100.webp?v=avatars-v22-25')}
-.avatar-humano.humano-mujer.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-0-24.webp?v=avatars-v22-25')}.avatar-humano.humano-mujer.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-25-49.webp?v=avatars-v22-25')}.avatar-humano.humano-mujer.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-50-74.webp?v=avatars-v22-25')}.avatar-humano.humano-mujer.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-75-100.webp?v=avatars-v22-25')}
-.avatar-ia.ia-01.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-0-24.webp?v=avatars-v22-25')}.avatar-ia.ia-01.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-25-49.webp?v=avatars-v22-25')}.avatar-ia.ia-01.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-50-74.webp?v=avatars-v22-25')}.avatar-ia.ia-01.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-75-100.webp?v=avatars-v22-25')}
-.avatar-ia.ia-02.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-0-24.webp?v=avatars-v22-25')}.avatar-ia.ia-02.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-25-49.webp?v=avatars-v22-25')}.avatar-ia.ia-02.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-50-74.webp?v=avatars-v22-25')}.avatar-ia.ia-02.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-75-100.webp?v=avatars-v22-25')}
+.avatar-humano.humano-hombre.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-0-24.webp?v=avatars-v22-38')}.avatar-humano.humano-hombre.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-25-49.webp?v=avatars-v22-38')}.avatar-humano.humano-hombre.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-50-74.webp?v=avatars-v22-38')}.avatar-humano.humano-hombre.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-75-100.webp?v=avatars-v22-38')}
+.avatar-humano.humano-mujer.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-0-24.webp?v=avatars-v22-38')}.avatar-humano.humano-mujer.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-25-49.webp?v=avatars-v22-38')}.avatar-humano.humano-mujer.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-50-74.webp?v=avatars-v22-38')}.avatar-humano.humano-mujer.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-75-100.webp?v=avatars-v22-38')}
+.avatar-ia.ia-01.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-0-24.webp?v=avatars-v22-38')}.avatar-ia.ia-01.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-25-49.webp?v=avatars-v22-38')}.avatar-ia.ia-01.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-50-74.webp?v=avatars-v22-38')}.avatar-ia.ia-01.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-75-100.webp?v=avatars-v22-38')}
+.avatar-ia.ia-02.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-0-24.webp?v=avatars-v22-38')}.avatar-ia.ia-02.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-25-49.webp?v=avatars-v22-38')}.avatar-ia.ia-02.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-50-74.webp?v=avatars-v22-38')}.avatar-ia.ia-02.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-75-100.webp?v=avatars-v22-38')}
 .identidad-personaje h3{margin:0;color:white;font-size:18px;letter-spacing:.17em;text-transform:uppercase}.nombre-humano{color:var(--verde-claro)!important}.nombre-ia{color:var(--azul-claro)!important}.microetiqueta{display:block;margin-top:7px;font-size:10px;letter-spacing:.08em;color:#a9babf}.porcentaje-personaje{display:block;margin-top:2px;font-size:34px;line-height:1}.porcentaje-humano{color:var(--verde)}.porcentaje-ia{color:var(--azul)}
 .bloque-barra-personaje{margin-top:8px}.barra-evolucion-nexo{position:relative;height:10px;border:1px solid rgba(223,241,244,.30);border-radius:99px;background:rgba(1,7,10,.84)}.relleno-barra-nexo{height:100%;width:0;border-radius:99px;transition:width .6s ease}.relleno-humano{background:linear-gradient(90deg,#79d93c,#d8ff7a);box-shadow:0 0 12px rgba(145,229,66,.48)}.relleno-ia{background:linear-gradient(90deg,#168fdd,#62d3ff);box-shadow:0 0 12px rgba(39,181,255,.5)}
 .marca-barra{position:absolute;top:-4px;width:1px;height:17px;background:rgba(225,242,244,.34)}.marca-25{left:25%}.marca-50{left:50%}.marca-75{left:75%}.numeros-barra{display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:rgba(220,237,240,.59)}
@@ -99,7 +102,7 @@
 .carta-mano.seleccionada{z-index:13;animation:carta-seleccionada 1.15s ease-in-out infinite;transform:translateY(-33px) scale(1.09) rotate(0)!important;filter:drop-shadow(0 0 18px rgba(145,229,66,.75)) brightness(1.2)}
 @keyframes carta-seleccionada{50%{filter:drop-shadow(0 0 30px rgba(145,229,66,.88)) brightness(1.28)}}
 .carta-mano.descartada,.carta-mano:disabled{opacity:.17;filter:grayscale(.9) brightness(.55);animation:none;cursor:not-allowed}
-.acciones-partida{position:relative;z-index:21;display:flex;justify-content:center;margin-top:1px;pointer-events:auto}.boton-confirmar-nexo{width:300px;height:68px;border:0;background:center/contain no-repeat url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp?v=avatars-v22-25');font-size:0;color:transparent;cursor:pointer;transition:transform .22s ease,filter .22s ease}.boton-confirmar-nexo:hover:not(:disabled),.boton-confirmar-nexo:focus-visible:not(:disabled){background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp?v=avatars-v22-25');transform:scale(1.045);filter:brightness(1.1);outline:none}.boton-confirmar-nexo:disabled{opacity:.28;filter:grayscale(.4) brightness(.7);cursor:not-allowed}.boton-poder{margin-left:8px}
+.acciones-partida{position:relative;z-index:21;display:flex;justify-content:center;margin-top:1px;pointer-events:auto}.boton-confirmar-nexo{width:300px;height:68px;border:0;background:center/contain no-repeat url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp?v=avatars-v22-38');font-size:0;color:transparent;cursor:pointer;transition:transform .22s ease,filter .22s ease}.boton-confirmar-nexo:hover:not(:disabled),.boton-confirmar-nexo:focus-visible:not(:disabled){background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp?v=avatars-v22-38');transform:scale(1.045);filter:brightness(1.1);outline:none}.boton-confirmar-nexo:disabled{opacity:.28;filter:grayscale(.4) brightness(.7);cursor:not-allowed}.boton-poder{margin-left:8px}
 
 /* ---------- IA: cartas disponibles ---------- */
 .mano-ia{margin-top:8px;padding-top:9px;border-top:1px solid rgba(210,234,239,.12)}.mano-ia .titulo-lista{text-align:left}.lista-cartas-ia{display:flex;gap:5px;justify-content:flex-start}.carta-pequena{width:48px;height:78px;border:0;border-radius:4px;background:center/cover no-repeat;box-shadow:0 7px 13px rgba(0,0,0,.35);font-size:0}.carta-vista-ia{margin:7px 0 0;font-size:10px;color:#b6e7ff}.panel-personaje-ia .lista-cartas-ia{justify-content:center}
@@ -169,7 +172,7 @@
   border-radius:0 0 18px 18px;
   background:
     linear-gradient(180deg,rgba(2,10,15,.92),rgba(3,12,17,.72)),
-    url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+    url('../assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp');
   background-size:auto,1200px auto;
   background-position:center,50% 24%;
   background-blend-mode:normal,soft-light;
@@ -325,7 +328,7 @@
   border-radius:12px;
   background:
     linear-gradient(180deg,rgba(18,42,29,.34),rgba(1,13,10,.90)),
-    url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+    url('../assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp');
   background-size:auto,760px auto;
   background-position:center,27% 72%;
   background-blend-mode:normal,soft-light;
@@ -375,7 +378,7 @@
   border-color:#b9ff77;
   background:
     linear-gradient(180deg,rgba(74,130,54,.52),rgba(2,21,13,.92)),
-    url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+    url('../assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp');
   background-size:auto,760px auto;
   background-position:center,27% 72%;
   box-shadow:inset 0 0 28px rgba(145,229,66,.17),0 0 24px rgba(145,229,66,.35);
@@ -391,7 +394,7 @@
   border-radius:12px;
   background:
     linear-gradient(180deg,rgba(23,54,75,.38),rgba(2,18,29,.90)),
-    url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+    url('../assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp');
   background-size:auto,760px auto;
   background-position:center,76% 62%;
   background-blend-mode:normal,soft-light;
@@ -505,7 +508,7 @@
   margin:0 auto;padding:0 34px;
   border:0;border-radius:0;
   background-color:transparent;
-  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp?v=avatars-v22-25');
+  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp?v=avatars-v22-38');
   background-repeat:no-repeat;background-position:center;background-size:contain;
   overflow:visible;
   color:#f5feff;
@@ -518,7 +521,7 @@
 #pantalla-juego .acciones .boton-confirmar-nexo:focus-visible:not(:disabled),
 #pantalla-juego #btn-siguiente.boton-siguiente-ronda:hover,
 #pantalla-juego #btn-siguiente.boton-siguiente-ronda:focus-visible{
-  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp?v=avatars-v22-25');
+  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp?v=avatars-v22-38');
   background-size:contain;
   transform:translateY(-3px) scale(1.025);
   filter:brightness(1.13) drop-shadow(0 0 14px rgba(62,211,225,.33));
@@ -589,11 +592,8 @@
 
 /* --- PLANETA: cambios de estado más visibles cada 25% --- */
 #pantalla-juego .capa-mundo{transition:opacity 1.05s ease,filter 1.05s ease,transform 1.05s ease}
-#pantalla-juego.planeta-saludable .capa-mundo-base{opacity:1;filter:brightness(1.08) saturate(1.08)}
-#pantalla-juego.planeta-fragil .capa-mundo-fragil{opacity:.86;filter:brightness(.97) saturate(.98)}
-#pantalla-juego.planeta-critico .capa-mundo-critico{opacity:.96;filter:brightness(.90) saturate(.91) contrast(1.05)}
-#pantalla-juego.planeta-colapso .capa-mundo-colapso{opacity:1;filter:brightness(.82) saturate(.92) contrast(1.09)}
-#pantalla-juego.planeta-catastrofe .capa-mundo-catastrofe{opacity:1;filter:brightness(.74) saturate(1.12) contrast(1.13)}
+
+
 #pantalla-juego .escena-partida-capas::after{
   content:"";position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;
 }
@@ -746,7 +746,7 @@
 #pantalla-juego .botones-declaracion{gap:12px}
 #pantalla-juego .zona-apuesta .boton-apuesta{
   min-width:128px;height:52px;padding:0 22px;overflow:hidden;border:1px solid rgba(143,229,72,.58);border-radius:10px;
-  background:linear-gradient(180deg,rgba(19,56,30,.55),rgba(2,19,14,.90)),url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background:linear-gradient(180deg,rgba(19,56,30,.55),rgba(2,19,14,.90)),url('../assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp');
   background-size:auto,720px auto;background-position:center,23% 68%;color:#f5ffe9;font-size:18px;font-weight:780;
   box-shadow:inset 0 1px rgba(240,255,235,.16),inset 0 -12px 24px rgba(81,156,45,.10),0 9px 22px rgba(0,0,0,.25);
 }
@@ -756,12 +756,12 @@
   box-shadow:inset 0 0 26px rgba(155,244,93,.18),0 0 30px rgba(145,229,66,.38),0 12px 24px rgba(0,0,0,.25);outline:none;
 }
 #pantalla-juego .zona-apuesta .boton-apuesta.seleccionada{
-  border-color:#d8ffa8;background:linear-gradient(180deg,rgba(87,152,54,.70),rgba(7,33,18,.96)),url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  border-color:#d8ffa8;background:linear-gradient(180deg,rgba(87,152,54,.70),rgba(7,33,18,.96)),url('../assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp');
   background-size:auto,720px auto;background-position:center,23% 68%;box-shadow:inset 0 0 30px rgba(170,255,106,.22),0 0 26px rgba(145,229,66,.44);
 }
 #pantalla-juego .declaracion-ia-cinematica{
   min-height:74px;overflow:hidden;border:1px solid rgba(63,196,255,.58);border-radius:10px;
-  background:linear-gradient(180deg,rgba(24,69,98,.45),rgba(2,20,31,.92)),url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp');
+  background:linear-gradient(180deg,rgba(24,69,98,.45),rgba(2,20,31,.92)),url('../assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp');
   background-size:auto,720px auto;background-position:center,77% 64%;box-shadow:inset 0 0 28px rgba(51,181,255,.09),0 10px 24px rgba(0,0,0,.24);
 }
 #pantalla-juego .declaracion-ia-cinematica h3{font-size:34px;color:#ace8ff;letter-spacing:.17em}
@@ -1406,21 +1406,8 @@
 /* Evolución visual: cambio directo de asset cada 25%, sin filtros ni halos adicionales. */
 
 /* ----- PLANETA: cada 25% debe ser inequívocamente distinto ----- */
-#pantalla-juego.planeta-saludable .capa-mundo-base{opacity:1!important;filter:brightness(1.10) saturate(1.12)!important}
-#pantalla-juego.planeta-fragil .capa-mundo-base{opacity:.18!important}
-#pantalla-juego.planeta-fragil .capa-mundo-fragil{opacity:1!important;filter:brightness(.96) saturate(.88) contrast(1.03)!important}
-#pantalla-juego.planeta-critico .capa-mundo-base{opacity:.05!important}
-#pantalla-juego.planeta-critico .capa-mundo-fragil{opacity:0!important}
-#pantalla-juego.planeta-critico .capa-mundo-critico{opacity:1!important;filter:brightness(.86) saturate(.72) contrast(1.10)!important}
-#pantalla-juego.planeta-colapso .capa-mundo-base,
-#pantalla-juego.planeta-colapso .capa-mundo-fragil,
-#pantalla-juego.planeta-colapso .capa-mundo-critico{opacity:0!important}
-#pantalla-juego.planeta-colapso .capa-mundo-colapso{opacity:1!important;filter:brightness(.76) saturate(.72) contrast(1.17)!important}
-#pantalla-juego.planeta-catastrofe .capa-mundo-base,
-#pantalla-juego.planeta-catastrofe .capa-mundo-fragil,
-#pantalla-juego.planeta-catastrofe .capa-mundo-critico,
-#pantalla-juego.planeta-catastrofe .capa-mundo-colapso{opacity:0!important}
-#pantalla-juego.planeta-catastrofe .capa-mundo-catastrofe{opacity:1!important;filter:brightness(.68) saturate(.95) contrast(1.24)!important}
+
+
 
 /* ----- DECLARACIÓN: títulos visibles y regla compacta legible ----- */
 #pantalla-juego .zona-central-cinematica{left:404px!important;right:404px!important}
@@ -1596,9 +1583,22 @@
 
 /* ----- CONVERGENCIA: bola luminosa circular centrada en la X de fondo ----- */
 #pantalla-juego .nexo-nucleo-partida{
-  top:42.0%!important;left:50%!important;width:300px!important;height:300px!important;transform:translate(-50%,-50%)!important;
+  top:41%!important;left:50%!important;width:300px!important;height:300px!important;transform:translate(-50%,-50%)!important;
   z-index:22!important;pointer-events:none!important;
 }
+/* Cada fondo conserva la esfera NEXO, pero su escala cambia ligeramente.
+   Ajustamos solo la posición del destello para que la Convergencia nazca siempre del núcleo visible. */
+#pantalla-juego.planeta-saludable .nexo-nucleo-partida,
+#pantalla-juego.planeta-fragil .nexo-nucleo-partida{top:39.5%!important}
+#pantalla-juego.planeta-critico .nexo-nucleo-partida{top:40.5%!important}
+#pantalla-juego.planeta-colapso .nexo-nucleo-partida{top:42%!important}
+#pantalla-juego.planeta-catastrofe .nexo-nucleo-partida{top:43%!important}
+#pantalla-juego .nexo-nucleo-partida.convergencia-activa::before{
+  content:"";position:absolute;left:50%;top:50%;width:430px;height:4px;transform:translate(-50%,-50%);
+  background:linear-gradient(90deg,transparent,rgba(141,255,126,.62),rgba(255,255,255,.98),rgba(91,210,255,.66),transparent);
+  box-shadow:0 0 22px rgba(111,239,220,.72);opacity:0;animation:v21-convergencia-rayo 1.25s ease-out forwards;
+}
+@keyframes v21-convergencia-rayo{0%{opacity:0;transform:translate(-50%,-50%) scaleX(.08)}25%{opacity:1;transform:translate(-50%,-50%) scaleX(.6)}55%{opacity:.9;transform:translate(-50%,-50%) scaleX(1)}100%{opacity:0;transform:translate(-50%,-50%) scaleX(1.18)}}
 #pantalla-juego .nucleo-luz-convergencia{
   inset:0!important;border-radius:50%!important;opacity:0;
   background:radial-gradient(circle,
@@ -1692,14 +1692,14 @@
 #superposicion-evento .boton-evento-continuar{
   width:250px!important;height:62px!important;padding:0 24px!important;border:0!important;border-radius:0!important;
   display:flex!important;align-items:center!important;justify-content:center!important;
-  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp?v=avatars-v22-25')!important;
+  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-normal.webp?v=avatars-v22-38')!important;
   background-size:100% 100%!important;background-position:center!important;background-color:transparent!important;
   color:#f4ffff!important;font-size:14px!important;font-weight:850!important;letter-spacing:.11em!important;text-transform:uppercase!important;
   box-shadow:none!important;overflow:visible!important;
 }
 #superposicion-evento .boton-evento-continuar:hover,
 #superposicion-evento .boton-evento-continuar:focus-visible{
-  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp?v=avatars-v22-25')!important;
+  background-image:url('../assets/images/partida/botones/boton-accion-nexo-v16-hover.webp?v=avatars-v22-38')!important;
   transform:translateY(-2px)!important;filter:brightness(1.10)!important;outline:none!important;
 }
 
@@ -1993,14 +1993,14 @@
 #pantalla-juego .hito-estado-antes .hito-evolucion-porcentaje{color:#84999e}
 #pantalla-juego .hito-evolucion-flecha{color:#a9fff0;font-size:28px;font-weight:300;text-align:center;text-shadow:0 0 16px rgba(87,229,209,.58);animation:v2217-flecha 1.4s ease-in-out infinite}
 #pantalla-juego .hito-planeta{border-bottom:3px solid #ffd060;box-shadow:inset 0 0 34px rgba(255,200,76,.08)}
-#pantalla-juego .hito-planeta-visual{width:205px;height:150px;background:center/cover no-repeat;border:1px solid rgba(217,229,215,.24);border-radius:8px;box-shadow:0 13px 24px rgba(0,0,0,.48)}
+#pantalla-juego .hito-planeta-visual{
+  width:205px;height:150px;display:block;
+  background-position:center;background-size:cover;background-repeat:no-repeat;
+  border:1px solid rgba(217,229,215,.24);border-radius:8px;
+  box-shadow:0 13px 24px rgba(0,0,0,.48);
+}
 #pantalla-juego .hito-estado-antes .hito-planeta-visual{filter:brightness(.62) saturate(.62);opacity:.72}
 #pantalla-juego .hito-estado-ahora .hito-planeta-visual{animation:v2217-revelar-planeta 2.4s ease-out both;box-shadow:0 0 26px rgba(255,197,87,.26),0 13px 24px rgba(0,0,0,.48)}
-#pantalla-juego .hito-planeta-visual.planeta-nivel-0{background-image:url('../assets/images/partida/fondos/fondo-partida-v15-ciudad-integrada-salud-inicial.webp')}
-#pantalla-juego .hito-planeta-visual.planeta-nivel-1{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-25-49-equilibrio-fragil.webp')}
-#pantalla-juego .hito-planeta-visual.planeta-nivel-2{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-50-74-equilibrio-critico.webp')}
-#pantalla-juego .hito-planeta-visual.planeta-nivel-3{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-75-99-colapso-inminente.webp')}
-#pantalla-juego .hito-planeta-visual.planeta-nivel-4{background-image:url('../assets/images/partida/capas-planeta/capa-planeta-v15-100-catastrofe.webp')}
 #pantalla-juego .hito-entra{animation:v2217-hito var(--duracion-hito,5600ms) ease-in-out both}
 @keyframes v2217-hito{0%{opacity:0;transform:translate(-50%,-46%) scale(.97)}8%,88%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-53%) scale(1.01)}}
 @keyframes v2217-revelar-planeta{0%{filter:brightness(.42) saturate(.35);transform:scale(1.04)}32%{filter:brightness(1.35) saturate(1.18)}100%{filter:brightness(1) saturate(1);transform:scale(1)}}
@@ -2681,3 +2681,32 @@
   #pantalla-juego .hud-impacto.modificador-positivo::before,
   #pantalla-juego .hud-impacto.modificador-mixto::before{animation:none!important;opacity:.78!important}
 }
+
+
+/* ===== FINAL ANTICIPADO · RECUPERACIÓN PLANETARIA COMPLETA ===== */
+#pantalla-juego #zona-resolucion.recuperacion-planetaria-completa{
+  border-color:rgba(145,229,66,.62)!important;
+  background:
+    radial-gradient(circle at 50% 22%,rgba(118,255,189,.18),transparent 34%),
+    linear-gradient(145deg,rgba(3,25,22,.96),rgba(2,15,20,.94) 58%,rgba(3,28,27,.96))!important;
+  box-shadow:0 30px 78px rgba(0,0,0,.58),0 0 52px rgba(86,238,190,.24),inset 0 0 42px rgba(146,255,211,.05)!important;
+}
+#pantalla-juego #zona-resolucion.recuperacion-planetaria-completa .resultado-ronda{
+  color:#b9ff86!important;text-shadow:0 0 22px rgba(145,229,66,.38)!important;
+  font-size:31px!important;letter-spacing:.055em!important;
+}
+#pantalla-juego #zona-resolucion.recuperacion-planetaria-completa .detalle-ronda{
+  max-width:620px!important;font-size:14px!important;line-height:1.55!important;color:#ecfff6!important;
+}
+#pantalla-juego #zona-resolucion.recuperacion-planetaria-completa #btn-siguiente{
+  width:390px!important;min-width:390px!important;box-shadow:0 0 26px rgba(145,229,66,.16)!important;
+}
+@media (max-width:760px){
+  #pantalla-juego #zona-resolucion.recuperacion-planetaria-completa #btn-siguiente{width:min(92%,390px)!important;min-width:0!important}
+}
+
+
+/* V22.39 · RESOLVER RONDA: capa de interacción prioritaria.
+   Evita que una zona visual de cartas pueda interceptar el clic del botón. */
+#pantalla-juego .acciones-partida{z-index:260!important;pointer-events:auto!important}
+#pantalla-juego #btn-confirmar-jugada{z-index:261!important;pointer-events:auto!important;touch-action:manipulation}
