@@ -5,9 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO — La Convergencia</title>
-  <link rel="stylesheet" href="./css/style.css?v=intro-v22-23-final">
+  <link rel="stylesheet" href="./css/style.css?v=revision-integral-v4">
   <!-- Pantalla de partida aislada para que su diseño sea fácil de estudiar/modificar -->
-  <link rel="stylesheet" href="./css/partida.css?v=avatars-v22-25">
+  <link rel="stylesheet" href="./css/partida.css?v=resolver-ronda-v1">
+  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp">
+  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-25-49-equilibrio-fragil.webp">
+  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-50-74-equilibrio-critico.webp">
+  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-75-99-colapso-inminente.webp">
+  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-100-crisis-catastrofica.webp">
 </head>
 <body>
 
@@ -443,15 +448,19 @@
   ============================================================ -->
   <section id="pantalla-juego" class="pantalla planeta-estable">
 
-    <!-- CAPAS REVERSIBLES DEL PLANETA. El JS solo cambia la clase planeta-*; CSS
-         mezcla las imágenes con opacidad. No hay canvas ni animación compleja. -->
+    <!-- EVOLUCIÓN REVERSIBLE DEL PLANETA.
+         El JS cambia directamente el src de esta imagen según la Crisis.
+         Durante la partida los cinco fondos conservan el núcleo/esfera NEXO,
+         porque la animación de Convergencia nace de su centro. -->
     <div class="escena-partida-capas" aria-hidden="true">
-      <div class="capa-mundo capa-mundo-base"></div>
-      <div class="capa-mundo capa-mundo-fragil"></div>
-      <div class="capa-mundo capa-mundo-critico"></div>
-      <div class="capa-mundo capa-mundo-colapso"></div>
-      <div class="capa-mundo capa-mundo-catastrofe"></div>
-<div class="vigneta-partida"></div>
+      <img
+        id="fondo-planeta-juego"
+        class="capa-mundo capa-mundo-planeta"
+        src="./assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp"
+        alt=""
+        decoding="async"
+      >
+      <div class="vigneta-partida"></div>
     </div>
 
     <!-- LOGO ESTÁTICO: usa exactamente el asset de portada. Aquí NO se anima la X. -->
@@ -725,72 +734,144 @@
     </div>
   </section>
 
-  <!-- MANUAL NEXO · accesible desde Introducción y durante la partida. -->
+  <!-- MANUAL NEXO · resumen visual fiel a las reglas reales de la partida. -->
   <div id="superposicion-manual" class="superposicion-manual oculta" role="dialog" aria-modal="true" aria-labelledby="titulo-manual">
     <article class="panel-manual">
       <header class="cabecera-manual">
-        <div>
+        <img class="manual-logo" src="assets/images/portada/logo/nexo-logo-completo-x-estatica-v7.webp" alt="NEXO · La Convergencia">
+        <div class="manual-titulos">
           <p class="manual-sobrelinea">PROTOCOLO NEXO · GUÍA DE JUEGO</p>
           <h3 id="titulo-manual">Cómo jugar</h3>
+          <p class="manual-subtitulo">Una guía visual para decidir rápido sin perder de vista la Crisis, las fortalezas y los modificadores.</p>
         </div>
         <button id="btn-cerrar-manual" class="boton-cerrar-manual" type="button" aria-label="Cerrar manual">×</button>
       </header>
 
       <div class="contenido-manual">
-        <section>
-          <h4>1 · Objetivo</h4>
-          <p>En cada ronda Humano e IA declaran PAR o IMPAR y juegan una carta del 1 al 5. La suma decide el resultado. Puedes buscar la <strong>convergencia</strong> para ayudar al planeta o la <strong>rivalidad</strong> para conquistar capacidades del contrario.</p>
+        <div class="manual-inicio">
+          <section class="manual-objetivo">
+            <div class="manual-encabezado-seccion">
+              <span class="manual-numero">1</span>
+              <div>
+                <span class="manual-etiqueta">OBJETIVO</span>
+                <h4>Mantén el equilibrio</h4>
+              </div>
+            </div>
+            <p>Controla la <strong>Crisis del Planeta</strong> mientras Humano e IA evolucionan, convergen o rivalizan. El número de rondas elegido marca la <strong>duración máxima</strong>: la partida puede terminar antes si la Crisis alcanza uno de sus extremos.</p>
+          </section>
+
+          <section class="manual-ronda">
+            <div class="manual-encabezado-seccion manual-encabezado-ronda">
+              <span class="manual-numero">2</span>
+              <div>
+                <span class="manual-etiqueta">UNA RONDA</span>
+                <h4>Lee · elige · declara · resuelve</h4>
+              </div>
+            </div>
+            <ol class="manual-pasos">
+              <li><span class="manual-paso-icono">◉</span><strong>Observa</strong><small>La IA muestra primero su apuesta PAR/IMPAR.</small></li>
+              <li><span class="manual-paso-icono">▱</span><strong>Elige</strong><small>Selecciona una carta disponible del 1 al 5.</small></li>
+              <li><span class="manual-paso-icono">↕</span><strong>Declara</strong><small>Escoge PAR o IMPAR para tu jugada.</small></li>
+              <li><span class="manual-paso-icono">Σ</span><strong>Resuelve</strong><small>La suma de ambas cartas decide qué apuestas aciertan.</small></li>
+            </ol>
+          </section>
+        </div>
+
+        <aside class="manual-final-anticipado" aria-label="Condiciones de final anticipado">
+          <div class="manual-final-titulo">
+            <span class="manual-etiqueta">FINAL ANTICIPADO</span>
+            <strong>Las rondas elegidas son el máximo, no una obligación.</strong>
+          </div>
+          <div class="manual-final-extremos">
+            <div class="manual-extremo manual-extremo-recuperacion"><b>0% CRISIS</b><span>RECUPERACIÓN</span><small>El planeta recupera el equilibrio y la partida termina inmediatamente.</small></div>
+            <div class="manual-final-separador" aria-hidden="true">↔</div>
+            <div class="manual-extremo manual-extremo-colapso"><b>100% CRISIS</b><span>COLAPSO</span><small>El planeta colapsa y la partida termina inmediatamente.</small></div>
+          </div>
+        </aside>
+
+        <section class="manual-resultados">
+          <div class="manual-encabezado-seccion">
+            <span class="manual-numero">3</span>
+            <div>
+              <span class="manual-etiqueta">RESULTADOS</span>
+              <h4>Tres desenlaces posibles</h4>
+            </div>
+          </div>
+          <div class="manual-tres-resultados">
+            <article class="resultado-manual resultado-convergencia"><strong>CONVERGENCIA</strong><span>Ambos aciertan.</span><small>La Crisis se reduce.</small></article>
+            <article class="resultado-manual resultado-rivalidad"><strong>RIVALIDAD</strong><span>Solo uno acierta.</span><small>El ganador evoluciona y puede conquistar la siguiente fortaleza rival.</small></article>
+            <article class="resultado-manual resultado-fracaso"><strong>FRACASO</strong><span>Ninguno acierta.</span><small>La Crisis aumenta 3 puntos, salvo que un modificador cambie la regla.</small></article>
+          </div>
         </section>
-        <section>
-          <h4>2 · Resultado de una ronda</h4>
-          <ul>
-            <li><strong>Ambos aciertan:</strong> CONVERGENCIA. El planeta mejora.</li>
-            <li><strong>Solo uno acierta:</strong> RIVALIDAD. El ganador evoluciona y puede conquistar una fortaleza.</li>
-            <li><strong>Ninguno acierta:</strong> FRACASO. La crisis planetaria empeora.</li>
-          </ul>
+
+        <section class="manual-fortalezas manual-seccion-amplia">
+          <div class="manual-encabezado-seccion">
+            <span class="manual-numero">4</span>
+            <div>
+              <span class="manual-etiqueta">FORTALEZAS</span>
+              <h4>Conquistadas no significa activas</h4>
+            </div>
+          </div>
+          <p class="manual-nota">Una fortaleza conquistada permanece disponible; el aviso grande solo aparece cuando realmente interviene en esa ronda.</p>
+          <div class="manual-columnas-fortalezas">
+            <div class="manual-lista manual-lista-humano">
+              <h5>El Humano puede conquistar de la IA</h5>
+              <dl>
+                <div><dt>MEMORIA</dt><dd>Consulta apuestas y cartas recientes de la IA.</dd></div>
+                <div><dt>PRECISIÓN</dt><dd>Una vez por ciclo de mano, revela la carta real de la IA y permite mantener o corregir tu carta antes de resolver.</dd></div>
+                <div><dt>ANÁLISIS PREDICTIVO</dt><dd>Compara las cartas IA aún disponibles y orienta hacia Convergencia o Rivalidad según combinaciones posibles.</dd></div>
+                <div><dt>VELOCIDAD</dt><dd>Eliges dos cartas y NEXO aplica automáticamente la opción más beneficiosa para el Humano. Ambas se descartan.</dd></div>
+              </dl>
+            </div>
+            <div class="manual-lista manual-lista-ia">
+              <h5>La IA puede conquistar del Humano</h5>
+              <dl>
+                <div><dt>CREATIVIDAD</dt><dd>Tras dos derrotas consecutivas frente al Humano, rompe el patrón y cambia su apuesta respecto a la anterior.</dd></div>
+                <div><dt>INTUICIÓN</dt><dd>Aproximadamente cada tres rondas usa tu elección como pista y puede sustituir su carta por otra que favorezca su apuesta.</dd></div>
+                <div><dt>EMPATÍA</dt><dd>Cuando el planeta entra en situación crítica, revela su carta para favorecer una posible Convergencia.</dd></div>
+                <div><dt>ADAPTACIÓN</dt><dd>Si está disponible, reutiliza una carta con la que anteriormente consiguió una victoria.</dd></div>
+              </dl>
+            </div>
+          </div>
         </section>
-        <section class="manual-bloque-fortalezas">
-          <h4>3 · Fortalezas que puede adquirir el Humano</h4>
-          <dl>
-            <div><dt>MEMORIA</dt><dd>Muestra las tres últimas cartas y apuestas de la IA.</dd></div>
-            <div><dt>PRECISIÓN</dt><dd>Una vez por ciclo de mano, al confirmar tu jugada revela la carta de la IA —no su apuesta— y te permite mantener tu carta o corregirla antes de resolver.</dd></div>
-            <div><dt>ANÁLISIS PREDICTIVO</dt><dd>Compara las cartas que aún puede jugar la IA e indica qué carta funciona en más combinaciones posibles para buscar convergencia y cuál para buscar rivalidad.</dd></div>
-            <div><dt>VELOCIDAD</dt><dd>Seleccionas dos cartas. NEXO compara ambos resultados y aplica automáticamente el más beneficioso para el Humano. Las dos cartas se descartan.</dd></div>
-          </dl>
-        </section>
-        <section class="manual-bloque-fortalezas manual-ia">
-          <h4>4 · Fortalezas que puede adquirir la IA</h4>
-          <dl>
-            <div><dt>CREATIVIDAD</dt><dd>Tras dos derrotas seguidas, rompe su patrón y prueba la apuesta contraria a la anterior.</dd></div>
-            <div><dt>INTUICIÓN</dt><dd>Cada tres rondas revisa su carta usando tu elección como pista y puede sustituirla por otra disponible que favorezca su apuesta.</dd></div>
-            <div><dt>EMPATÍA</dt><dd>Cuando el planeta está en peligro, revela su carta para favorecer una posible convergencia.</dd></div>
-            <div><dt>ADAPTACIÓN</dt><dd>Si puede, recupera una carta con la que ya consiguió una victoria para reutilizar una opción que antes funcionó.</dd></div>
-          </dl>
-        </section>
-        <section>
-          <h4>5 · Cartas de crisis</h4>
-          <dl>
-            <div><dt>ENERGÍA RENOVABLE</dt><dd>Si hay convergencia, la reducción de crisis se duplica.</dd></div>
-            <div><dt>ECONOMÍA CIRCULAR</dt><dd>Si hay convergencia, la crisis baja 3 puntos extra.</dd></div>
-            <div><dt>INCENDIO FORESTAL</dt><dd>Si no hay convergencia, la crisis aumenta 3 puntos adicionales.</dd></div>
-            <div><dt>SEQUÍA</dt><dd>La suma de las cartas aumenta la crisis incluso si hay convergencia.</dd></div>
-            <div><dt>PUNTO DE INFLEXIÓN</dt><dd>Cualquier cambio de crisis vale el doble, pero nadie conquista capacidades.</dd></div>
-          </dl>
-        </section>
-        <section>
-          <h4>6 · Eventos especiales</h4>
-          <dl>
-            <div><dt>TORMENTA SOLAR</dt><dd>Ninguno puede usar capacidades conquistadas.</dd></div>
-            <div><dt>CUMBRE DE EMERGENCIA</dt><dd>Una convergencia reduce el doble la crisis.</dd></div>
-            <div><dt>SOBRECARGA DE DATOS</dt><dd>No se usan Análisis ni Precisión y la carta IA vale +1.</dd></div>
-            <div><dt>CHISPA CREATIVA</dt><dd>Ves la carta de la IA antes de apostar, pero no su apuesta.</dd></div>
-            <div><dt>PUNTO SIN RETORNO</dt><dd>Un fracaso aumenta la crisis 6 puntos en lugar de 3.</dd></div>
-          </dl>
-        </section>
-        <section>
-          <h4>7 · Consejo estratégico</h4>
-          <p>La apuesta de la IA se muestra antes de que decidas. Igualarla favorece la posibilidad de convergencia; llevarle la contraria fuerza una rivalidad. Las fortalezas activas aparecen resaltadas cuando intervienen para que sepas qué regla está modificando la ronda.</p>
-        </section>
+
+        <div class="manual-dos-columnas">
+          <section class="manual-modificadores">
+            <div class="manual-encabezado-seccion">
+              <span class="manual-numero">5</span>
+              <div><span class="manual-etiqueta">CARTAS DE CRISIS</span><h4>Modifican la ronda</h4></div>
+            </div>
+            <dl class="manual-lista-compacta">
+              <div><dt>ENERGÍA RENOVABLE</dt><dd>Duplica la reducción de Crisis obtenida por Convergencia.</dd></div>
+              <div><dt>ECONOMÍA CIRCULAR</dt><dd>Añade 3 puntos extra a la reducción de Crisis por Convergencia.</dd></div>
+              <div><dt>INCENDIO FORESTAL</dt><dd>Si no hay Convergencia, la Crisis aumenta 3 puntos adicionales.</dd></div>
+              <div><dt>SEQUÍA</dt><dd>La suma de las cartas aumenta la Crisis incluso si hay Convergencia.</dd></div>
+              <div><dt>PUNTO DE INFLEXIÓN</dt><dd>Duplica cualquier cambio de Crisis e impide conquistar fortalezas esa ronda.</dd></div>
+            </dl>
+          </section>
+
+          <section class="manual-eventos">
+            <div class="manual-encabezado-seccion">
+              <span class="manual-numero">6</span>
+              <div><span class="manual-etiqueta">EVENTOS ESPECIALES</span><h4>Cambian temporalmente las reglas</h4></div>
+            </div>
+            <dl class="manual-lista-compacta">
+              <div><dt>TORMENTA SOLAR</dt><dd>Desactiva temporalmente las fortalezas conquistadas.</dd></div>
+              <div><dt>CUMBRE DE EMERGENCIA</dt><dd>Duplica la reducción de Crisis obtenida por Convergencia.</dd></div>
+              <div><dt>SOBRECARGA DE DATOS</dt><dd>Bloquea Análisis y Precisión y hace que la carta IA cuente +1 en la suma.</dd></div>
+              <div><dt>CHISPA CREATIVA</dt><dd>Revela la carta de la IA antes de apostar, pero no su apuesta.</dd></div>
+              <div><dt>PUNTO SIN RETORNO</dt><dd>Un Fracaso aumenta la Crisis 6 puntos en lugar de 3.</dd></div>
+            </dl>
+          </section>
+        </div>
+
+        <aside class="manual-consejo">
+          <span class="manual-numero">7</span>
+          <div>
+            <span class="manual-etiqueta">CONSEJO ESTRATÉGICO</span>
+            <p>La apuesta de la IA se muestra antes de que decidas. Igualarla <strong>favorece</strong> la Convergencia; llevarle la contraria favorece una Rivalidad. Antes de resolver, revisa siempre fortalezas activas, carta de Crisis y evento de la ronda.</p>
+          </div>
+        </aside>
       </div>
     </article>
   </div>
@@ -838,51 +919,96 @@
   </div>
 
   <!-- ============================================================
-       PANTALLA FINAL · ESTRUCTURA PROPIA AMPLIADA CON EL RESUMEN LÓGICO
+       PANTALLA FINAL · RESULTADO NEXO
+       El planeta ocupa la jerarquía principal. El desenlace Humano/IA,
+       el perfil del jugador y las estadísticas quedan como lectura secundaria.
   ============================================================ -->
-  <section id="pantalla-final" class="pantalla">
+  <section id="pantalla-final" class="pantalla" aria-labelledby="titulo-final-principal">
+    <div class="final-atmosfera" aria-hidden="true"></div>
+
     <div class="contenido-final">
-      <h2 id="titulo-desenlace">—</h2>
-      <p id="mensaje-desenlace">—</p>
+      <header class="final-cabecera">
+        <img
+          class="final-logo-nexo"
+          src="./assets/images/portada/logo/nexo-logo-completo-x-estatica-v7.webp"
+          alt="NEXO · La Convergencia"
+        >
+        <p id="final-sobrelinea" class="final-sobrelinea">PROTOCOLO NEXO · RESULTADO FINAL</p>
+        <h2 id="titulo-final-principal">—</h2>
+        <p id="subtitulo-final-principal" class="final-subtitulo">—</p>
+        <p id="mensaje-final-principal" class="final-mensaje-planeta">—</p>
+      </header>
 
-      <div class="perfil-final">
-        <p class="etiqueta-crisis">Tu perfil de evolución</p>
-        <h3 id="nombre-perfil">—</h3>
-        <p id="descripcion-perfil">—</p>
+      <div class="final-hologramas-principales">
+        <article class="final-panel final-panel-desenlace">
+          <p id="final-etiqueta-desenlace" class="final-panel-etiqueta">DESENLACE DE LA CONVERGENCIA</p>
+          <h3 id="titulo-desenlace">—</h3>
+          <p id="mensaje-desenlace">—</p>
+        </article>
+
+        <article class="final-panel final-panel-perfil">
+          <p class="final-panel-etiqueta">
+            PERFIL ALCANZADO POR <strong id="final-nombre-jugador">—</strong>
+          </p>
+          <h3 id="nombre-perfil">—</h3>
+          <p id="descripcion-perfil">—</p>
+        </article>
       </div>
 
-      <div class="resumen-final">
-        <div class="dato-final"><span>Evolución humana</span><strong id="final-evo-humano">0</strong></div>
-        <div class="dato-final"><span>Evolución IA</span><strong id="final-evo-ia">0</strong></div>
-        <div class="dato-final"><span>Crisis del planeta</span><strong id="final-planeta">0</strong></div>
-        <div class="dato-final"><span>Rondas jugadas</span><strong id="final-rondas">0</strong></div>
+      <div class="resumen-final" aria-label="Resumen numérico de la partida">
+        <div class="dato-final">
+          <span>Evolución humana</span>
+          <strong id="final-evo-humano">0</strong>
+        </div>
+        <div class="dato-final">
+          <span>Evolución IA</span>
+          <strong id="final-evo-ia">0</strong>
+        </div>
+        <div class="dato-final dato-final-planeta">
+          <span>Crisis del planeta</span>
+          <strong id="final-planeta">0% CRISIS</strong>
+        </div>
+        <div class="dato-final">
+          <span>Rondas jugadas</span>
+          <strong id="final-rondas">0</strong>
+        </div>
       </div>
 
-      <div class="porcentajes-final">
+      <div class="porcentajes-final" aria-label="Balance de evolución Humano IA">
         <div class="barra-progreso barra-porcentaje">
           <div id="barra-porcentaje-humano" class="relleno-barra relleno-humano"></div>
         </div>
-        <p><span id="texto-porcentaje-humano">50%</span> Humano / <span id="texto-porcentaje-ia">50%</span> IA</p>
+        <p>
+          <span id="texto-porcentaje-humano">50%</span> HUMANO
+          <span class="final-balance-separador">/</span>
+          <span id="texto-porcentaje-ia">50%</span> IA
+        </p>
       </div>
 
       <div class="columnas-capacidades-finales">
-        <div class="capacidades-conquistadas">
-          <h3>Capacidades conquistadas por ti</h3>
+        <section class="capacidades-conquistadas capacidades-humano-final">
+          <h3>CAPACIDADES CONQUISTADAS POR TI</h3>
           <ul id="lista-capacidades"></ul>
-        </div>
-        <div class="capacidades-conquistadas">
-          <h3>Capacidades conquistadas por la IA</h3>
+        </section>
+
+        <section class="capacidades-conquistadas capacidades-ia-final">
+          <h3>CAPACIDADES CONQUISTADAS POR LA IA</h3>
           <ul id="lista-capacidades-ia"></ul>
-        </div>
+        </section>
       </div>
 
-      <p id="coleccion-perfiles" class="coleccion-perfiles">—</p>
-      <button id="btn-volver-jugar" class="boton boton-principal" type="button">Volver a jugar</button>
+      <div class="final-cierre">
+        <p id="coleccion-perfiles" class="coleccion-perfiles">—</p>
+        <blockquote id="final-reflexion" class="final-reflexion">
+          El futuro de NEXO se decide por cómo evolucionamos y por el mundo que dejamos vivo.
+        </blockquote>
+        <button id="btn-volver-jugar" class="boton-final-nexo" type="button">VOLVER A JUGAR</button>
+      </div>
     </div>
   </section>
 
   <!-- NEXO V5 · efecto visual aislado de la lógica del juego -->
   <script type="module" src="./src/efecto-energia-esfera.js?v=config-v10-esfera-alineada"></script>
-  <script type="module" src="./dist/main.js?v=chispa-v22-19"></script>
+  <script type="module" src="./dist/main.js?v=resolver-ronda-v1"></script>
 </body>
 </html>
