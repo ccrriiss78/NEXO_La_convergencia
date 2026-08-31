@@ -633,6 +633,12 @@ export class Partida {
     puntosJugador = this.jugador.getEvolucion() - evolucionJugadorAntes;
     puntosIA = this.ia.getEvolucion() - evolucionIAAntes;
 
+    if (this.saludPlaneta >= SALUD_MAXIMA && saludPlanetaAntes < SALUD_MAXIMA) {
+      explicacion =
+        "RECUPERACIÓN PLANETARIA COMPLETA · La Crisis ha llegado al 0%. " +
+        "El planeta vuelve a respirar. Sobrevivir no era suficiente: el verdadero desafío era aprender a evolucionar sin destruir aquello que nos sostiene.";
+    }
+
     let capacidadConquistada: string = "";
     if (resultado === "RIVALIDAD" && !this.hayCartaCrisis("inflexion")) {
       if (ganador === "HUMANO") {
@@ -698,16 +704,19 @@ export class Partida {
   // ---- Final de la partida ------------------------------------------------
 
   /**
-   * Comprueba si la partida ha terminado. Termina por colapso (planeta a 0),
-   * porque se han jugado todas las rondas o, en modo libre, porque el
-   * planeta se ha recuperado del todo.
+   * La partida termina inmediatamente cuando la Crisis alcanza
+   * cualquiera de sus dos extremos:
+   *
+   * Crisis 0%   = salud del planeta 100% = recuperación total.
+   * Crisis 100% = salud del planeta 0%   = colapso planetario.
+   *
+   * Si no se alcanza ninguno de los extremos, una partida de duración
+   * fija termina al completar el número de rondas seleccionado.
    */
   public comprobarFinal(): boolean {
-    if (this.saludPlaneta <= 0) {
+    if (this.saludPlaneta <= 0 || this.saludPlaneta >= SALUD_MAXIMA) {
       this.terminada = true;
     } else if (this.totalRondas > 0 && this.ronda >= this.totalRondas) {
-      this.terminada = true;
-    } else if (this.totalRondas === 0 && this.saludPlaneta >= SALUD_MAXIMA) {
       this.terminada = true;
     }
     return this.terminada;
@@ -738,19 +747,19 @@ export class Partida {
         "hayáis evolucionado si no queda mundo donde hacerlo.";
     } else if (this.saludPlaneta > 75 && diferencia <= 5) {
       desenlace = "CONVERGENCIA TOTAL";
-      mensaje =
-        "Habéis salvado el planeta sin que ninguno dominase al otro. " +
-        "El protocolo NEXO ha funcionado exactamente como se diseñó.";
+      mensaje = this.saludPlaneta >= SALUD_MAXIMA
+        ? "El planeta se ha recuperado y Humano e IA llegan al final sin que uno domine al otro. NEXO demuestra que avanzar juntos puede ser una forma de supervivencia."
+        : "Habéis protegido el planeta sin que ninguno dominase al otro. El protocolo NEXO ha alcanzado un equilibrio real.";
     } else if (evolucionJugador > evolucionIA) {
       desenlace = "SUPREMACIA HUMANA";
-      mensaje =
-        "Te has impuesto a la IA. El planeta termina con " +
-        crisisFinal + "% de crisis.";
+      mensaje = this.saludPlaneta >= SALUD_MAXIMA
+        ? "El planeta se ha recuperado, pero el equilibrio entre Humano e IA no lo ha hecho: la evolución humana domina el desenlace. Salvar el mundo no responde por sí solo a la pregunta de cómo compartirlo."
+        : "Te has impuesto a la IA. El planeta termina con " + crisisFinal + "% de crisis.";
     } else if (evolucionIA > evolucionJugador) {
       desenlace = "SUPREMACIA IA";
-      mensaje =
-        "La IA se ha impuesto. El planeta termina con " +
-        crisisFinal + "% de crisis.";
+      mensaje = this.saludPlaneta >= SALUD_MAXIMA
+        ? "El planeta se ha recuperado, pero la IA domina la evolución final. La supervivencia está asegurada; la cuestión que queda abierta es quién define ahora el futuro compartido."
+        : "La IA se ha impuesto. El planeta termina con " + crisisFinal + "% de crisis.";
     } else {
       desenlace = "EQUILIBRIO INESTABLE";
       mensaje =

@@ -158,6 +158,14 @@ function probarFracasoNoCuentaComoDerrotaIA() {
   assert.equal(p2.getIA().getDerrotasSeguidas(), 0);
 }
 
+function probarConfirmacionNoTieneEstadoMuerto() {
+  const main = fs.readFileSync(new URL("../dist/main.js", import.meta.url), "utf8");
+  assert.match(main, /cartasSeleccionadas\.length < necesarias/);
+  assert.match(main, /fase = "carta";/);
+  assert.match(main, /puedeUsarPrecision && activarPrecision\(\)/);
+  assert.match(main, /ACTIVAR PRECISIÓN/);
+}
+
 function probarManualYLimpiezaUI() {
   const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const main = fs.readFileSync(new URL("../dist/main.js", import.meta.url), "utf8");
@@ -187,5 +195,6 @@ probarCreatividadCambiaApuestaTrasDosDerrotas();
 probarAdaptacionReutilizaCartaGanadora();
 probarFracasoNoCuentaComoDerrotaIA();
 probarPrecisionRevelaCartaFiableYPermiteCorreccion();
+probarConfirmacionNoTieneEstadoMuerto();
 probarManualYLimpiezaUI();
 console.log("NEXO: 8 fortalezas y coherencia V22.36 verificadas.");

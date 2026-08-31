@@ -16,7 +16,7 @@ export type Resultado = "CONVERGENCIA" | "RIVALIDAD" | "FRACASO";
 /** Quién se ha impuesto en una ronda de rivalidad. */
 export type Bando = "HUMANO" | "IA" | "NADIE";
 
-/** Los cuatro desenlaces con los que puede terminar la partida. */
+/** Los cinco desenlaces con los que puede terminar la partida. */
 export type Desenlace =
   | "COLAPSO"
   | "CONVERGENCIA TOTAL"
