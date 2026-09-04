@@ -163,7 +163,9 @@ function probarConfirmacionNoTieneEstadoMuerto() {
   assert.match(main, /cartasSeleccionadas\.length < necesarias/);
   assert.match(main, /fase = "carta";/);
   assert.match(main, /puedeUsarPrecision && activarPrecision\(\)/);
-  assert.match(main, /ACTIVAR PRECISIÓN/);
+  assert.doesNotMatch(main, /ACTIVAR PRECISIÓN/);
+  assert.match(main, /RESOLVER RONDA/);
+  assert.match(main, /puedeUsarPrecision && activarPrecision\(\)/);
 }
 
 function probarManualYLimpiezaUI() {
@@ -185,6 +187,17 @@ function probarManualYLimpiezaUI() {
   assert.doesNotMatch(main, /mostrarOpcionesVelocidad|textoOpcionVelocidad|laIACambiaDeIdea/);
 }
 
+function probarAvisoVelocidadVisible() {
+  const main = fs.readFileSync(new URL("../dist/main.js", import.meta.url), "utf8");
+  const css = fs.readFileSync(new URL("../css/partida.css", import.meta.url), "utf8");
+  assert.match(main, /FORTALEZA ACTIVA · VELOCIDAD — ELIGE DOS CARTAS/);
+  assert.match(main, /const necesarias = usaVelocidad \? 2 : 1/);
+  assert.match(main, /NEXO selecciona la carta/);
+  assert.match(css, /V24\.21 EFECTIVA · HOVER Y AVISO DE VELOCIDAD PROTEGIDOS/);
+  assert.match(css, /z-index:60!important/);
+  assert.match(css, /z-index:61!important/);
+}
+
 probarMemoriaRegistraJugadasIA();
 probarAnalisisDaConsejoUtil();
 probarVelocidadPrevisualizaSinMutar();
@@ -197,4 +210,5 @@ probarFracasoNoCuentaComoDerrotaIA();
 probarPrecisionRevelaCartaFiableYPermiteCorreccion();
 probarConfirmacionNoTieneEstadoMuerto();
 probarManualYLimpiezaUI();
+probarAvisoVelocidadVisible();
 console.log("NEXO: 8 fortalezas y coherencia V22.36 verificadas.");

@@ -1,9 +1,14 @@
 {
   "name": "nexo_la_convergencia",
   "version": "1.0.0",
-  "description": "Juego de cartas Humano vs IA basado en la Morra, desarrollo con TypeScript\r NEXO\r LA CONVERGENCIA\r Dos inteligencias · Un planeta · Una misma evolución\r Documento de diseño de la propuesta fusionada\r Videojuego de cartas basado en la mecánica tradicional de la Morra (PAR / IMPAR)\r Agosto 2026",
+  "description": "NEXO - La Convergencia. Juego de cartas Humano vs IA basado en la Morra (PAR/IMPAR), hecho con TypeScript, HTML, CSS y localStorage.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc --outDir dist",
+    "build:check": "tsc",
+    "audit": "node scripts/auditar-proyecto.mjs",
+    "guardian:install": "node scripts/instalar-hook.mjs",
+    "pretest": "npm run audit",
     "test": "node tests/functional.mjs && node tests/fortalezas.mjs && node tests/player-storage.mjs && node tests/player-migration.mjs"
   },
   "repository": {

@@ -210,7 +210,7 @@ export class Partida {
       return null;
     }
     const posicion: number = Math.floor(Math.random() * CARTAS_CRISIS.length);
-    return CARTAS_CRISIS[posicion];
+    return CARTAS_CRISIS[posicion] as CartaCrisis;
   }
 
   /**

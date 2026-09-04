@@ -348,6 +348,14 @@ Puede abrirse con **Live Server** desde VS Code, que es el flujo de trabajo util
 
 ## Pruebas
 
+### Guardián de archivos
+
+Ejecutar `npm run audit` para comprobar el inventario de archivos esenciales, todos los assets protegidos, las referencias a recursos y la correspondencia entre `src/` y `dist/`. `npm test` ejecuta automáticamente esta auditoría antes de las pruebas funcionales.
+
+Dentro de un repositorio Git, ejecutar una sola vez `npm run guardian:install`. Esto activa el hook incluido en `.githooks/pre-commit` y bloquea commits cuando la auditoría detecta pérdidas o referencias rotas.
+
+Las reglas para Codex están en `AGENTS.md`; Claude dispone de las instrucciones equivalentes en `CLAUDE.md`.
+
 Ejecutar:
 
 ```bash
@@ -380,4 +388,26 @@ Los próximos cambios artísticos del planeta pueden desarrollarse como una fase
 
 ### Corrección de interacción — Resolver ronda
 
-Se ha reforzado el botón `RESOLVER RONDA` para que una jugada completa no pueda quedar en un estado visual habilitado sin respuesta. Cuando `Precisión` está disponible, el botón indica `ACTIVAR PRECISIÓN`; en el resto de casos resuelve la ronda normalmente. También se ha elevado la prioridad de interacción del botón para evitar que una capa visual de cartas intercepte el clic.
+Se ha reforzado el botón `RESOLVER RONDA` para que una jugada completa no pueda quedar en un estado visual habilitado sin respuesta. `Precisión` ya no sustituye el texto ni la función del botón principal: si la fortaleza está disponible, al pulsar `RESOLVER RONDA` se abre automáticamente su panel informativo para elegir entre mantener o corregir la carta antes del resultado. También se ha elevado la prioridad de interacción del botón para evitar que una capa visual de cartas intercepte el clic.
+
+### Sistema tipográfico de partida (V24.2)
+La pantalla de partida usa una única familia tipográfica de interfaz (`Inter`, con `Segoe UI`/Arial como respaldo) y diferencia jerarquías mediante peso, tamaño y espaciado. La revisión V24.2 no modifica la geometría de los paneles; consolida además el CSS de la fortaleza Precisión para evitar reglas redundantes.
+
+## Fuentes TypeScript y compilación (V24.15)
+
+La carpeta `src/` vuelve a contener una fuente TypeScript para cada módulo JavaScript de `dist/`. El navegador continúa ejecutando `dist/main.js`, pero ese archivo y sus dependencias pueden reconstruirse desde las fuentes.
+
+Después de instalar las dependencias con `npm install`, están disponibles estos comandos:
+
+- `npm run build:check`: compila en `dist-comprobacion/` sin sobrescribir el juego activo. Se recomienda durante el desarrollo.
+- `npm run build`: genera la versión ejecutable en `dist/` cuando la compilación de comprobación y las pruebas hayan terminado correctamente.
+- `npm test`: ejecuta las comprobaciones funcionales, de fortalezas y de persistencia.
+
+Flujo recomendado para evitar pérdidas:
+
+1. Ejecutar `npm run build:check`.
+2. Ejecutar `npm test`.
+3. Comprobar en el navegador los cambios visuales o de interacción.
+4. Ejecutar `npm run build` únicamente cuando todo lo anterior sea correcto.
+
+`src/efecto-energia-esfera.js` es una excepción intencionada: es un efecto visual independiente cargado directamente por `index.html` y no forma parte de la lógica compilada de la partida.

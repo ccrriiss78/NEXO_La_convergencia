@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO — La Convergencia</title>
-  <link rel="stylesheet" href="./css/style.css?v=revision-integral-v4">
+  <link rel="stylesheet" href="./css/style.css?v=ui-v24-12">
   <!-- Pantalla de partida aislada para que su diseño sea fácil de estudiar/modificar -->
-  <link rel="stylesheet" href="./css/partida.css?v=resolver-ronda-v1">
+  <link rel="stylesheet" href="./css/partida.css?v=flow-v24-11">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-25-49-equilibrio-fragil.webp">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-50-74-equilibrio-critico.webp">
@@ -639,17 +639,22 @@
                 <small id="precision-dato-secundario">Carta fijada para esta resolución.</small>
               </div>
             </div>
-            <p id="precision-decision" class="precision-decision">Tu carta confirmada es <strong id="precision-carta-humano">—</strong>. Puedes mantenerla o corregirla usando este dato.</p>
+            <div class="precision-recordatorio" aria-label="Recordatorio de tu jugada actual">
+              <div class="precision-recordatorio-item precision-recordatorio-apuesta">
+                <span>TÚ DECLARASTE</span>
+                <strong id="precision-apuesta-humano">—</strong>
+              </div>
+              <div class="precision-recordatorio-item precision-recordatorio-carta">
+                <span>TU CARTA ACTUAL</span>
+                <strong id="precision-carta-humano-resumen">—</strong>
+              </div>
+            </div>
+            <p id="precision-decision" class="precision-decision">Has declarado <strong id="precision-apuesta-humano-texto">—</strong> y tu carta confirmada es <strong id="precision-carta-humano">—</strong>. Ahora puedes decidir si mantenerla o corregirla con esta información.</p>
             <div id="precision-acciones" class="precision-acciones">
               <button id="btn-precision-mantener" class="boton precision-accion precision-mantener" type="button"><span id="precision-texto-mantener">MANTENER</span></button>
               <button id="btn-precision-corregir" class="boton precision-accion precision-corregir" type="button">CORREGIR CARTA</button>
             </div>
           </section>
-
-          <!-- BOTÓN RESOLVER. Solo se habilita con PAR/IMPAR + carta seleccionada. -->
-          <div id="acciones" class="acciones acciones-partida">
-            <button id="btn-confirmar-jugada" class="boton boton-confirmar-nexo" type="button" disabled>RESOLVER RONDA</button>
-          </div>
 
           <div id="zona-velocidad" class="zona-velocidad fortaleza-eleccion oculta" aria-live="polite">
             <div class="cabecera-fortaleza-eleccion">
@@ -666,6 +671,11 @@
             <p id="velocidad-eleccion-nexo" class="ayuda-fortaleza ayuda-fortaleza-destacada">—</p>
             <button id="btn-velocidad-aplicar" class="boton boton-poder boton-aplicar-velocidad" type="button">APLICAR MEJOR RESULTADO</button>
           </div>
+        </div>
+
+        <!-- ACCIÓN PRINCIPAL · fuera de la capa de cartas para garantizar clic y separación visual. -->
+        <div id="acciones" class="acciones acciones-partida">
+          <button id="btn-confirmar-jugada" class="boton boton-confirmar-nexo" type="button" disabled>RESOLVER RONDA</button>
         </div>
 
         <!-- RESOLUCIÓN. Sustituye a la decisión; nunca se superpone con PAR/IMPAR. -->
@@ -740,9 +750,9 @@
       <header class="cabecera-manual">
         <img class="manual-logo" src="assets/images/portada/logo/nexo-logo-completo-x-estatica-v7.webp" alt="NEXO · La Convergencia">
         <div class="manual-titulos">
-          <p class="manual-sobrelinea">PROTOCOLO NEXO · GUÍA DE JUEGO</p>
+          <p class="manual-sobrelinea">PROTOCOLO NEXO · GUÍA OPERATIVA</p>
           <h3 id="titulo-manual">Cómo jugar</h3>
-          <p class="manual-subtitulo">Una guía visual para decidir rápido sin perder de vista la Crisis, las fortalezas y los modificadores.</p>
+          <p class="manual-subtitulo">Consulta el protocolo de una ronda, sus desenlaces y los sistemas que pueden alterar cada decisión.</p>
         </div>
         <button id="btn-cerrar-manual" class="boton-cerrar-manual" type="button" aria-label="Cerrar manual">×</button>
       </header>
@@ -919,14 +929,15 @@
   </div>
 
   <!-- ============================================================
-       PANTALLA FINAL · RESULTADO NEXO
-       El planeta ocupa la jerarquía principal. El desenlace Humano/IA,
-       el perfil del jugador y las estadísticas quedan como lectura secundaria.
+       PANTALLA FINAL · RESULTADO NEXO · REDISEÑO V23
+       El estado del planeta domina la jerarquía. El fondo sigue siendo
+       dinámico y la información se protege mediante un campo holográfico
+       semitransparente que mantiene visible la escena final.
   ============================================================ -->
   <section id="pantalla-final" class="pantalla" aria-labelledby="titulo-final-principal">
     <div class="final-atmosfera" aria-hidden="true"></div>
 
-    <div class="contenido-final">
+    <div class="contenido-final final-campo-lectura">
       <header class="final-cabecera">
         <img
           class="final-logo-nexo"
@@ -935,17 +946,46 @@
         >
         <p id="final-sobrelinea" class="final-sobrelinea">PROTOCOLO NEXO · RESULTADO FINAL</p>
         <h2 id="titulo-final-principal">—</h2>
+
+        <div class="final-planeta-dominante" aria-label="Estado final del planeta">
+          <strong id="final-planeta" class="final-planeta-porcentaje">0%</strong>
+          <span class="final-planeta-etiqueta">CRISIS<br>DEL PLANETA</span>
+        </div>
         <p id="subtitulo-final-principal" class="final-subtitulo">—</p>
         <p id="mensaje-final-principal" class="final-mensaje-planeta">—</p>
       </header>
 
-      <div class="final-hologramas-principales">
-        <article class="final-panel final-panel-desenlace">
-          <p id="final-etiqueta-desenlace" class="final-panel-etiqueta">DESENLACE DE LA CONVERGENCIA</p>
-          <h3 id="titulo-desenlace">—</h3>
-          <p id="mensaje-desenlace">—</p>
+      <div class="final-evolucion" aria-label="Evolución final Humano e IA">
+        <article class="final-evolucion-card final-evolucion-humano">
+          <div id="final-avatar-humano" class="final-avatar final-avatar-humano" role="img" aria-label="Avatar humano final"></div>
+          <div class="final-evolucion-info">
+            <p class="final-evolucion-tipo">HUMANO</p>
+            <p class="final-evolucion-valor"><strong id="final-evo-humano">0%</strong> <span>EVOLUCIÓN</span></p>
+            <div class="final-mini-barra" aria-hidden="true"><span id="final-barra-humano"></span></div>
+            <h3>CAPACIDADES CONQUISTADAS</h3>
+            <ul id="lista-capacidades"></ul>
+          </div>
         </article>
 
+        <div class="final-rondas-nucleo" aria-label="Rondas jugadas">
+          <span class="final-rondas-icono" aria-hidden="true">✦</span>
+          <strong id="final-rondas">0</strong>
+          <small>RONDAS</small>
+        </div>
+
+        <article class="final-evolucion-card final-evolucion-ia">
+          <div class="final-evolucion-info">
+            <p class="final-evolucion-tipo">IA</p>
+            <p class="final-evolucion-valor"><strong id="final-evo-ia">0%</strong> <span>EVOLUCIÓN</span></p>
+            <div class="final-mini-barra" aria-hidden="true"><span id="final-barra-ia"></span></div>
+            <h3>CAPACIDADES CONQUISTADAS</h3>
+            <ul id="lista-capacidades-ia"></ul>
+          </div>
+          <div id="final-avatar-ia" class="final-avatar final-avatar-ia" role="img" aria-label="Avatar IA final"></div>
+        </article>
+      </div>
+
+      <div class="final-hologramas-principales">
         <article class="final-panel final-panel-perfil">
           <p class="final-panel-etiqueta">
             PERFIL ALCANZADO POR <strong id="final-nombre-jugador">—</strong>
@@ -953,51 +993,19 @@
           <h3 id="nombre-perfil">—</h3>
           <p id="descripcion-perfil">—</p>
         </article>
-      </div>
 
-      <div class="resumen-final" aria-label="Resumen numérico de la partida">
-        <div class="dato-final">
-          <span>Evolución humana</span>
-          <strong id="final-evo-humano">0</strong>
-        </div>
-        <div class="dato-final">
-          <span>Evolución IA</span>
-          <strong id="final-evo-ia">0</strong>
-        </div>
-        <div class="dato-final dato-final-planeta">
-          <span>Crisis del planeta</span>
-          <strong id="final-planeta">0% CRISIS</strong>
-        </div>
-        <div class="dato-final">
-          <span>Rondas jugadas</span>
-          <strong id="final-rondas">0</strong>
-        </div>
-      </div>
-
-      <div class="porcentajes-final" aria-label="Balance de evolución Humano IA">
-        <div class="barra-progreso barra-porcentaje">
-          <div id="barra-porcentaje-humano" class="relleno-barra relleno-humano"></div>
-        </div>
-        <p>
-          <span id="texto-porcentaje-humano">50%</span> HUMANO
-          <span class="final-balance-separador">/</span>
-          <span id="texto-porcentaje-ia">50%</span> IA
-        </p>
-      </div>
-
-      <div class="columnas-capacidades-finales">
-        <section class="capacidades-conquistadas capacidades-humano-final">
-          <h3>CAPACIDADES CONQUISTADAS POR TI</h3>
-          <ul id="lista-capacidades"></ul>
-        </section>
-
-        <section class="capacidades-conquistadas capacidades-ia-final">
-          <h3>CAPACIDADES CONQUISTADAS POR LA IA</h3>
-          <ul id="lista-capacidades-ia"></ul>
-        </section>
+        <article class="final-panel final-panel-desenlace">
+          <p id="final-etiqueta-desenlace" class="final-panel-etiqueta">DESENLACE DE LA CONVERGENCIA</p>
+          <h3 id="titulo-desenlace">—</h3>
+          <p id="mensaje-desenlace">—</p>
+        </article>
       </div>
 
       <div class="final-cierre">
+        <div class="final-lectura-estrategica" aria-label="Lectura estratégica del resultado">
+          <span>LECTURA ESTRATÉGICA · TEORÍA DE JUEGOS</span>
+          <p id="final-lectura-estrategica">—</p>
+        </div>
         <p id="coleccion-perfiles" class="coleccion-perfiles">—</p>
         <blockquote id="final-reflexion" class="final-reflexion">
           El futuro de NEXO se decide por cómo evolucionamos y por el mundo que dejamos vivo.
@@ -1009,6 +1017,6 @@
 
   <!-- NEXO V5 · efecto visual aislado de la lógica del juego -->
   <script type="module" src="./src/efecto-energia-esfera.js?v=config-v10-esfera-alineada"></script>
-  <script type="module" src="./dist/main.js?v=resolver-ronda-v1"></script>
+  <script type="module" src="./dist/main.js?v=flow-v24-10"></script>
 </body>
 </html>
