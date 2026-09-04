@@ -12,10 +12,10 @@ import { CartaCrisis, FichaEvento, FichaCapacidad, FichaPerfil } from "./tipos.j
 // ---- Constantes de equilibrio de la partida ---------------------------
 
 /** Salud del planeta al empezar la partida. */
-export const SALUD_INICIAL: number = 30;
+export const SALUD_INICIAL: number = 50;
 
 /** Salud máxima que puede alcanzar el planeta. */
-export const SALUD_MAXIMA: number = 60;
+export const SALUD_MAXIMA: number = 100;
 
 /** Puntos que pierde el planeta cuando la ronda termina en FRACASO. */
 export const PENALIZACION_FRACASO: number = 3;
@@ -30,7 +30,7 @@ export const RONDAS_ENTRE_EVENTOS: number = 4;
 export const PROBABILIDAD_CARTA_CRISIS: number = 0.34;
 
 /** Salud por debajo de la cual la IA con Empatía busca la convergencia. */
-export const PLANETA_EN_PELIGRO: number = 15;
+export const PLANETA_EN_PELIGRO: number = 25;
 
 // ---- Crisis ecológica de cada ronda -----------------------------------
 

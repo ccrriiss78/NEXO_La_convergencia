@@ -44,6 +44,8 @@ let partida: Partida | null = null;
 let fase: FaseRonda = "apuesta";
 let apuestaElegida: Apuesta | null = null;
 let cartasSeleccionadas: number[] = [];
+let cartaConfirmadaPrecision: number | null = null;
+let mejorCartaVelocidad: number | null = null;
 
 // Configuración elegida en la pantalla previa a la partida.
 let avatarElegido: string = "explorador";
@@ -89,7 +91,9 @@ function iniciar(): void {
   });
 
   elemento("btn-confirmar-jugada").addEventListener("click", confirmar);
-  elemento("btn-cambiar").addEventListener("click", usarPrecision);
+  elemento("btn-precision-mantener").addEventListener("click", mantenerCartaPrecision);
+  elemento("btn-precision-corregir").addEventListener("click", corregirCartaPrecision);
+  elemento("btn-velocidad-aplicar").addEventListener("click", aplicarVelocidad);
   elemento("btn-siguiente").addEventListener("click", siguiente);
   elemento("btn-cerrar-evento").addEventListener("click", ocultarEvento);
 
@@ -172,16 +176,19 @@ function nuevaRonda(): void {
   fase = "apuesta";
   apuestaElegida = null;
   cartasSeleccionadas = [];
+  cartaConfirmadaPrecision = null;
+  mejorCartaVelocidad = null;
 
   ocultarResolucion();
   ocultar("zona-velocidad");
-  ocultar("btn-cambiar");
+  ocultar("panel-precision");
   ocultar("btn-siguiente");
   mostrar("zona-apuesta");
   mostrar("zona-mano");
-  escribir("btn-confirmar-jugada", "CONFIRMAR");
+  escribir("btn-confirmar-jugada", "RESOLVER RONDA");
   mostrar("btn-confirmar-jugada");
   (elemento("btn-confirmar-jugada") as HTMLButtonElement).disabled = true;
+  elemento("pantalla-juego").classList.remove("precision-modo-correccion");
 
   pintarApuestaElegida(null);
   refrescarPantalla();
@@ -295,7 +302,17 @@ function quitarSeleccion(valor: number): number[] {
 function actualizarBotonConfirmar(): void {
   const boton: HTMLButtonElement = elemento("btn-confirmar-jugada") as HTMLButtonElement;
   const necesarias: number = velocidadDisponible() ? 2 : 1;
-  boton.disabled = apuestaElegida === null || cartasSeleccionadas.length < necesarias;
+  const jugadaIncompleta: boolean = apuestaElegida === null || cartasSeleccionadas.length < necesarias;
+  const jugadaCompleta: boolean = !jugadaIncompleta;
+  const puedeUsarPrecision: boolean =
+    partida !== null &&
+    jugadaCompleta &&
+    partida.getJugador().puedeUsarPrecision() &&
+    partida.capacidadesPermitidas() &&
+    !velocidadDisponible();
+
+  boton.disabled = jugadaIncompleta;
+  boton.textContent = puedeUsarPrecision ? "ACTIVAR PRECISIÓN" : "RESOLVER RONDA";
 }
 
 /**
@@ -309,13 +326,10 @@ function confirmar(): void {
 
   if (fase === "carta") {
     const jugador: Jugador = partida.getJugador();
-    const puedeCambiar: boolean =
+    const puedeUsarPrecision: boolean =
       jugador.puedeUsarPrecision() && partida.capacidadesPermitidas() && !velocidadDisponible();
 
-    if (puedeCambiar) {
-      fase = "confirmada";
-      mostrar("btn-cambiar");
-      escribir("btn-confirmar-jugada", "REVELAR");
+    if (puedeUsarPrecision && activarPrecision()) {
       return;
     }
     revelar();
@@ -327,16 +341,51 @@ function confirmar(): void {
   }
 }
 
-/** Botón de la capacidad Precisión: deshace la confirmación una vez por mano. */
-function usarPrecision(): void {
-  if (partida === null || fase !== "confirmada") {
+/** Activa Precisión: revela y fija la carta real de la IA antes de resolver. */
+function activarPrecision(): boolean {
+  if (partida === null || cartasSeleccionadas.length !== 1) {
+    return false;
+  }
+
+  cartaConfirmadaPrecision = cartasSeleccionadas[0];
+  const cartaIA: number = partida.fijarCartaIAParaPrecision(cartaConfirmadaPrecision);
+  partida.getJugador().gastarPrecision();
+
+  escribir("precision-carta-ia", String(cartaIA));
+  escribir("precision-carta-humano", String(cartaConfirmadaPrecision));
+  escribir("precision-texto-mantener", "MANTENER " + cartaConfirmadaPrecision);
+  const imagen: HTMLImageElement = elemento("precision-imagen-carta-ia") as HTMLImageElement;
+  imagen.src = "./assets/images/partida/cartas/ia/carta-ia-" + cartaIA + ".webp";
+  imagen.alt = "Carta " + cartaIA + " seleccionada por la IA";
+
+  fase = "confirmada";
+  ocultar("btn-confirmar-jugada");
+  mostrar("panel-precision");
+  elemento("pantalla-juego").classList.add("precision-modo-correccion");
+  return true;
+}
+
+/** Mantiene la carta confirmada tras usar Precisión. */
+function mantenerCartaPrecision(): void {
+  if (cartaConfirmadaPrecision === null) {
     return;
   }
-  partida.getJugador().gastarPrecision();
-  fase = "carta";
+  ocultar("panel-precision");
+  elemento("pantalla-juego").classList.remove("precision-modo-correccion");
+  resolverConCarta(cartaConfirmadaPrecision);
+}
+
+/** Permite elegir otra carta tras ver la carta fijada por Precisión. */
+function corregirCartaPrecision(): void {
+  if (partida === null) {
+    return;
+  }
   cartasSeleccionadas = [];
-  ocultar("btn-cambiar");
-  escribir("btn-confirmar-jugada", "CONFIRMAR");
+  fase = "carta";
+  ocultar("panel-precision");
+  mostrar("btn-confirmar-jugada");
+  elemento("pantalla-juego").classList.add("precision-modo-correccion");
+  escribir("btn-confirmar-jugada", "RESOLVER RONDA");
   escribir("instruccion-mano", "PRECISIÓN usada: elige otra carta");
   pintarMano(partida.getJugador(), cartasSeleccionadas, pulsarCarta);
   actualizarBotonConfirmar();
@@ -351,14 +400,13 @@ function revelar(): void {
     return;
   }
 
-  ocultar("btn-cambiar");
   ocultar("btn-confirmar-jugada");
 
   if (cartasSeleccionadas.length === 2) {
     const jugador: Jugador = partida.getJugador();
     jugador.jugarCarta(cartasSeleccionadas[0]);
     jugador.jugarCarta(cartasSeleccionadas[1]);
-    mostrarOpcionesVelocidad(cartasSeleccionadas[0], cartasSeleccionadas[1]);
+    prepararVelocidad(cartasSeleccionadas[0], cartasSeleccionadas[1]);
     return;
   }
 
@@ -366,47 +414,49 @@ function revelar(): void {
 }
 
 /** Muestra los dos resultados posibles del poder Velocidad. */
-function mostrarOpcionesVelocidad(cartaA: number, cartaB: number): void {
-  if (partida === null) {
+function prepararVelocidad(cartaA: number, cartaB: number): void {
+  if (partida === null || apuestaElegida === null) {
     return;
   }
   fase = "velocidad";
 
-  const valorIA: number = partida.getValorCartaIA();
-  const botonA: HTMLButtonElement = elemento("btn-veloz-a") as HTMLButtonElement;
-  const botonB: HTMLButtonElement = elemento("btn-veloz-b") as HTMLButtonElement;
+  const resultadoA = partida.previsualizarResultado(cartaA, apuestaElegida);
+  const resultadoB = partida.previsualizarResultado(cartaB, apuestaElegida);
+  const ventajaA: number = resultadoA.puntosJugador - resultadoA.puntosIA + resultadoA.puntosPlaneta;
+  const ventajaB: number = resultadoB.puntosJugador - resultadoB.puntosIA + resultadoB.puntosPlaneta;
+  mejorCartaVelocidad = ventajaB > ventajaA ? cartaB : cartaA;
 
-  botonA.textContent = textoOpcionVelocidad(cartaA, valorIA);
-  botonB.textContent = textoOpcionVelocidad(cartaB, valorIA);
-
-  botonA.onclick = function () {
-    ocultar("zona-velocidad");
-    resolverConCarta(cartaA);
-  };
-  botonB.onclick = function () {
-    ocultar("zona-velocidad");
-    resolverConCarta(cartaB);
-  };
-
+  escribir("resultado-veloz-a", describirVelocidad(cartaA, resultadoA.suma, resultadoA.paridad, resultadoA.ganador));
+  escribir("resultado-veloz-b", describirVelocidad(cartaB, resultadoB.suma, resultadoB.paridad, resultadoB.ganador));
+  escribir("velocidad-eleccion-nexo", "NEXO aplicará la carta " + mejorCartaVelocidad + " porque deja el mejor balance para el Humano.");
   mostrar("zona-velocidad");
 }
 
-function textoOpcionVelocidad(carta: number, valorIA: number): string {
-  const suma: number = carta + valorIA;
-  const paridad: string = suma % 2 === 0 ? "PAR" : "IMPAR";
-  return "Carta " + carta + " · suma " + suma + " (" + paridad + ")";
+function describirVelocidad(carta: number, suma: number, paridad: Apuesta, ganador: string): string {
+  return "Carta " + carta + " · suma " + suma + " (" + paridad + ") · " + ganador;
+}
+
+function aplicarVelocidad(): void {
+  if (mejorCartaVelocidad === null) {
+    return;
+  }
+  ocultar("zona-velocidad");
+  resolverConCarta(mejorCartaVelocidad, true);
 }
 
 /** Resuelve la ronda con la carta elegida y pinta el resultado. */
-function resolverConCarta(carta: number): void {
+function resolverConCarta(carta: number, cartaYaDescartada: boolean = false): void {
   if (partida === null || apuestaElegida === null) {
     return;
   }
 
-  partida.getJugador().jugarCarta(carta);
+  if (!cartaYaDescartada) {
+    partida.getJugador().jugarCarta(carta);
+  }
   const resumen: ResumenRonda = partida.resolverRonda(carta, apuestaElegida);
 
   fase = "resuelta";
+  elemento("pantalla-juego").classList.remove("precision-modo-correccion");
   ocultar("zona-apuesta");
   ocultar("zona-mano");
   refrescarPantalla();

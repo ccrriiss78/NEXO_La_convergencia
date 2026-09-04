@@ -183,12 +183,11 @@ export function pintarPistas(partida: Partida): void {
   const puede: boolean = partida.capacidadesPermitidas();
 
   if (jugador.tiene("analisis") && puede && !partida.hayEvento("sobrecarga")) {
-    const tendencia: Apuesta | null = partida.getIA().getTendencia();
-    if (tendencia === null) {
-      escribir("pista-analisis", "ANÁLISIS · la IA todavía no ha apostado nunca.");
-    } else {
-      escribir("pista-analisis", "ANÁLISIS · la IA tiende a apostar " + tendencia + ".");
-    }
+    const consejo = partida.getConsejoAnalisis();
+    escribir(
+      "pista-analisis",
+      "ANÁLISIS · Convergencia: " + consejo.convergencia + " · Rivalidad: " + consejo.rivalidad + "."
+    );
     mostrar("pista-analisis");
   } else {
     ocultar("pista-analisis");
@@ -361,7 +360,7 @@ export function pintarResolucion(resumen: ResumenRonda): void {
 function construirDetalle(resumen: ResumenRonda): string {
   let detalle: string = resumen.explicacion;
 
-  if (resumen.cambioDeIdeaIA) {
+  if (resumen.intuicionIA) {
     detalle =
       "INTUICIÓN · la IA te ha leído y ha cambiado su apuesta a última hora. " + detalle;
   }
