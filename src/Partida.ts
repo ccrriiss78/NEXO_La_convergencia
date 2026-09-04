@@ -1,10 +1,11 @@
 import { Jugador } from "./Jugador.js";
 import { Evento } from "./Evento.js";
+import { Carta } from "./Carta.js";
 import {
-  apuestaContraria,
   decidirCartaIA,
   declararApuestaIA,
-  laIACambiaDeIdea,
+  intuicionActiva,
+  preverCartaConIntuicion,
   laIAJuegaACartasVistas
 } from "./ia.js";
 import {
@@ -71,12 +72,14 @@ export class Partida {
   // para que el jugador sepa que le queda a la IA, tal y como dice el
   // documento de diseño: en la quinta ronda del ciclo ya no hay dudas.
   private cartasIAReveladas: number[];
+  private cartaIAFijadaPorPrecision: boolean;
+  private intuicionAplicadaPorPrecision: boolean;
 
   private terminada: boolean;
 
-  constructor(nombreJugador: string, avatarJugador: string, totalRondas: number) {
+  constructor(nombreJugador: string, avatarJugador: string, totalRondas: number, avatarIA: string = "ia-01") {
     this.jugador = new Jugador(nombreJugador, false, avatarJugador);
-    this.ia = new Jugador("IA", true, "ia");
+    this.ia = new Jugador("IA", true, avatarIA);
 
     this.ronda = 0;
     this.totalRondas = totalRondas;
@@ -91,6 +94,8 @@ export class Partida {
     this.cartaIA = 0;
     this.apuestaDeclaradaIA = "PAR";
     this.cartasIAReveladas = [];
+    this.cartaIAFijadaPorPrecision = false;
+    this.intuicionAplicadaPorPrecision = false;
     this.terminada = false;
   }
 
@@ -151,13 +156,13 @@ export class Partida {
 
   /** Estado visual del planeta, para cambiar el fondo de la pantalla. */
   public getEstadoPlaneta(): string {
-    if (this.saludPlaneta <= 15) {
+    if (this.saludPlaneta < 25) {
       return "critico";
     }
-    if (this.saludPlaneta <= 30) {
+    if (this.saludPlaneta < 50) {
       return "deteriorado";
     }
-    if (this.saludPlaneta <= 45) {
+    if (this.saludPlaneta < 75) {
       return "estable";
     }
     return "recuperado";
@@ -177,6 +182,8 @@ export class Partida {
     }
 
     this.ronda = this.ronda + 1;
+    this.cartaIAFijadaPorPrecision = false;
+    this.intuicionAplicadaPorPrecision = false;
 
     this.jugador.limpiarApuesta();
     this.ia.limpiarApuesta();
@@ -262,6 +269,25 @@ export class Partida {
     );
   }
 
+
+  /** Mensajes visibles de las fortalezas de IA que afectan a esta ronda. */
+  public getAvisosFortalezasIA(): string[] {
+    const avisos: string[] = [];
+    if (!this.capacidadesPermitidas()) {
+      return avisos;
+    }
+    if (this.ia.tiene("adaptacion") && this.ia.getCartaGanadora() > 0 && this.cartaIA === this.ia.getCartaGanadora()) {
+      avisos.push("ADAPTACIÓN · REUTILIZACIÓN EFICAZ: la IA recupera una carta con la que ya consiguió una victoria");
+    }
+    if (this.ia.tiene("creatividad") && this.ia.getDerrotasSeguidas() >= 2) {
+      avisos.push("CREATIVIDAD · CAMBIO DE ENFOQUE: tras dos derrotas, la IA rompe su patrón y cambia su apuesta");
+    }
+    if (this.iaJuegaACartasVistas()) {
+      avisos.push("EMPATÍA · PRIORIDAD PLANETARIA: la IA juega a cartas vistas para favorecer la CONVERGENCIA");
+    }
+    return avisos;
+  }
+
   /**
    * Cartas que la IA todavía NO ha revelado en este ciclo de mano, una de
    * ellas es la que tiene ahora mismo boca abajo.
@@ -297,6 +323,169 @@ export class Partida {
     return this.cartaIA;
   }
 
+
+  /** Valor efectivo de una carta concreta de la IA en la ronda actual. */
+  private getValorCartaIAPara(carta: number): number {
+    if (this.hayEvento("sobrecarga")) {
+      return carta + 1;
+    }
+    return carta;
+  }
+
+  /**
+   * ANÁLISIS PREDICTIVO: convierte las cartas que aún puede jugar la IA en
+   * una recomendación clara para el Humano. No adivina la carta oculta:
+   * cuenta posibilidades con un bucle y calcula un porcentaje.
+   */
+  public getConsejoAnalisis(): { convergencia: string; rivalidad: string } {
+    const cartasHumano: Carta[] = this.jugador.getCartasDisponibles();
+    const cartasIA: number[] = this.getCartasIAPorRevelar();
+    if (cartasHumano.length === 0 || cartasIA.length === 0) {
+      return { convergencia: "sin datos", rivalidad: "sin datos" };
+    }
+
+    let mejorConvergencia: number = 1;
+    let aciertosConvergencia: number = -1;
+    let mejorRivalidad: number = 1;
+    let aciertosRivalidad: number = -1;
+    const apuestaRival: Apuesta = this.apuestaDeclaradaIA === "PAR" ? "IMPAR" : "PAR";
+
+    for (const cartaDisponible of cartasHumano) {
+      const cartaHumano: number = cartaDisponible.getValor();
+      let coincideIA: number = 0;
+      let contradiceIA: number = 0;
+      for (const cartaPosibleIA of cartasIA) {
+        const valorIA: number = this.getValorCartaIAPara(cartaPosibleIA);
+        const paridad: Apuesta = (cartaHumano + valorIA) % 2 === 0 ? "PAR" : "IMPAR";
+        if (paridad === this.apuestaDeclaradaIA) coincideIA = coincideIA + 1;
+        if (paridad === apuestaRival) contradiceIA = contradiceIA + 1;
+      }
+      if (coincideIA > aciertosConvergencia) {
+        aciertosConvergencia = coincideIA;
+        mejorConvergencia = cartaHumano;
+      }
+      if (contradiceIA > aciertosRivalidad) {
+        aciertosRivalidad = contradiceIA;
+        mejorRivalidad = cartaHumano;
+      }
+    }
+
+    const porcentajeConvergencia: number = Math.round((aciertosConvergencia / cartasIA.length) * 100);
+    const porcentajeRivalidad: number = Math.round((aciertosRivalidad / cartasIA.length) * 100);
+    return {
+      convergencia: "carta " + mejorConvergencia + " · " + porcentajeConvergencia + "% de combinaciones posibles",
+      rivalidad: "carta " + mejorRivalidad + " · " + porcentajeRivalidad + "% de combinaciones posibles"
+    };
+  }
+
+  /**
+   * Vista previa sin efectos secundarios. VELOCIDAD la usa para comparar
+   * dos cartas y decidir cuál beneficia más al Humano.
+   */
+  public previsualizarResultado(cartaJugador: number, apuestaJugador: Apuesta): {
+    cartaJugador: number;
+    cartaIA: number;
+    suma: number;
+    paridad: Apuesta;
+    apuestaIA: Apuesta;
+    resultado: Resultado;
+    ganador: Bando;
+    intuicionActiva: boolean;
+    puntosPlaneta: number;
+    puntosJugador: number;
+    puntosIA: number;
+  } {
+    const usaIntuicion: boolean = intuicionActiva(this.ia, this.ronda, this.capacidadesPermitidas());
+    const incremento: number = this.hayEvento("sobrecarga") ? 1 : 0;
+    const cartaIAPrevista: number = preverCartaConIntuicion(
+      this.ia,
+      this.cartaIA,
+      cartaJugador,
+      this.apuestaDeclaradaIA,
+      this.ronda,
+      this.capacidadesPermitidas(),
+      incremento
+    );
+    const valorIA: number = this.getValorCartaIAPara(cartaIAPrevista);
+    const suma: number = cartaJugador + valorIA;
+    const paridad: Apuesta = suma % 2 === 0 ? "PAR" : "IMPAR";
+    const aciertaJugador: boolean = apuestaJugador === paridad;
+    const aciertaIA: boolean = this.apuestaDeclaradaIA === paridad;
+    let resultado: Resultado;
+    let ganador: Bando;
+    if (aciertaJugador && aciertaIA) {
+      resultado = "CONVERGENCIA";
+      ganador = "NADIE";
+    } else if (aciertaJugador) {
+      resultado = "RIVALIDAD";
+      ganador = "HUMANO";
+    } else if (aciertaIA) {
+      resultado = "RIVALIDAD";
+      ganador = "IA";
+    } else {
+      resultado = "FRACASO";
+      ganador = "NADIE";
+    }
+    let puntosPlaneta: number = 0;
+    let puntosJugador: number = 0;
+    let puntosIA: number = 0;
+    if (resultado === "CONVERGENCIA") puntosPlaneta = suma;
+    else if (resultado === "RIVALIDAD" && ganador === "HUMANO") { puntosJugador = suma; puntosIA = -suma; }
+    else if (resultado === "RIVALIDAD" && ganador === "IA") { puntosIA = suma; puntosJugador = -suma; }
+    else puntosPlaneta = this.hayEvento("sinretorno") ? -6 : -PENALIZACION_FRACASO;
+
+    if (resultado === "CONVERGENCIA" && this.hayCartaCrisis("renovable")) puntosPlaneta = puntosPlaneta * 2;
+    if (resultado === "CONVERGENCIA" && this.hayCartaCrisis("circular")) puntosPlaneta = puntosPlaneta + 3;
+    if (this.hayCartaCrisis("incendio") && resultado !== "CONVERGENCIA") puntosPlaneta = puntosPlaneta - 3;
+    if (this.hayCartaCrisis("sequia")) {
+      if (resultado === "CONVERGENCIA") puntosPlaneta = -suma;
+      else puntosPlaneta = puntosPlaneta - suma;
+    }
+    if (resultado === "CONVERGENCIA" && puntosPlaneta > 0 && this.hayEvento("cumbre")) puntosPlaneta = puntosPlaneta * 2;
+    if (this.hayCartaCrisis("inflexion")) puntosPlaneta = puntosPlaneta * 2;
+
+    const planetaDespues: number = Math.max(0, Math.min(SALUD_MAXIMA, this.saludPlaneta + puntosPlaneta));
+    const humanoDespues: number = Math.max(0, this.jugador.getEvolucion() + puntosJugador);
+    const iaDespues: number = Math.max(0, this.ia.getEvolucion() + puntosIA);
+    return {
+      cartaJugador, cartaIA: cartaIAPrevista, suma, paridad, apuestaIA: this.apuestaDeclaradaIA,
+      resultado, ganador, intuicionActiva: usaIntuicion,
+      puntosPlaneta: planetaDespues - this.saludPlaneta,
+      puntosJugador: humanoDespues - this.jugador.getEvolucion(),
+      puntosIA: iaDespues - this.ia.getEvolucion()
+    };
+  }
+
+  /**
+   * PRECISIÓN revela una carta IA fiable. Si INTUICIÓN está activa, la IA
+   * ajusta primero su carta usando la decisión humana ya confirmada y luego
+   * esa carta queda fijada para el resto de la ronda.
+   */
+  public fijarCartaIAParaPrecision(cartaJugador: number): number {
+    const usaIntuicion: boolean = intuicionActiva(this.ia, this.ronda, this.capacidadesPermitidas());
+    const incremento: number = this.hayEvento("sobrecarga") ? 1 : 0;
+    const cartaAntesIntuicion: number = this.cartaIA;
+    const cartaFinal: number = preverCartaConIntuicion(
+      this.ia,
+      this.cartaIA,
+      cartaJugador,
+      this.apuestaDeclaradaIA,
+      this.ronda,
+      this.capacidadesPermitidas(),
+      incremento
+    );
+    if (cartaFinal !== this.cartaIA) {
+      this.ia.devolverCarta(this.cartaIA);
+      this.ia.jugarCarta(cartaFinal);
+      this.cartaIA = cartaFinal;
+    }
+    this.cartaIAFijadaPorPrecision = true;
+    // ADQUIRIDA ≠ ACTIVA: el aviso fuerte solo aparece si INTUICIÓN
+    // realmente modificó la carta preparada por la IA.
+    this.intuicionAplicadaPorPrecision = usaIntuicion && cartaFinal !== cartaAntesIntuicion;
+    return this.cartaIA;
+  }
+
   // ---- Resolución de la ronda --------------------------------------------
 
   /**
@@ -306,29 +495,38 @@ export class Partida {
    * El corazón del juego son las tres comparaciones de aquí abajo.
    */
   public resolverRonda(cartaJugador: number, apuestaJugador: Apuesta): ResumenRonda {
+    let usaIntuicion: boolean = this.intuicionAplicadaPorPrecision;
+    if (!this.cartaIAFijadaPorPrecision) {
+      const intuicionDisponible: boolean = intuicionActiva(this.ia, this.ronda, this.capacidadesPermitidas());
+      const incremento: number = this.hayEvento("sobrecarga") ? 1 : 0;
+      const cartaAntesIntuicion: number = this.cartaIA;
+      const cartaIAPrevista: number = preverCartaConIntuicion(
+        this.ia,
+        this.cartaIA,
+        cartaJugador,
+        this.apuestaDeclaradaIA,
+        this.ronda,
+        this.capacidadesPermitidas(),
+        incremento
+      );
+      if (cartaIAPrevista !== this.cartaIA) {
+        this.ia.devolverCarta(this.cartaIA);
+        this.ia.jugarCarta(cartaIAPrevista);
+        this.cartaIA = cartaIAPrevista;
+      }
+      // Solo se anuncia como ACTIVA si hubo una intervención visible real.
+      usaIntuicion = intuicionDisponible && cartaIAPrevista !== cartaAntesIntuicion;
+    }
+
     const valorIA: number = this.getValorCartaIA();
     const suma: number = cartaJugador + valorIA;
     const paridad: Apuesta = suma % 2 === 0 ? "PAR" : "IMPAR";
-
-    // La IA ya cantó su apuesta al empezar la ronda y la mantiene. Solo la
-    // cambia si ha conquistado INTUICIÓN y le toca leer al jugador: entonces
-    // le da la vuelta a la suya, y con eso arruina el plan del humano fuese
-    // cual fuese (si buscaba coincidir se encuentra un duelo, y al revés).
-    let apuestaIA: Apuesta = this.apuestaDeclaradaIA;
-    const cambioDeIdea: boolean = laIACambiaDeIdea(
-      this.ia,
-      this.ronda,
-      this.capacidadesPermitidas()
-    );
-    if (cambioDeIdea) {
-      apuestaIA = apuestaContraria(this.apuestaDeclaradaIA);
-    }
+    const apuestaIA: Apuesta = this.apuestaDeclaradaIA;
     this.jugador.apostar(apuestaJugador);
     this.ia.apostar(apuestaIA);
 
     const aciertaJugador: boolean = apuestaJugador === paridad;
     const aciertaIA: boolean = apuestaIA === paridad;
-
     let resultado: Resultado;
     let ganador: Bando;
     if (aciertaJugador && aciertaIA) {
@@ -346,20 +544,11 @@ export class Partida {
     }
 
     const resumen: ResumenRonda = this.repartirPuntos(
-      resultado,
-      ganador,
-      suma,
-      cartaJugador,
-      valorIA,
-      paridad,
-      apuestaJugador,
-      apuestaIA
+      resultado, ganador, suma, cartaJugador, valorIA, paridad, apuestaJugador, apuestaIA
     );
-    resumen.cambioDeIdeaIA = cambioDeIdea;
-
+    resumen.intuicionIA = usaIntuicion;
     this.actualizarMemorias(resultado, ganador, cartaJugador, apuestaJugador, apuestaIA);
     this.comprobarFinal();
-
     return resumen;
   }
 
@@ -377,84 +566,87 @@ export class Partida {
     apuestaJugador: Apuesta,
     apuestaIA: Apuesta
   ): ResumenRonda {
-    // 1. Puntos base de la ronda, modificados por las cartas positivas.
-    let puntos: number = suma;
-    if (this.hayCartaCrisis("circular")) {
-      puntos = puntos + 3;
-    }
-    if (this.hayCartaCrisis("renovable")) {
-      puntos = puntos * 2;
-    }
+    const saludPlanetaAntes: number = this.saludPlaneta;
+    const evolucionJugadorAntes: number = this.jugador.getEvolucion();
+    const evolucionIAAntes: number = this.ia.getEvolucion();
+    const puntosBase: number = suma;
 
-    // 2. A dónde van esos puntos según el resultado.
     let puntosPlaneta: number = 0;
     let puntosJugador: number = 0;
     let puntosIA: number = 0;
     let explicacion: string = "";
 
     if (resultado === "CONVERGENCIA") {
-      puntosPlaneta = puntos;
-      if (this.hayEvento("cumbre")) {
-        puntosPlaneta = puntosPlaneta * 2;
-      }
-      if (this.hayCartaCrisis("sequia")) {
-        puntosPlaneta = -puntos;
-      }
-      explicacion = "Los dos habéis acertado: habéis leído la crisis igual.";
+      puntosPlaneta = puntosBase;
+      explicacion = "Los dos habéis acertado: hay convergencia y el planeta puede recuperarse.";
     } else if (resultado === "RIVALIDAD") {
       if (ganador === "HUMANO") {
-        puntosJugador = puntos;
-        explicacion = "Te has impuesto a la IA, pero el planeta no mejora.";
+        puntosJugador = puntosBase;
+        puntosIA = -puntosBase;
+        explicacion = "Te has impuesto a la IA: tu evolución avanza y la suya retrocede.";
       } else {
-        puntosIA = puntos;
-        explicacion = "La IA se ha impuesto y te ha quitado una capacidad.";
-      }
-      if (this.hayCartaCrisis("incendio")) {
-        puntosPlaneta = puntosPlaneta - 3;
-      }
-      if (this.hayCartaCrisis("sequia")) {
-        puntosPlaneta = puntosPlaneta - puntos;
+        puntosIA = puntosBase;
+        puntosJugador = -puntosBase;
+        explicacion = "La IA se ha impuesto: su evolución avanza y la tuya retrocede.";
       }
     } else {
       puntosPlaneta = -PENALIZACION_FRACASO;
       if (this.hayEvento("sinretorno")) {
         puntosPlaneta = -6;
       }
-      if (this.hayCartaCrisis("incendio")) {
-        puntosPlaneta = puntosPlaneta - 3;
-      }
-      explicacion = "Nadie ha entendido la crisis. El planeta lo paga.";
+      explicacion = "Nadie ha entendido la crisis. El planeta pierde equilibrio.";
     }
 
-    // 3. El Punto de Inflexión duplica lo que le pase al planeta.
+    if (resultado === "CONVERGENCIA" && this.hayCartaCrisis("renovable")) {
+      puntosPlaneta = puntosPlaneta * 2;
+    }
+    if (resultado === "CONVERGENCIA" && this.hayCartaCrisis("circular")) {
+      puntosPlaneta = puntosPlaneta + 3;
+    }
+    if (this.hayCartaCrisis("incendio") && resultado !== "CONVERGENCIA") {
+      puntosPlaneta = puntosPlaneta - 3;
+    }
+    if (this.hayCartaCrisis("sequia")) {
+      if (resultado === "CONVERGENCIA") {
+        puntosPlaneta = -puntosBase;
+      } else {
+        puntosPlaneta = puntosPlaneta - puntosBase;
+      }
+    }
+    // Cumbre solo duplica una recuperación real. Si Sequía ha convertido
+    // la convergencia en daño, el evento positivo no puede agravarlo.
+    if (resultado === "CONVERGENCIA" && puntosPlaneta > 0 && this.hayEvento("cumbre")) {
+      puntosPlaneta = puntosPlaneta * 2;
+    }
     if (this.hayCartaCrisis("inflexion")) {
       puntosPlaneta = puntosPlaneta * 2;
     }
 
-    // 4. Se aplican los puntos a los tres marcadores.
     this.saludPlaneta = this.saludPlaneta + puntosPlaneta;
-    if (this.saludPlaneta > SALUD_MAXIMA) {
-      this.saludPlaneta = SALUD_MAXIMA;
-    }
-    if (this.saludPlaneta < 0) {
-      this.saludPlaneta = 0;
-    }
+    if (this.saludPlaneta > SALUD_MAXIMA) this.saludPlaneta = SALUD_MAXIMA;
+    if (this.saludPlaneta < 0) this.saludPlaneta = 0;
     this.jugador.sumarEvolucion(puntosJugador);
     this.ia.sumarEvolucion(puntosIA);
 
-    // 5. Conquista de capacidad (el Punto de Inflexión la impide).
+    // Mostramos el cambio realmente aplicado después de respetar el mínimo 0.
+    puntosPlaneta = this.saludPlaneta - saludPlanetaAntes;
+    puntosJugador = this.jugador.getEvolucion() - evolucionJugadorAntes;
+    puntosIA = this.ia.getEvolucion() - evolucionIAAntes;
+
+    if (this.saludPlaneta >= SALUD_MAXIMA && saludPlanetaAntes < SALUD_MAXIMA) {
+      explicacion =
+        "RECUPERACIÓN PLANETARIA COMPLETA · La Crisis ha llegado al 0%. " +
+        "El planeta vuelve a respirar. Sobrevivir no era suficiente: el verdadero desafío era aprender a evolucionar sin destruir aquello que nos sostiene.";
+    }
+
     let capacidadConquistada: string = "";
     if (resultado === "RIVALIDAD" && !this.hayCartaCrisis("inflexion")) {
       if (ganador === "HUMANO") {
         const ficha = this.jugador.conquistarSiguiente(CAPACIDADES_IA);
-        if (ficha !== null) {
-          capacidadConquistada = ficha.nombre;
-        }
+        if (ficha !== null) capacidadConquistada = ficha.nombre;
       } else {
         const ficha = this.ia.conquistarSiguiente(CAPACIDADES_HUMANAS);
-        if (ficha !== null) {
-          capacidadConquistada = ficha.nombre;
-        }
+        if (ficha !== null) capacidadConquistada = ficha.nombre;
       }
     }
 
@@ -471,16 +663,22 @@ export class Partida {
       puntosPlaneta: puntosPlaneta,
       puntosJugador: puntosJugador,
       puntosIA: puntosIA,
+      saludPlanetaAntes: saludPlanetaAntes,
+      saludPlanetaDespues: this.saludPlaneta,
+      evolucionJugadorAntes: evolucionJugadorAntes,
+      evolucionJugadorDespues: this.jugador.getEvolucion(),
+      evolucionIAAntes: evolucionIAAntes,
+      evolucionIADespues: this.ia.getEvolucion(),
       capacidadConquistada: capacidadConquistada,
       explicacion: explicacion,
-      cambioDeIdeaIA: false
+      intuicionIA: false
     };
   }
 
   /**
    * Apunta lo que ha pasado para que las capacidades puedan usarlo después:
-   * el historial (Memoria y Análisis), las derrotas seguidas (Adaptación) y
-   * la última jugada ganadora de la IA (Creatividad).
+   * el historial (Memoria y Análisis), las derrotas seguidas (Creatividad) y
+   * la última jugada ganadora de la IA (Adaptación).
    */
   private actualizarMemorias(
     resultado: Resultado,
@@ -496,7 +694,7 @@ export class Partida {
     if (ganador === "IA") {
       this.ia.reiniciarDerrotas();
       this.ia.guardarJugadaGanadora(this.cartaIA, apuestaIA);
-    } else if (ganador === "HUMANO" || resultado === "FRACASO") {
+    } else if (ganador === "HUMANO") {
       this.ia.sumarDerrota();
     } else {
       this.ia.reiniciarDerrotas();
@@ -506,16 +704,19 @@ export class Partida {
   // ---- Final de la partida ------------------------------------------------
 
   /**
-   * Comprueba si la partida ha terminado. Termina por colapso (planeta a 0),
-   * porque se han jugado todas las rondas o, en modo libre, porque el
-   * planeta se ha recuperado del todo.
+   * La partida termina inmediatamente cuando la Crisis alcanza
+   * cualquiera de sus dos extremos:
+   *
+   * Crisis 0%   = salud del planeta 100% = recuperación total.
+   * Crisis 100% = salud del planeta 0%   = colapso planetario.
+   *
+   * Si no se alcanza ninguno de los extremos, una partida de duración
+   * fija termina al completar el número de rondas seleccionado.
    */
   public comprobarFinal(): boolean {
-    if (this.saludPlaneta <= 0) {
+    if (this.saludPlaneta <= 0 || this.saludPlaneta >= SALUD_MAXIMA) {
       this.terminada = true;
     } else if (this.totalRondas > 0 && this.ronda >= this.totalRondas) {
-      this.terminada = true;
-    } else if (this.totalRondas === 0 && this.saludPlaneta >= SALUD_MAXIMA) {
       this.terminada = true;
     }
     return this.terminada;
@@ -534,6 +735,7 @@ export class Partida {
     const evolucionJugador: number = this.jugador.getEvolucion();
     const evolucionIA: number = this.ia.getEvolucion();
     const diferencia: number = Math.abs(evolucionJugador - evolucionIA);
+    const crisisFinal: number = SALUD_MAXIMA - this.saludPlaneta;
 
     let desenlace: Desenlace;
     let mensaje: string;
@@ -543,21 +745,26 @@ export class Partida {
       mensaje =
         "El planeta ha colapsado. Perdéis los dos: no importa cuánto " +
         "hayáis evolucionado si no queda mundo donde hacerlo.";
-    } else if (this.saludPlaneta > 45 && diferencia <= 5) {
+    } else if (this.saludPlaneta > 75 && diferencia <= 5) {
       desenlace = "CONVERGENCIA TOTAL";
-      mensaje =
-        "Habéis salvado el planeta sin que ninguno dominase al otro. " +
-        "El protocolo NEXO ha funcionado exactamente como se diseñó.";
-    } else if (evolucionJugador >= evolucionIA) {
+      mensaje = this.saludPlaneta >= SALUD_MAXIMA
+        ? "El planeta se ha recuperado y Humano e IA llegan al final sin que uno domine al otro. NEXO demuestra que avanzar juntos puede ser una forma de supervivencia."
+        : "Habéis protegido el planeta sin que ninguno dominase al otro. El protocolo NEXO ha alcanzado un equilibrio real.";
+    } else if (evolucionJugador > evolucionIA) {
       desenlace = "SUPREMACIA HUMANA";
-      mensaje =
-        "Te has impuesto a la IA. El planeta sobrevive con " +
-        this.saludPlaneta + " puntos de salud.";
-    } else {
+      mensaje = this.saludPlaneta >= SALUD_MAXIMA
+        ? "El planeta se ha recuperado, pero el equilibrio entre Humano e IA no lo ha hecho: la evolución humana domina el desenlace. Salvar el mundo no responde por sí solo a la pregunta de cómo compartirlo."
+        : "Te has impuesto a la IA. El planeta termina con " + crisisFinal + "% de crisis.";
+    } else if (evolucionIA > evolucionJugador) {
       desenlace = "SUPREMACIA IA";
+      mensaje = this.saludPlaneta >= SALUD_MAXIMA
+        ? "El planeta se ha recuperado, pero la IA domina la evolución final. La supervivencia está asegurada; la cuestión que queda abierta es quién define ahora el futuro compartido."
+        : "La IA se ha impuesto. El planeta termina con " + crisisFinal + "% de crisis.";
+    } else {
+      desenlace = "EQUILIBRIO INESTABLE";
       mensaje =
-        "La IA se ha impuesto. El planeta sobrevive con " +
-        this.saludPlaneta + " puntos de salud.";
+        "Humano e IA han terminado con la misma evolución, pero el planeta " +
+        "aún conserva " + crisisFinal + "% de crisis. El protocolo sigue abierto.";
     }
 
     const total: number = evolucionJugador + evolucionIA;
@@ -588,7 +795,7 @@ export class Partida {
     const conquistadas: number = this.jugador.getCapacidades().length;
     let id: string = "superviviente";
 
-    if (conquistadas === 4 && this.saludPlaneta > 45) {
+    if (conquistadas === 4 && this.saludPlaneta > 75) {
       id = "nexo";
     } else if (conquistadas === 4) {
       id = "conquistador";
@@ -596,7 +803,7 @@ export class Partida {
       id = "mente";
     } else if (conquistadas === 2) {
       id = "estratega";
-    } else if (this.saludPlaneta >= 45) {
+    } else if (this.saludPlaneta >= 75) {
       id = "guardian";
     }
 

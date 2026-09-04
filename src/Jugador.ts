@@ -34,7 +34,7 @@ export class Jugador {
   // Derrotas seguidas: lo necesita la capacidad Adaptación de la IA.
   private derrotasSeguidas: number;
 
-  // Última jugada que le salió bien: lo necesita la capacidad Creatividad.
+  // Última jugada que le salió bien: lo necesita la capacidad Adaptación.
   private cartaGanadora: number;
   private apuestaGanadora: Apuesta | null;
 
@@ -167,6 +167,9 @@ export class Jugador {
 
   public sumarEvolucion(puntos: number): void {
     this.evolucion = this.evolucion + puntos;
+    if (this.evolucion < 0) {
+      this.evolucion = 0;
+    }
   }
 
   public getCapacidades(): string[] {
@@ -233,28 +236,6 @@ export class Jugador {
     return this.historialApuestas;
   }
 
-  /**
-   * Tendencia de las apuestas hechas hasta ahora: devuelve "PAR" o "IMPAR"
-   * según cuál haya repetido más. Es lo que muestra la capacidad Análisis
-   * predictivo. Si no hay historial devuelve null.
-   */
-  public getTendencia(): Apuesta | null {
-    if (this.historialApuestas.length === 0) {
-      return null;
-    }
-    let pares: number = 0;
-    for (let i = 0; i < this.historialApuestas.length; i++) {
-      if (this.historialApuestas[i] === "PAR") {
-        pares = pares + 1;
-      }
-    }
-    const impares: number = this.historialApuestas.length - pares;
-    if (pares >= impares) {
-      return "PAR";
-    }
-    return "IMPAR";
-  }
-
   // ---- Estado de las capacidades ----------------------------------------
 
   public puedeUsarPrecision(): boolean {
@@ -277,7 +258,7 @@ export class Jugador {
     this.derrotasSeguidas = 0;
   }
 
-  /** Guarda la jugada con la que ganó una ronda (capacidad Creatividad). */
+  /** Guarda la jugada con la que ganó una ronda (capacidad Adaptación). */
   public guardarJugadaGanadora(carta: number, apuesta: Apuesta): void {
     this.cartaGanadora = carta;
     this.apuestaGanadora = apuesta;

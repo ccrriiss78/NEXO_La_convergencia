@@ -3,23 +3,13 @@ import { Apuesta } from "./tipos.js";
 import { Carta } from "./Carta.js";
 
 /**
- * El "cerebro" de la IA.
+ * Decisiones sencillas de la IA.
  *
- * La máquina decide DOS cosas al empezar la ronda: qué carta pone boca abajo
- * y qué apuesta declara. Y las declara ANTES que el jugador.
- *
- * Ese orden es la regla más importante del juego. Como el humano ve la
- * apuesta de la IA antes de decidir la suya, puede elegir entre alinearse
- * con ella (y jugar a la convergencia) o llevarle la contraria (y forzar un
- * duelo). Si la IA apostase después, el jugador no decidiría nada: el
- * resultado de la ronda sería puro azar.
- *
- * Está en funciones sueltas y no dentro de la clase Jugador a propósito:
- * Jugador guarda datos (es igual para el humano y para la IA) y este
- * archivo decide, que es otra cosa.
+ * No hay aprendizaje automático ni algoritmos avanzados: solo arrays,
+ * Math.random(), bucles y condicionales, igual que el resto del proyecto.
  */
 
-/** Devuelve "PAR" o "IMPAR" lanzando una moneda. */
+/** Devuelve "PAR" o "IMPAR" al azar. */
 function apuestaAlAzar(): Apuesta {
   if (Math.random() < 0.5) {
     return "PAR";
@@ -36,11 +26,10 @@ export function apuestaContraria(apuesta: Apuesta): Apuesta {
 }
 
 /**
- * Elige la carta que la IA pone boca abajo y la descarta de su mano.
+ * Elige la carta inicial de la IA.
  *
- * Normalmente elige al azar entre las que le quedan. Si ha conquistado
- * CREATIVIDAD deja de jugar al azar: repite la carta con la que ya ganó
- * una ronda, siempre que todavía la tenga disponible.
+ * ADAPTACIÓN reutiliza, si todavía está disponible, la última carta con la
+ * que la IA ganó. Aprende de un resultado anterior que funcionó.
  */
 export function decidirCartaIA(ia: Jugador, capacidadesPermitidas: boolean): number {
   const disponibles: Carta[] = ia.getCartasDisponibles();
@@ -48,7 +37,7 @@ export function decidirCartaIA(ia: Jugador, capacidadesPermitidas: boolean): num
     return 0;
   }
 
-  if (capacidadesPermitidas && ia.tiene("creatividad") && ia.getCartaGanadora() > 0) {
+  if (capacidadesPermitidas && ia.tiene("adaptacion") && ia.getCartaGanadora() > 0) {
     for (let i = 0; i < disponibles.length; i++) {
       if (disponibles[i].getValor() === ia.getCartaGanadora()) {
         return ia.jugarCarta(ia.getCartaGanadora());
@@ -61,43 +50,31 @@ export function decidirCartaIA(ia: Jugador, capacidadesPermitidas: boolean): num
 }
 
 /**
- * La apuesta que la IA declara al empezar la ronda, antes de saber nada de
- * lo que va a hacer el jugador.
+ * Apuesta inicial de la IA.
  *
- * @param ia                     la jugadora artificial
- * @param capacidadesPermitidas  false durante la Tormenta solar
+ * CREATIVIDAD: tras dos derrotas seguidas rompe su patrón y prueba la apuesta
+ * contraria a la anterior. Si no se activa, la apuesta sigue siendo aleatoria.
  */
 export function declararApuestaIA(ia: Jugador, capacidadesPermitidas: boolean): Apuesta {
   if (!capacidadesPermitidas) {
     return apuestaAlAzar();
   }
 
-  // ADAPTACIÓN: si lleva dos derrotas seguidas cambia de estrategia y
-  // declara lo contrario de lo que declaró la última vez.
   const historial: Apuesta[] = ia.getHistorialApuestas();
-  if (ia.tiene("adaptacion") && ia.getDerrotasSeguidas() >= 2 && historial.length > 0) {
+  if (ia.tiene("creatividad") && ia.getDerrotasSeguidas() >= 2 && historial.length > 0) {
     return apuestaContraria(historial[historial.length - 1]);
-  }
-
-  // CREATIVIDAD: la mitad de las veces repite la apuesta con la que ganó.
-  const ganadora: Apuesta | null = ia.getApuestaGanadora();
-  if (ia.tiene("creatividad") && ganadora !== null && Math.random() < 0.5) {
-    return ganadora;
   }
 
   return apuestaAlAzar();
 }
 
 /**
- * INTUICIÓN: una de cada tres rondas, la IA lee la intención del jugador y
- * cambia su apuesta a última hora.
- *
- * Basta con darle la vuelta a su propia apuesta para arruinar el plan del
- * humano, sea cual sea: si el jugador se había alineado buscando la
- * convergencia, ahora se encuentra un duelo; y si buscaba el duelo, ahora
- * se encuentra alineado y sin capacidad que conquistar.
+ * INTUICIÓN se activa una vez cada tres rondas.
+ * La IA no ve el futuro: usa la carta elegida por el Humano como una pista y,
+ * entre las cartas que todavía conserva, busca una que haga acertar su propia
+ * apuesta declarada. Si no existe una opción mejor, mantiene la carta inicial.
  */
-export function laIACambiaDeIdea(
+export function intuicionActiva(
   ia: Jugador,
   ronda: number,
   capacidadesPermitidas: boolean
@@ -106,8 +83,49 @@ export function laIACambiaDeIdea(
 }
 
 /**
- * EMPATÍA: con el planeta en peligro, la IA renuncia a ganar y juega a
- * cartas vistas para que el humano pueda buscar la convergencia.
+ * Calcula qué carta preferiría la IA con Intuición SIN modificar la mano.
+ * incrementoValorIA vale 1 durante Sobrecarga de datos y 0 el resto del tiempo.
+ */
+export function preverCartaConIntuicion(
+  ia: Jugador,
+  cartaActual: number,
+  cartaJugador: number,
+  apuestaIA: Apuesta,
+  ronda: number,
+  capacidadesPermitidas: boolean,
+  incrementoValorIA: number
+): number {
+  if (!intuicionActiva(ia, ronda, capacidadesPermitidas)) {
+    return cartaActual;
+  }
+
+  const candidatas: number[] = [cartaActual];
+  const disponibles: Carta[] = ia.getCartasDisponibles();
+  for (const cartaDisponible of disponibles) {
+    candidatas.push(cartaDisponible.getValor());
+  }
+
+  // Si la carta actual ya hace acertar a la IA, no hace falta cambiarla.
+  const sumaActual: number = cartaJugador + cartaActual + incrementoValorIA;
+  const paridadActual: Apuesta = sumaActual % 2 === 0 ? "PAR" : "IMPAR";
+  if (paridadActual === apuestaIA) {
+    return cartaActual;
+  }
+
+  for (const candidata of candidatas) {
+    const suma: number = cartaJugador + candidata + incrementoValorIA;
+    const paridad: Apuesta = suma % 2 === 0 ? "PAR" : "IMPAR";
+    if (paridad === apuestaIA) {
+      return candidata;
+    }
+  }
+
+  return cartaActual;
+}
+
+/**
+ * EMPATÍA: con el planeta en peligro, la IA muestra su carta para que el
+ * Humano pueda intentar una convergencia consciente.
  */
 export function laIAJuegaACartasVistas(
   ia: Jugador,
