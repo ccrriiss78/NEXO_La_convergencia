@@ -168,6 +168,16 @@ function probarConfirmacionNoTieneEstadoMuerto() {
   assert.match(main, /puedeUsarPrecision && activarPrecision\(\)/);
 }
 
+function probarPrecisionNoOfreceCorreccionImposible() {
+  const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  const main = fs.readFileSync(new URL("../src/main.ts", import.meta.url), "utf8");
+  assert.match(html, /id="precision-opciones-texto"/);
+  assert.match(main, /SIN CARTAS ALTERNATIVAS/);
+  assert.match(main, /las cinco se recuperarán al comenzar la ronda siguiente/);
+  assert.match(main, /botonCorregir\.disabled = !hayCartaAlternativa/);
+  assert.match(main, /if \(!hayCartaAlternativa\) \{\s*return;/);
+}
+
 function probarManualYLimpiezaUI() {
   const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const main = fs.readFileSync(new URL("../dist/main.js", import.meta.url), "utf8");
@@ -209,6 +219,7 @@ probarAdaptacionReutilizaCartaGanadora();
 probarFracasoNoCuentaComoDerrotaIA();
 probarPrecisionRevelaCartaFiableYPermiteCorreccion();
 probarConfirmacionNoTieneEstadoMuerto();
+probarPrecisionNoOfreceCorreccionImposible();
 probarManualYLimpiezaUI();
 probarAvisoVelocidadVisible();
 console.log("NEXO: 8 fortalezas y coherencia V22.36 verificadas.");

@@ -572,7 +572,20 @@ function activarPrecision() {
     escribir("precision-apuesta-humano-texto", apuestaElegida);
     escribir("precision-texto-mantener", "MANTENER " + cartaHumano);
     escribir("precision-titulo", "Lectura exacta detectada");
-    escribir("precision-dato-secundario", "La carta de la IA queda fijada para esta resolución.");
+    const hayCartaAlternativa = jugador.getCartasDisponibles().some(function (carta) {
+        return carta.getValor() !== cartaHumano;
+    });
+    const botonCorregir = elemento("btn-precision-corregir") as HTMLButtonElement;
+    botonCorregir.disabled = !hayCartaAlternativa;
+    botonCorregir.textContent = hayCartaAlternativa ? "CORREGIR CARTA" : "SIN CARTAS ALTERNATIVAS";
+    if (hayCartaAlternativa) {
+        escribir("precision-dato-secundario", "La carta de la IA queda fijada para esta resolución.");
+        escribir("precision-opciones-texto", "Ahora puedes decidir si mantenerla o corregirla con esta información.");
+    }
+    else {
+        escribir("precision-dato-secundario", "No quedan cartas alternativas en este ciclo.");
+        escribir("precision-opciones-texto", "Mantén esta última carta para resolver; las cinco se recuperarán al comenzar la ronda siguiente.");
+    }
     // FIX · V24.20: antes se sobrescribía aquí el textContent completo de
     // #precision-decision, que es el CONTENEDOR de los <strong> que acabamos
     // de rellenar arriba (precision-apuesta-humano-texto y precision-carta-humano).
@@ -614,6 +627,15 @@ function mantenerCartaPrecision() {
  */
 function corregirCartaPrecision() {
     if (partida === null || fase !== "precision-decision") {
+        return;
+    }
+    const cartaActual = cartasSeleccionadas[0];
+    const hayCartaAlternativa = partida.getJugador().getCartasDisponibles().some(function (carta) {
+        return carta.getValor() !== cartaActual;
+    });
+    // Protección adicional: aunque se invoque la acción desde fuera del botón,
+    // nunca se abre una corrección sin una carta distinta que poder elegir.
+    if (!hayCartaAlternativa) {
         return;
     }
     fase = "precision-correccion";
