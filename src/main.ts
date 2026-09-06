@@ -341,6 +341,13 @@ function nuevaRonda() {
     elemento("instruccion-mano").classList.remove("instruccion-precision-activa");
     elemento("instruccion-mano").classList.toggle("instruccion-fortaleza-activa", velocidadDisponible());
     const evento = partida.getEventoActivo();
+    // CHISPA + VELOCIDAD necesitan compartir la franja central con dos avisos.
+    // Marcamos únicamente esta combinación para compactar la mano sin mover
+    // el panel PAR/IMPAR ni alterar la lógica de ninguna fortaleza.
+    elemento("pantalla-juego").classList.toggle(
+        "chispa-velocidad-activa",
+        evento !== null && evento.getId() === "chispa" && velocidadDisponible()
+    );
     if (evento !== null) {
         mostrarEvento(evento.getId(), evento.getNombre(), evento.getDescripcion());
     }

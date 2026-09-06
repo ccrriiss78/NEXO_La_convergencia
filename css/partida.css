@@ -3108,3 +3108,31 @@
   #pantalla-juego .carta-mano.seleccionada,
   #pantalla-juego .mano-cartas.modo-velocidad .carta-mano.seleccionada{transform:translateY(-5px) scale(1.03) rotate(0)!important}
 }
+
+/* =====================================================================
+   PARTIDA · V24.23 · CHISPA CREATIVA + VELOCIDAD SIN SOLAPE
+   La declaración conserva su posición. Solo en esta coincidencia se
+   compacta la mano para que el aviso de Velocidad quede debajo de Chispa.
+   ===================================================================== */
+#pantalla-juego.chispa-velocidad-activa .zona-mano-cinematica{
+  bottom:88px!important;
+}
+#pantalla-juego.chispa-velocidad-activa .mano-cartas{
+  min-height:146px!important;
+  padding-top:2px!important;
+}
+#pantalla-juego.chispa-velocidad-activa .carta-mano{
+  width:96px!important;
+  height:144px!important;
+  flex-basis:96px!important;
+}
+@media(max-height:860px) and (min-width:1051px){
+  #pantalla-juego.chispa-velocidad-activa .zona-mano-cinematica{bottom:82px!important}
+  #pantalla-juego.chispa-velocidad-activa .mano-cartas{min-height:142px!important}
+  #pantalla-juego.chispa-velocidad-activa .carta-mano{width:92px!important;height:138px!important;flex-basis:92px!important}
+}
+@media(max-height:760px) and (min-width:1051px){
+  #pantalla-juego.chispa-velocidad-activa .zona-mano-cinematica{bottom:72px!important}
+  #pantalla-juego.chispa-velocidad-activa .mano-cartas{min-height:126px!important}
+  #pantalla-juego.chispa-velocidad-activa .carta-mano{width:82px!important;height:123px!important;flex-basis:82px!important}
+}

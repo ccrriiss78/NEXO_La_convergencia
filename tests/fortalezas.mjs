@@ -208,6 +208,16 @@ function probarAvisoVelocidadVisible() {
   assert.match(css, /z-index:61!important/);
 }
 
+function probarChispaYVelocidadNoCompartenEspacio() {
+  const main = fs.readFileSync(new URL("../src/main.ts", import.meta.url), "utf8");
+  const css = fs.readFileSync(new URL("../css/partida.css", import.meta.url), "utf8");
+  assert.match(main, /"chispa-velocidad-activa"/);
+  assert.match(main, /evento\.getId\(\) === "chispa" && velocidadDisponible\(\)/);
+  assert.match(css, /V24\.23 · CHISPA CREATIVA \+ VELOCIDAD SIN SOLAPE/);
+  assert.match(css, /#pantalla-juego\.chispa-velocidad-activa \.mano-cartas/);
+  assert.match(css, /#pantalla-juego\.chispa-velocidad-activa \.carta-mano/);
+}
+
 probarMemoriaRegistraJugadasIA();
 probarAnalisisDaConsejoUtil();
 probarVelocidadPrevisualizaSinMutar();
@@ -222,4 +232,5 @@ probarConfirmacionNoTieneEstadoMuerto();
 probarPrecisionNoOfreceCorreccionImposible();
 probarManualYLimpiezaUI();
 probarAvisoVelocidadVisible();
+probarChispaYVelocidadNoCompartenEspacio();
 console.log("NEXO: 8 fortalezas y coherencia V22.36 verificadas.");
