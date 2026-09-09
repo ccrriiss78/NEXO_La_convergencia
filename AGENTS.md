@@ -13,7 +13,7 @@ Cada módulo JavaScript de `dist/` debe conservar su correspondiente fuente Type
 1. Identificar la última versión estable confirmada por la usuaria.
 2. Trabajar sobre una copia nueva y conservar intacta la versión estable.
 3. Revisar `README.md`, `INFORME_RECONSTRUCCION_TYPESCRIPT.md`, `package.json` y `tsconfig.json`.
-4. Comprobar que existen 10 fuentes `.ts` y 10 módulos `.js` correspondientes.
+4. Comprobar que existen 11 fuentes `.ts` y 11 módulos `.js` correspondientes.
 5. Separar los cambios funcionales de los cambios visuales y evitar modificaciones ajenas a la petición.
 6. Ejecutar `npm run audit`. Si falla, detener el trabajo y restaurar primero la integridad del proyecto.
 

@@ -21,10 +21,14 @@ const RUTAS_PLANETA_JUEGO = [
     "./assets/images/partida/fondos-planeta/partida-planeta-75-99-colapso-inminente.webp",
     "./assets/images/partida/fondos-planeta/partida-planeta-100-crisis-catastrofica.webp"
 ];
+const RUTA_PLANETA_RECUPERADO = "./assets/images/partida/fondos-planeta/partida-planeta-0-recuperacion-total.webp";
 // Guardamos las imágenes precargadas para que el navegador conserve la referencia.
 // Así, al cruzar 25/50/75/100 no aparece un hueco negro mientras llega el nuevo fondo.
 const FONDOS_PLANETA_PRECARGADOS = [];
 function precargarFondosPlaneta() {
+    const recuperado = new Image();
+    recuperado.src = RUTA_PLANETA_RECUPERADO;
+    FONDOS_PLANETA_PRECARGADOS.push(recuperado);
     for (let i = 0; i < RUTAS_PLANETA_JUEGO.length; i++) {
         const imagen = new Image();
         imagen.src = RUTAS_PLANETA_JUEGO[i];
@@ -63,6 +67,7 @@ export function ocultar(id) {
 /** Enseña una pantalla y esconde todas las demás. */
 export function mostrarPantalla(idPantalla) {
     const pantallas = [
+        "pantalla-suspense",
         "pantalla-inicio",
         "pantalla-introduccion",
         "pantalla-configuracion",
@@ -75,6 +80,12 @@ export function mostrarPantalla(idPantalla) {
         pantalla.classList.toggle("activa", esActiva);
         pantalla.classList.toggle("oculta", !esActiva);
     }
+    // Fuera de la partida siempre existe acceso al sonido. En la partida se
+    // mantiene el botón integrado en su cabecera para no duplicar controles.
+    const ajustesGlobales = elemento("btn-ajustes-global");
+    const usarAjustesDePartida = idPantalla === "pantalla-juego";
+    ajustesGlobales.classList.toggle("oculta", usarAjustesDePartida);
+    ajustesGlobales.setAttribute("aria-expanded", "false");
 }
 // ---- Los tres marcadores y los avatares ----------------------------------
 /** Pinta las tres barras con sus números. */
@@ -175,8 +186,8 @@ export function pintarEvolucionVisual(partida) {
     const ia = partida.getIA();
     const porcentajeHumano = calcularPorcentaje(jugador.getEvolucion(), EVOLUCION_MAXIMA_BARRA);
     const porcentajeIA = calcularPorcentaje(ia.getEvolucion(), EVOLUCION_MAXIMA_BARRA);
-    const nivelHumano = calcularTramoVisual(porcentajeHumano);
-    const nivelIA = calcularTramoVisual(porcentajeIA);
+    const nivelHumano = porcentajeHumano === 100 ? 4 : calcularTramoVisual(porcentajeHumano);
+    const nivelIA = porcentajeIA === 100 ? 4 : calcularTramoVisual(porcentajeIA);
     let tipoHumano = jugador.getAvatar();
     if (tipoHumano !== "humano-hombre" && tipoHumano !== "humano-mujer") {
         tipoHumano = "humano-hombre";
@@ -210,7 +221,11 @@ export function pintarEvolucionVisual(partida) {
     // como respaldo visual: nunca dejamos el centro de la partida en negro.
     const fondoPlaneta = elemento("fondo-planeta-juego");
     const escenaPlaneta = fondoPlaneta.parentElement;
-    const rutaPlaneta = rutaPlanetaJuego(tramoPlaneta);
+    const rutaPlaneta = crisisPlaneta === 0 ? RUTA_PLANETA_RECUPERADO : rutaPlanetaJuego(tramoPlaneta);
+    pantalla.classList.toggle("evolucion-humano-100", porcentajeHumano === 100);
+    pantalla.classList.toggle("evolucion-ia-100", porcentajeIA === 100);
+    pantalla.classList.toggle("crisis-planeta-0", crisisPlaneta === 0);
+    pantalla.classList.toggle("crisis-planeta-100", crisisPlaneta === 100);
     if (!fondoPlaneta.dataset.controlError) {
         fondoPlaneta.dataset.controlError = "1";
         fondoPlaneta.addEventListener("error", function () {

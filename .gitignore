@@ -144,3 +144,6 @@ vite.config.ts.timestamp-*
 
 # Compilacion temporal de comprobacion
 dist-comprobacion/
+
+# Cache local de npm usada durante las comprobaciones
+.npm-cache/

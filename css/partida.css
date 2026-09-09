@@ -83,8 +83,12 @@
 .avatar{width:100%;height:100%;background:center/cover no-repeat}
 .avatar-humano.humano-hombre.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-0-24.webp?v=avatars-v22-38')}.avatar-humano.humano-hombre.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-25-49.webp?v=avatars-v22-38')}.avatar-humano.humano-hombre.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-50-74.webp?v=avatars-v22-38')}.avatar-humano.humano-hombre.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-75-100.webp?v=avatars-v22-38')}
 .avatar-humano.humano-mujer.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-0-24.webp?v=avatars-v22-38')}.avatar-humano.humano-mujer.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-25-49.webp?v=avatars-v22-38')}.avatar-humano.humano-mujer.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-50-74.webp?v=avatars-v22-38')}.avatar-humano.humano-mujer.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-75-100.webp?v=avatars-v22-38')}
-.avatar-ia.ia-01.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-0-24.webp?v=avatars-v22-38')}.avatar-ia.ia-01.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-25-49.webp?v=avatars-v22-38')}.avatar-ia.ia-01.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-50-74.webp?v=avatars-v22-38')}.avatar-ia.ia-01.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-75-100.webp?v=avatars-v22-38')}
+.avatar-ia.ia-01.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-0-24.webp?v=avatars-v22-38')}.avatar-ia.ia-01.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-25-49.webp?v=avatars-v22-38')}.avatar-ia.ia-01.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-50-74.webp?v=avatars-v24-29')}.avatar-ia.ia-01.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-75-100.webp?v=avatars-v22-38')}
 .avatar-ia.ia-02.nivel-0{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-0-24.webp?v=avatars-v22-38')}.avatar-ia.ia-02.nivel-1{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-25-49.webp?v=avatars-v22-38')}.avatar-ia.ia-02.nivel-2{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-50-74.webp?v=avatars-v22-38')}.avatar-ia.ia-02.nivel-3{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-75-100.webp?v=avatars-v22-38')}
+.avatar-humano.humano-hombre.nivel-4{background-image:url('../assets/images/partida/avatares-evolucion/humano-hombre-a-ia-100.webp?v=avatars-v24-24')}
+.avatar-humano.humano-mujer.nivel-4{background-image:url('../assets/images/partida/avatares-evolucion/humano-mujer-a-ia-100.webp?v=avatars-v24-24')}
+.avatar-ia.ia-01.nivel-4{background-image:url('../assets/images/partida/avatares-evolucion/ia-femenina-a-humano-100.webp?v=avatars-v24-24')}
+.avatar-ia.ia-02.nivel-4{background-image:url('../assets/images/partida/avatares-evolucion/ia-masculina-a-humano-100.webp?v=avatars-v24-24')}
 .identidad-personaje h3{margin:0;color:white;font-size:18px;letter-spacing:.17em;text-transform:uppercase}.nombre-humano{color:var(--verde-claro)!important}.nombre-ia{color:var(--azul-claro)!important}.microetiqueta{display:block;margin-top:7px;font-size:10px;letter-spacing:.08em;color:#a9babf}.porcentaje-personaje{display:block;margin-top:2px;font-size:34px;line-height:1}.porcentaje-humano{color:var(--verde)}.porcentaje-ia{color:var(--azul)}
 .bloque-barra-personaje{margin-top:8px}.barra-evolucion-nexo{position:relative;height:10px;border:1px solid rgba(223,241,244,.30);border-radius:99px;background:rgba(1,7,10,.84)}.relleno-barra-nexo{height:100%;width:0;border-radius:99px;transition:width .6s ease}.relleno-humano{background:linear-gradient(90deg,#79d93c,#d8ff7a);box-shadow:0 0 12px rgba(145,229,66,.48)}.relleno-ia{background:linear-gradient(90deg,#168fdd,#62d3ff);box-shadow:0 0 12px rgba(39,181,255,.5)}
 .marca-barra{position:absolute;top:-4px;width:1px;height:17px;background:rgba(225,242,244,.34)}.marca-25{left:25%}.marca-50{left:50%}.marca-75{left:75%}.numeros-barra{display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:rgba(220,237,240,.59)}
@@ -1802,6 +1806,28 @@
   #pantalla-juego .zona-resultado-cinematica{top:calc(57vh + 62px)!important;min-height:285px!important}
 }
 
+/* V24.24 · extremos exactos de evolución y Crisis. */
+#pantalla-juego.evolucion-humano-100 #avatar-humano{
+  animation:halo-evolucion-humano 2.2s ease-in-out infinite alternate;
+}
+#pantalla-juego.evolucion-ia-100 #avatar-ia{
+  animation:halo-evolucion-ia 2.2s ease-in-out infinite alternate;
+}
+#pantalla-juego.crisis-planeta-0 .barra-salud-planeta{
+  box-shadow:0 0 18px rgba(144,255,105,.85),0 0 34px rgba(75,225,188,.38)!important;
+}
+#pantalla-juego.crisis-planeta-100 .barra-salud-planeta{
+  box-shadow:0 0 18px rgba(255,76,67,.9),0 0 34px rgba(255,126,65,.45)!important;
+}
+@keyframes halo-evolucion-humano{
+  from{box-shadow:inset 0 0 16px rgba(142,255,91,.22),0 0 10px rgba(113,238,110,.42)}
+  to{box-shadow:inset 0 0 28px rgba(76,232,194,.34),0 0 24px rgba(142,255,91,.82),0 0 42px rgba(61,216,202,.34)}
+}
+@keyframes halo-evolucion-ia{
+  from{box-shadow:inset 0 0 16px rgba(80,205,255,.22),0 0 10px rgba(39,181,255,.42)}
+  to{box-shadow:inset 0 0 28px rgba(111,230,255,.34),0 0 24px rgba(39,181,255,.84),0 0 42px rgba(74,150,255,.38)}
+}
+
 @media(prefers-reduced-motion:reduce){
   #pantalla-juego .zona-resultado-cinematica.panel-resultado-entra,
   #pantalla-juego .nexo-nucleo-partida.fracaso-activo,
@@ -3135,4 +3161,103 @@
   #pantalla-juego.chispa-velocidad-activa .zona-mano-cinematica{bottom:72px!important}
   #pantalla-juego.chispa-velocidad-activa .mano-cartas{min-height:126px!important}
   #pantalla-juego.chispa-velocidad-activa .carta-mano{width:82px!important;height:123px!important;flex-basis:82px!important}
+}
+
+/* =====================================================================
+   PARTIDA · V24.27 · CORREDOR CENTRAL SEGURO
+   Los laterales ya tenían su espacio reservado, pero la zona central
+   conservaba width:100% y se extendía por debajo del avatar IA. La anchura
+   automática hace efectivos los márgenes existentes sin mover los paneles.
+   ===================================================================== */
+@media(min-width:1501px){
+  #pantalla-juego .zona-central-cinematica{
+    width:auto!important;
+    max-width:none!important;
+  }
+  #pantalla-juego .panel-precision-nexo,
+  #pantalla-juego.precision-correccion-activa #panel-precision{
+    width:min(760px,calc(100vw - 824px))!important;
+    max-width:calc(100vw - 824px)!important;
+  }
+  #pantalla-juego .hito-evolucion{
+    width:min(1080px,calc(100vw - 824px))!important;
+  }
+  #pantalla-juego .zona-resultado-cinematica{
+    width:min(820px,calc(100vw - 824px))!important;
+  }
+  #superposicion-evento .tarjeta-evento-nexo{
+    width:min(900px,calc(100vw - 824px))!important;
+  }
+}
+
+@media(min-width:1051px) and (max-width:1500px){
+  #pantalla-juego .zona-central-cinematica{
+    width:auto!important;
+    max-width:none!important;
+  }
+  #pantalla-juego .zona-declaraciones-nexo,
+  #pantalla-juego .zona-mano-cinematica,
+  #pantalla-juego.precision-correccion-activa .zona-mano-cinematica,
+  #pantalla-juego .pistas-partida,
+  #pantalla-juego .panel-precision-nexo,
+  #pantalla-juego.precision-correccion-activa #panel-precision{
+    width:min(700px,calc(100vw - 708px))!important;
+    max-width:calc(100vw - 708px)!important;
+  }
+  #pantalla-juego .zona-declaraciones-nexo{
+    grid-template-columns:minmax(0,1.1fr) 30px minmax(0,.9fr)!important;
+    gap:6px!important;
+    padding-right:10px!important;
+    padding-left:10px!important;
+  }
+  #pantalla-juego .botones-declaracion{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+  #pantalla-juego .zona-apuesta .boton-apuesta{
+    width:100%!important;
+    min-width:0!important;
+    padding-right:8px!important;
+    padding-left:8px!important;
+  }
+  #pantalla-juego .carta-mano{
+    width:96px!important;
+    height:150px!important;
+    flex-basis:96px!important;
+  }
+  #pantalla-juego .mano-cartas{
+    gap:6px!important;
+  }
+  #pantalla-juego .hito-evolucion,
+  #pantalla-juego .zona-resultado-cinematica{
+    width:min(700px,calc(100vw - 708px))!important;
+  }
+  #pantalla-juego .zona-resultado-cinematica{
+    padding-right:20px!important;
+    padding-left:20px!important;
+  }
+  #superposicion-evento .tarjeta-evento-nexo{
+    width:min(760px,calc(100vw - 708px))!important;
+    min-width:0!important;
+    min-height:270px!important;
+    grid-template-columns:minmax(190px,.78fr) minmax(0,1.22fr)!important;
+  }
+  #superposicion-evento .marco-imagen-evento{
+    min-height:270px!important;
+  }
+  #superposicion-evento .contenido-evento{
+    padding:22px 20px!important;
+  }
+  #superposicion-evento #nombre-evento{
+    font-size:25px!important;
+  }
+  #superposicion-evento #descripcion-evento{
+    margin:11px 0 15px!important;
+    font-size:13px!important;
+  }
+  #superposicion-evento .boton-evento-continuar{
+    width:220px!important;
+    height:55px!important;
+  }
 }

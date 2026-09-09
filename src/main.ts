@@ -1,6 +1,7 @@
 import { Partida } from "./Partida.js";
 import { guardarMejorMarca, guardarPerfil, importarProgresoAnteriorSiExiste, listarJugadores, seleccionarJugador } from "./almacenamiento.js";
 import { elemento, escribir, habilitarCartasTrasApuesta, mostrar, mostrarEvento, mostrarPantalla, ocultar, ocultarEvento, ocultarResolucion, pintarApuestaElegida, pintarCabeceraRonda, pintarCapacidades, pintarCartasIA, pintarDeclaracionIA, pintarEvolucionVisual, pintarFinal, pintarMano, pintarMarcadores, pintarMejorMarca, pintarMemoria, pintarPistas, pintarResolucion, pintarSeleccionCartas } from "./interfaz.js";
+import { audioAmbiente } from "./suspense.js";
 let partida = null;
 let fase = "apuesta";
 let apuestaElegida = null;
@@ -13,7 +14,6 @@ let nombreJugadorElegido = "";
 // Bloque narrativo visible en la introducción (0 = primero, 3 = último).
 let bloqueIntroActual = 0;
 // Ajustes de sonido. Se guardan para respetar la preferencia del usuario.
-const audioAmbiente = new Audio("./assets/audio/heartbeat.wav");
 audioAmbiente.loop = true;
 let sonidoActivo = localStorage.getItem("nexo-sonido") !== "off";
 let volumenSonido = Number(localStorage.getItem("nexo-volumen") || "28");
@@ -65,7 +65,7 @@ function iniciar() {
     prepararOpcionesConfig();
     prepararJugadores();
     pintarMejorMarca();
-    mostrarPantalla("pantalla-inicio");
+    mostrarPantalla("pantalla-suspense");
 }
 /** Muestra uno de los cuatro bloques narrativos de la introducción. */
 function mostrarBloqueIntro() {
@@ -263,16 +263,20 @@ function empezarPartida() {
 // ---- Ajustes rápidos -------------------------------------------------------
 function prepararAjustes() {
     const panel = elemento("superposicion-ajustes");
-    const boton = elemento("btn-ajustes");
+    const botones = [elemento("btn-ajustes"), elemento("btn-ajustes-global")];
     const controlSonido = elemento("control-sonido");
     const controlVolumen = elemento("control-volumen");
     controlSonido.checked = sonidoActivo;
     controlVolumen.value = String(volumenSonido);
     controlVolumen.disabled = !sonidoActivo;
-    boton.addEventListener("click", function () {
-        panel.classList.remove("oculta");
-        boton.setAttribute("aria-expanded", "true");
-    });
+    for (let i = 0; i < botones.length; i++) {
+        botones[i].addEventListener("click", function () {
+            panel.classList.remove("oculta");
+            for (let j = 0; j < botones.length; j++) {
+                botones[j].setAttribute("aria-expanded", "true");
+            }
+        });
+    }
     elemento("btn-cerrar-ajustes").addEventListener("click", cerrarAjustes);
     panel.addEventListener("click", function (evento) {
         if (evento.target === panel) {
@@ -299,6 +303,7 @@ function prepararAjustes() {
 function cerrarAjustes() {
     elemento("superposicion-ajustes").classList.add("oculta");
     elemento("btn-ajustes").setAttribute("aria-expanded", "false");
+    elemento("btn-ajustes-global").setAttribute("aria-expanded", "false");
 }
 function reproducirAmbiente() {
     if (!sonidoActivo || partida === null) {

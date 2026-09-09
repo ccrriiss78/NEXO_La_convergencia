@@ -218,6 +218,20 @@ function probarChispaYVelocidadNoCompartenEspacio() {
   assert.match(css, /#pantalla-juego\.chispa-velocidad-activa \.carta-mano/);
 }
 
+function probarEstadosVisualesExtremos() {
+  const interfaz = fs.readFileSync(new URL("../src/interfaz.ts", import.meta.url), "utf8");
+  const css = fs.readFileSync(new URL("../css/partida.css", import.meta.url), "utf8");
+  assert.match(interfaz, /porcentajeHumano === 100 \? 4/);
+  assert.match(interfaz, /porcentajeIA === 100 \? 4/);
+  assert.match(interfaz, /crisisPlaneta === 0 \? RUTA_PLANETA_RECUPERADO/);
+  assert.match(css, /humano-hombre-a-ia-100\.webp/);
+  assert.match(css, /humano-mujer-a-ia-100\.webp/);
+  assert.match(css, /ia-femenina-a-humano-100\.webp/);
+  assert.match(css, /ia-masculina-a-humano-100\.webp/);
+  assert.match(css, /halo-evolucion-humano/);
+  assert.match(css, /halo-evolucion-ia/);
+}
+
 probarMemoriaRegistraJugadasIA();
 probarAnalisisDaConsejoUtil();
 probarVelocidadPrevisualizaSinMutar();
@@ -233,4 +247,5 @@ probarPrecisionNoOfreceCorreccionImposible();
 probarManualYLimpiezaUI();
 probarAvisoVelocidadVisible();
 probarChispaYVelocidadNoCompartenEspacio();
+probarEstadosVisualesExtremos();
 console.log("NEXO: 8 fortalezas y coherencia V22.36 verificadas.");

@@ -5,9 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO — La Convergencia</title>
-  <link rel="stylesheet" href="./css/style.css?v=ui-v24-12">
+  <link rel="stylesheet" href="./css/style.css?v=ui-v24-28">
   <!-- Pantalla de partida aislada para que su diseño sea fácil de estudiar/modificar -->
-  <link rel="stylesheet" href="./css/partida.css?v=flow-v24-11">
+  <link rel="stylesheet" href="./css/partida.css?v=flow-v24-27c">
+  <!-- Pantalla de suspense previa a INICIO: pulso interactivo + desbloqueo de audio -->
+  <link rel="stylesheet" href="./css/suspense.css?v=suspense-v1">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-25-49-equilibrio-fragil.webp">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-50-74-equilibrio-critico.webp">
@@ -17,10 +20,36 @@
 <body>
 
   <!-- ============================================================
+       PANTALLA 0: SUSPENSE
+       Verde Humano y azul IA convergen en un núcleo interactivo.
+       El clic desbloquea el audio y abre la portada existente.
+  ============================================================ -->
+  <section id="pantalla-suspense" class="pantalla activa" aria-label="Acceso a NEXO">
+    <svg id="svg-suspense" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="masaGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+          <stop offset="4%" stop-color="#ffffff" stop-opacity="0.6"/>
+          <stop offset="30%" stop-color="#8cd7c8" stop-opacity="0.26"/>
+          <stop offset="55%" stop-color="#009FE3" stop-opacity="0.13"/>
+          <stop offset="72%" stop-color="#009FE3" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <line id="linea-humano-1" stroke="#7CC242" stroke-width="1.4" opacity="0.4"/>
+      <line id="linea-humano-2" stroke="#7CC242" stroke-width="1.4" opacity="0.4"/>
+      <line id="linea-ia-1" stroke="#009FE3" stroke-width="1.4" opacity="0.4"/>
+      <line id="linea-ia-2" stroke="#009FE3" stroke-width="1.4" opacity="0.4"/>
+      <circle id="masaCirculo" r="92" fill="url(#masaGrad)"/>
+      <circle id="nucleoCirculo" r="2" fill="#ffffff" opacity="0.9"/>
+    </svg>
+    <p id="texto-suspense">pulso</p>
+  </section>
+
+  <!-- ============================================================
        PANTALLA 1: INICIO
        Portada definitiva: logo, lema y botón JUGAR
   ============================================================ -->
-  <section id="pantalla-inicio" class="pantalla activa">
+  <section id="pantalla-inicio" class="pantalla">
     <div class="fondo-inicio"></div>
 
     <div class="contenido-inicio">
@@ -1015,8 +1044,20 @@
     </div>
   </section>
 
+  <!-- Acceso global al sonido: visible fuera de la partida; durante la partida
+       se utiliza el botón de ajustes integrado en su cabecera. -->
+  <button
+    id="btn-ajustes-global"
+    class="boton-icono-ajustes boton-ajustes-global"
+    type="button"
+    aria-label="Abrir ajustes de sonido"
+    aria-controls="superposicion-ajustes"
+    aria-expanded="false"
+    title="Sonido y volumen"
+  ><span aria-hidden="true">⚙</span></button>
+
   <!-- NEXO V5 · efecto visual aislado de la lógica del juego -->
   <script type="module" src="./src/efecto-energia-esfera.js?v=config-v10-esfera-alineada"></script>
-  <script type="module" src="./dist/main.js?v=flow-v24-10"></script>
+  <script type="module" src="./dist/main.js?v=flow-v24-27"></script>
 </body>
 </html>

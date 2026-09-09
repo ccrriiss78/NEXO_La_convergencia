@@ -8,6 +8,7 @@ Este README documenta el comportamiento del juego integrado hasta **V22.37**. Su
 
 La versión actual incluye:
 
+- pantalla de suspense interactiva previa a la portada, con desbloqueo del audio ambiente;
 - portada e introducción narrativa en cuatro bloques;
 - configuración de nombre, avatar Humano, avatar IA y duración de partida;
 - partidas de 8, 12 o 16 rondas y modo libre;
@@ -307,7 +308,8 @@ NEXO_La_convergencia_cris/
 ├── index.html
 ├── css/
 │   ├── style.css
-│   └── partida.css
+│   ├── partida.css
+│   └── suspense.css
 ├── src/
 │   ├── Carta.ts
 │   ├── Jugador.ts
@@ -315,6 +317,7 @@ NEXO_La_convergencia_cris/
 │   ├── ia.ts
 │   ├── tipos.ts
 │   ├── main.ts
+│   ├── suspense.ts
 │   └── efecto-energia-esfera.js
 ├── dist/
 │   ├── main.js
@@ -323,6 +326,7 @@ NEXO_La_convergencia_cris/
 │   ├── Partida.js
 │   ├── ia.js
 │   ├── tipos.js
+│   ├── suspense.js
 │   ├── Evento.js
 │   ├── interfaz.js
 │   ├── datos.js
