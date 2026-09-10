@@ -22,6 +22,7 @@ La versión actual incluye:
 - avisos visuales diferenciados para modificadores positivos, negativos y mixtos;
 - desenlaces y perfiles finales;
 - persistencia local de jugadores y preferencias;
+- música de fondo propia durante la partida, compatible con todos los efectos;
 - pruebas automáticas con `npm test`.
 
 ## Historia
@@ -187,6 +188,8 @@ Los avisos contextuales aparecen en el lateral del jugador que posee actualmente
 4. **Velocidad**  
    Permite seleccionar **dos cartas**. NEXO compara los resultados que producirían ambas opciones y aplica automáticamente la más beneficiosa para el Humano teniendo en cuenta los cambios reales de evolución y Crisis de la ronda. Las dos cartas seleccionadas se descartan.
 
+   Por ese coste, el Humano puede mostrar menos cartas disponibles que la IA: ambas manos llevan ciclos independientes y la IA solo gasta una carta por ronda. Cuando una mano queda vacía, sus cinco cartas se recuperan al preparar la ronda siguiente.
+
 ### Fortalezas humanas que puede conquistar la IA
 
 1. **Creatividad**  
@@ -289,9 +292,31 @@ La pantalla final muestra también un perfil de evolución relacionado con forta
 
 ## Persistencia y sonido
 
-La portada utiliza `assets/audio/inicio/ambos-nexo.mp3` mediante un objeto `Audio` normal. La pista comienza después de pulsar la pantalla de suspense, se repite mientras permanece visible `#pantalla-inicio` y reduce gradualmente su volumen con `setInterval` al pulsar **JUGAR**. La X del logo reproduce el doble golpe del corazón detectado en la pista —un golpe principal y otro más corto— cada 1,01 segundos. Los nodos luminosos siguen otro reloj independiente de 11,102 segundos y se activan con las cuatro descargas tecnológicas principales, incluida una pequeña réplica en la descarga más larga. Al iniciarse el audio, dos variables CSS corrigen el desfase provocado por los 700 ms de transición entre suspense y portada. Esta integración no utiliza Web Audio API ni añade clases nuevas.
+La portada utiliza `assets/audio/inicio/ambos-nexo.mp3` mediante un objeto `Audio` normal. En V24.38 se sustituyó únicamente el contenido de esa pista por la segunda mezcla entregada, manteniendo su duración aproximada de 22 segundos. En V24.39 se han medido de nuevo sus tiempos: la X reproduce el doble golpe del corazón con un ciclo de `1,009272 s`, cuyo golpe principal cae cerca del 19,3% y el segundo cerca del 53%; los nodos usan un reloj independiente de `11,101995 s` y destellan con las descargas situadas aproximadamente en `0,980`, `3,780`, `4,540` y `7,040 s`. La pista comienza después de pulsar la pantalla de suspense, se repite mientras permanece visible `#pantalla-inicio` y reduce gradualmente su volumen con `setInterval` al pulsar **JUGAR**. Al iniciarse el audio, dos variables CSS fijan la fase y una clase temporal reinicia la animación durante un solo fotograma; así no hereda el tiempo transcurrido mientras la portada estaba oculta y también vuelve sincronizada después de **VOLVER A JUGAR**. Esta integración no utiliza Web Audio API ni añade clases de TypeScript.
 
-`heartbeat.wav` se conserva temporalmente como respaldo mientras se construyen las siguientes capas de sonido; ya no es la pista de la portada.
+La composición de la pantalla final se compacta únicamente entre `821` y `980 px` de alto. En ese tramo se reserva margen inferior, se reduce de forma ligera la altura del logo, las tarjetas y el cierre, y el contenido se alinea desde arriba. De este modo **VOLVER A JUGAR** queda completo dentro de la pantalla sin necesitar desplazamiento vertical, manteniendo intacto el diseño amplio en resoluciones mayores.
+
+Desde V24.40, el desenlace **PLANETA RECUPERADO** utiliza `assets/audio/final/planeta-restaurado.mp3` como música propia. Es un objeto `Audio` independiente con `loop = true`: comienza únicamente cuando la Crisis llega al 0%, continúa mientras el jugador permanece en la pantalla final y se detiene y rebobina al pulsar **VOLVER A JUGAR**. El interruptor y el volumen generales también la controlan; al silenciar se pausa y al volver a activar el sonido se reanuda si el desenlace recuperado sigue visible.
+
+Desde V24.41, el peor desenlace **COLAPSO PLANETARIO** utiliza `assets/audio/final/planeta-colapso.mp3` con el mismo comportamiento seguro: solo comienza al alcanzar el 100% de Crisis, se repite mientras el jugador permanece en esa pantalla final y se pausa o detiene con los controles generales y **VOLVER A JUGAR**. Elegir un jugador ya registrado reproduce además un único clic corto y constante, reutilizando un efecto existente para no duplicar assets.
+
+Desde V24.42, Introducción y Configuración comparten `assets/audio/musica/introduccion-configuracion.mp3`. La pista empieza al pulsar **JUGAR**, usa un único objeto `Audio` y no se reinicia al cambiar entre esas dos pantallas. Se mantiene en bucle hasta que una configuración válida permite pulsar **INICIAR PROTOCOLO**; entonces se detiene y comienza la música de partida.
+
+V24.43 corrige el criterio de la música `assets/audio/final/rivalidad-final.mp3`: al agotarse las rondas, se activa cuando el desenlace completo es **SUPREMACÍA HUMANA** o **SUPREMACÍA IA**, con independencia del resultado aislado de la última ronda. Se repite hasta **VOLVER A JUGAR**, respeta silencio y volumen, no se usa al abandonar y no sustituye las músicas prioritarias de recuperación total o colapso.
+
+V24.44 mejora únicamente la mezcla entre pantallas. La pista de la portada recibe un refuerzo moderado de volumen. La música compartida de Introducción y Configuración comienza desde el segundo 2 del MP3 y sube gradualmente durante 900 ms. Al pulsar **INICIAR PROTOCOLO**, esa música baja durante el mismo intervalo mientras la música de partida entra progresivamente. Los fundidos utilizan `setInterval` y la propiedad `volume` de objetos `Audio`; no emplean Web Audio API ni modifican los archivos MP3.
+
+La mezcla V24.41 corrige el nivel excesivamente bajo de las versiones anteriores. El 28% general se estaba multiplicando por volúmenes internos ya reducidos; ahora una función común refuerza la mezcla y la limita a `1`, el máximo admitido por el objeto `Audio`. Se conservan las proporciones entre efectos y músicas, el control de volumen continúa funcionando y el silencio sigue dejando todo a cero.
+
+Los efectos breves de interfaz y partida se organizan en `assets/audio/sfx/` y se controlan desde `src/sonidos.ts`. Este módulo contiene únicamente objetos, funciones, listeners y objetos `Audio`: no añade una quinta clase ni utiliza Web Audio API. Cada acción —avatar, rondas, PAR/IMPAR, carta, panel o confirmación— conserva un único sonido reconocible. Los objetos `Audio` se preparan una vez y se reutilizan para que el primer clic y los siguientes respondan de la misma forma. Evento y carta de crisis se ordenan si coinciden; y las transiciones de planeta o avatares solo suenan al cruzar 25%, 50%, 75% o 100%. El volumen y el silencio siguen usando `nexo-volumen` y `nexo-sonido`. La selección completa y los archivos de origen se documentan en `MAPA_SONORO_NEXO.md`.
+
+Desde V24.36, todos los eventos especiales comparten una señal fija y todas las cartas/modificadores de crisis comparten otra señal distinta. Velocidad mantiene siempre dos cartas cuando se sustituye una elección, permite desmarcarlas y muestra el progreso `0/2`, `1/2` o `2/2`, evitando que el botón de resolución parezca bloqueado sin explicación.
+
+Desde V24.37, `assets/audio/musica/nexo-partida.mp3` acompaña únicamente la pantalla de partida. Utiliza un objeto `Audio` independiente y `loop = true`, por lo que los sonidos de botones, eventos, fortalezas, resultados y transiciones pueden reproducirse a la vez sin cortar la música. El interruptor y el volumen generales siguen controlándolo todo; al silenciar se pausa la pista y al abandonar o llegar al desenlace se detiene y vuelve al inicio.
+
+La limpieza V24.40 retira `heartbeat.wav`, sustituido definitivamente por la mezcla de portada, y el efecto positivo que había quedado sin ninguna llamada ejecutable. Los demás efectos y músicas se conservan sin cambios.
+
+La limpieza V24.41 retira 21 gráficos heredados V15/V16 que ya no tenían ninguna referencia y habían sido sustituidos por los botones limpios, los fondos evolutivos y el núcleo actuales. Las diez cartas numeradas se conservan: aunque su ruta completa no aparece escrita literalmente, TypeScript la construye con el valor de cada carta. El icono del navegador reutiliza la X vigente de NEXO para evitar la petición rota de `favicon.ico`.
 
 El navegador utiliza `localStorage` para conservar información local como:
 
