@@ -2,6 +2,7 @@ import { Partida } from "./Partida.js";
 import { guardarMejorMarca, guardarPerfil, importarProgresoAnteriorSiExiste, listarJugadores, seleccionarJugador } from "./almacenamiento.js";
 import { elemento, escribir, habilitarCartasTrasApuesta, mostrar, mostrarEvento, mostrarPantalla, ocultar, ocultarEvento, ocultarResolucion, pintarApuestaElegida, pintarCabeceraRonda, pintarCapacidades, pintarCartasIA, pintarDeclaracionIA, pintarEvolucionVisual, pintarFinal, pintarMano, pintarMarcadores, pintarMejorMarca, pintarMemoria, pintarPistas, pintarResolucion, pintarSeleccionCartas } from "./interfaz.js";
 import { audioInicio, actualizarVolumenAudioInicio, apagarAudioInicioSuavemente, pausarAudioInicio, reproducirAudioInicio } from "./suspense.js";
+import { actualizarVolumenEfectos, actualizarVolumenMusicaEquilibrioRestablecido, actualizarVolumenMusicaIntroduccionConfiguracion, actualizarVolumenMusicaPartida, actualizarVolumenMusicaPlanetaColapso, actualizarVolumenMusicaPlanetaRestaurado, actualizarVolumenMusicaRivalidadFinal, apagarMusicaIntroduccionConfiguracionSuavemente, cancelarEfectosProgramados, conectarSonidosInterfaz, correspondeMusicaPlanetaRestaurado, detenerEfectos, pausarMusicaEquilibrioRestablecido, pausarMusicaIntroduccionConfiguracion, pausarMusicaPartida, pausarMusicaPlanetaColapso, pausarMusicaPlanetaRestaurado, pausarMusicaRivalidadFinal, precargarEfectos, reproducirCartaCrisis, reproducirDesenlace, reproducirEvento, reproducirFeedbackDeRonda, reproducirMusicaEquilibrioRestablecido, reproducirMusicaIntroduccionConfiguracion, reproducirMusicaPartida, reproducirMusicaPlanetaColapso, reproducirMusicaPlanetaRestaurado, reproducirMusicaRivalidadFinal, reproducirSonido } from "./sonidos.js";
 let partida = null;
 let fase = "apuesta";
 let apuestaElegida = null;
@@ -13,16 +14,20 @@ let rondasElegidas = 12;
 let nombreJugadorElegido = "";
 // Bloque narrativo visible en la introducción (0 = primero, 3 = último).
 let bloqueIntroActual = 0;
+let cartaCrisisPendienteDeSonido = false;
+let finalConMusicaRivalidad = false;
 // Ajustes de sonido. Se guardan para respetar la preferencia del usuario.
 let sonidoActivo = localStorage.getItem("nexo-sonido") !== "off";
 let volumenSonido = Number(localStorage.getItem("nexo-volumen") || "28");
-// El MP3 contiene un latido doble aproximadamente cada 1,01 segundos.
-// Este valor también se usa en CSS para que la X siga ese mismo compás.
-const DURACION_PULSO_PORTADA = 1.01;
-const DURACION_DESCARGAS_PORTADA = 11.102;
+// El MP3 contiene once latidos dobles dentro de cada ciclo de descargas.
+// Usamos las duraciones medidas de ambos ciclos para que la X y los nodos
+// mantengan su fase incluso después de varias repeticiones de la pista.
+const DURACION_PULSO_PORTADA = 1.009272;
+const DURACION_DESCARGAS_PORTADA = 11.101995;
 /**
  * Ajusta el punto de inicio de la animación al tiempo que lleva sonando el MP3.
- * Solo modifica una variable CSS; no analiza ni transforma el sonido.
+ * La clase temporal detiene la animación durante un fotograma; al retirarla,
+ * CSS vuelve a empezar desde la fase exacta indicada por las dos variables.
  */
 function sincronizarPulsoPortada() {
     const logo = document.querySelector("#pantalla-inicio .logo-nexo-animado");
@@ -30,8 +35,12 @@ function sincronizarPulsoPortada() {
         return;
     const faseAudio = audioInicio.currentTime % DURACION_PULSO_PORTADA;
     const faseDescargas = audioInicio.currentTime % DURACION_DESCARGAS_PORTADA;
-    logo.style.setProperty("--desfase-pulso-audio", `-${faseAudio.toFixed(3)}s`);
-    logo.style.setProperty("--desfase-descarga-audio", `-${faseDescargas.toFixed(3)}s`);
+    logo.classList.add("reiniciar-animacion-audio");
+    logo.style.setProperty("--desfase-pulso-audio", `-${faseAudio.toFixed(6)}s`);
+    logo.style.setProperty("--desfase-descarga-audio", `-${faseDescargas.toFixed(6)}s`);
+    window.requestAnimationFrame(function () {
+        logo.classList.remove("reiniciar-animacion-audio");
+    });
 }
 // ---- Arranque ------------------------------------------------------------
 /** Conecta todos los botones de la página. Se ejecuta una sola vez. */
@@ -54,6 +63,7 @@ function iniciar() {
         bloqueIntroActual = 0;
         mostrarBloqueIntro();
         mostrarPantalla("pantalla-introduccion");
+        reproducirMusicaIntroduccionConfiguracionSiCorresponde();
     });
     // El mismo botón CONTINUAR avanza por los cuatro bloques.
     // En el último bloque conduce a la pantalla de configuración.
@@ -77,7 +87,7 @@ function iniciar() {
     elemento("btn-precision-mantener").addEventListener("click", mantenerCartaPrecision);
     elemento("btn-precision-corregir").addEventListener("click", corregirCartaPrecision);
     elemento("btn-siguiente").addEventListener("click", siguiente);
-    elemento("btn-cerrar-evento").addEventListener("click", ocultarEvento);
+    elemento("btn-cerrar-evento").addEventListener("click", cerrarEventoDeRonda);
     prepararAjustes();
     elemento("btn-abandonar").addEventListener("click", function () {
         if (partida !== null) {
@@ -86,6 +96,12 @@ function iniciar() {
         }
     });
     elemento("btn-volver-jugar").addEventListener("click", function () {
+        pausarMusicaIntroduccionConfiguracion(true);
+        pausarMusicaPlanetaRestaurado(true);
+        pausarMusicaEquilibrioRestablecido(true);
+        pausarMusicaPlanetaColapso(true);
+        pausarMusicaRivalidadFinal(true);
+        finalConMusicaRivalidad = false;
         partida = null;
         pintarMejorMarca();
         mostrarPantalla("pantalla-inicio");
@@ -93,6 +109,8 @@ function iniciar() {
     });
     prepararOpcionesConfig();
     prepararJugadores();
+    conectarSonidosInterfaz();
+    precargarEfectos();
     pintarMejorMarca();
     mostrarPantalla("pantalla-suspense");
 }
@@ -279,9 +297,12 @@ function empezarPartida() {
         avatarIAElegido = String(radioIA.value);
     }
     partida = new Partida(nombreJugadorElegido, avatarElegido, rondasElegidas, avatarIAElegido);
+    finalConMusicaRivalidad = false;
     escribir("nombre-humano", "HUMANO");
     escribir("nombre-jugador-partida", nombreJugadorElegido);
+    apagarMusicaIntroduccionConfiguracionSuavemente();
     mostrarPantalla("pantalla-juego");
+    reproducirMusicaPartidaSiCorresponde();
     nuevaRonda();
 }
 // ---- Ajustes rápidos -------------------------------------------------------
@@ -313,14 +334,31 @@ function prepararAjustes() {
         localStorage.setItem("nexo-sonido", sonidoActivo ? "on" : "off");
         if (sonidoActivo) {
             reproducirAudioInicioSiCorresponde();
+            reproducirMusicaIntroduccionConfiguracionSiCorresponde();
+            reproducirMusicaPartidaSiCorresponde();
+            reproducirMusicaFinalSiCorresponde();
         }
         else {
             pausarAudioInicio();
+            pausarMusicaIntroduccionConfiguracion();
+            pausarMusicaPartida();
+            pausarMusicaPlanetaRestaurado();
+            pausarMusicaEquilibrioRestablecido();
+            pausarMusicaPlanetaColapso();
+            pausarMusicaRivalidadFinal();
+            detenerEfectos();
         }
     });
     controlVolumen.addEventListener("input", function () {
         volumenSonido = Number(controlVolumen.value);
         actualizarVolumenAudioInicio(volumenSonido);
+        actualizarVolumenEfectos(volumenSonido);
+        actualizarVolumenMusicaIntroduccionConfiguracion(volumenSonido);
+        actualizarVolumenMusicaPartida(volumenSonido);
+        actualizarVolumenMusicaPlanetaRestaurado(volumenSonido);
+        actualizarVolumenMusicaEquilibrioRestablecido(volumenSonido);
+        actualizarVolumenMusicaPlanetaColapso(volumenSonido);
+        actualizarVolumenMusicaRivalidadFinal(volumenSonido);
         localStorage.setItem("nexo-volumen", String(volumenSonido));
     });
 }
@@ -336,12 +374,50 @@ function reproducirAudioInicioSiCorresponde() {
     }
     reproducirAudioInicio(volumenSonido);
 }
+/** La misma pista continúa al pasar de Introducción a Configuración. */
+function reproducirMusicaIntroduccionConfiguracionSiCorresponde() {
+    const introduccionActiva = elemento("pantalla-introduccion").classList.contains("activa");
+    const configuracionActiva = elemento("pantalla-configuracion").classList.contains("activa");
+    if (!sonidoActivo || (!introduccionActiva && !configuracionActiva)) {
+        return;
+    }
+    reproducirMusicaIntroduccionConfiguracion(volumenSonido);
+}
+/** La música larga solo acompaña la pantalla de juego, nunca las demás. */
+function reproducirMusicaPartidaSiCorresponde() {
+    const juegoActivo = elemento("pantalla-juego").classList.contains("activa");
+    if (!sonidoActivo || !juegoActivo || partida === null) {
+        return;
+    }
+    reproducirMusicaPartida(volumenSonido);
+}
+/** Reanuda la música que corresponda al desenlace visible. */
+function reproducirMusicaFinalSiCorresponde() {
+    const finalActivo = elemento("pantalla-final").classList.contains("activa");
+    if (!sonidoActivo || !finalActivo || partida === null) {
+        return;
+    }
+    const saludPlaneta = partida.getSaludPlaneta();
+    if (saludPlaneta >= 100) {
+        reproducirMusicaEquilibrioRestablecido(volumenSonido);
+    }
+    else if (saludPlaneta <= 0) {
+        reproducirMusicaPlanetaColapso(volumenSonido);
+    }
+    else if (correspondeMusicaPlanetaRestaurado(saludPlaneta)) {
+        reproducirMusicaPlanetaRestaurado(volumenSonido);
+    }
+    else if (finalConMusicaRivalidad) {
+        reproducirMusicaRivalidadFinal(volumenSonido);
+    }
+}
 // ---- Ciclo de la ronda ----------------------------------------------------
 /** Prepara la ronda siguiente y deja la pantalla lista para apostar. */
 function nuevaRonda() {
     if (partida === null) {
         return;
     }
+    cancelarEfectosProgramados();
     partida.prepararRonda();
     fase = "apuesta";
     apuestaElegida = null;
@@ -368,12 +444,31 @@ function nuevaRonda() {
     elemento("instruccion-mano").classList.remove("instruccion-precision-activa");
     elemento("instruccion-mano").classList.toggle("instruccion-fortaleza-activa", velocidadDisponible());
     const evento = partida.getEventoActivo();
+    const cartaCrisis = partida.getCartaCrisis();
+    cartaCrisisPendienteDeSonido = evento !== null && cartaCrisis !== null;
     // CHISPA + VELOCIDAD necesitan compartir la franja central con dos avisos.
     // Marcamos únicamente esta combinación para compactar la mano sin mover
     // el panel PAR/IMPAR ni alterar la lógica de ninguna fortaleza.
     elemento("pantalla-juego").classList.toggle("chispa-velocidad-activa", evento !== null && evento.getId() === "chispa" && velocidadDisponible());
     if (evento !== null) {
         mostrarEvento(evento.getId(), evento.getNombre(), evento.getDescripcion());
+        reproducirEvento(evento.getId());
+    }
+    else if (cartaCrisis !== null) {
+        reproducirCartaCrisis(cartaCrisis.tipo);
+    }
+}
+/** Cierra el evento y presenta después el modificador de crisis si coinciden. */
+function cerrarEventoDeRonda() {
+    ocultarEvento();
+    if (partida === null || !cartaCrisisPendienteDeSonido)
+        return;
+    const cartaCrisis = partida.getCartaCrisis();
+    cartaCrisisPendienteDeSonido = false;
+    if (cartaCrisis !== null) {
+        window.setTimeout(function () {
+            reproducirCartaCrisis(cartaCrisis.tipo);
+        }, 180);
     }
 }
 /** Repinta todo lo que puede haber cambiado: marcadores, avatares, mano... */
@@ -468,7 +563,9 @@ function pulsarCarta(valor) {
     const corrigiendoPrecision = fase === "precision-correccion";
     fase = corrigiendoPrecision ? "precision-correccion" : "carta";
     if (velocidadDisponible() && !corrigiendoPrecision) {
-        // Con Velocidad se eligen dos cartas: la tercera pulsación empieza de cero.
+        // Con Velocidad se eligen dos cartas. Si ya hay dos y se pulsa una
+        // tercera, sustituimos la más antigua y conservamos una jugada completa.
+        // Así un roce accidental no vuelve a bloquear RESOLVER RONDA.
         if (yaSeleccionada(valor)) {
             cartasSeleccionadas = quitarSeleccion(valor);
         }
@@ -476,7 +573,8 @@ function pulsarCarta(valor) {
             cartasSeleccionadas.push(valor);
         }
         else {
-            cartasSeleccionadas = [valor];
+            cartasSeleccionadas.shift();
+            cartasSeleccionadas.push(valor);
         }
     }
     else {
@@ -523,13 +621,19 @@ function actualizarBotonConfirmar() {
         escribir("btn-confirmar-jugada", "DECLARA PAR / IMPAR");
     }
     else if (cartasSeleccionadas.length < necesarias) {
-        escribir("btn-confirmar-jugada", usaVelocidad ? "ELIGE 2 CARTAS" : "ELIGE TU CARTA");
+        if (usaVelocidad) {
+            const elegidas = cartasSeleccionadas.length;
+            escribir("btn-confirmar-jugada", elegidas === 0 ? "ELIGE 2 CARTAS · 0/2" : "ELIGE OTRA CARTA · 1/2");
+        }
+        else {
+            escribir("btn-confirmar-jugada", "ELIGE TU CARTA");
+        }
     }
     else {
         // La acción principal siempre conserva su significado: resolver la ronda.
         // Si PRECISIÓN está disponible, se aplicará automáticamente al pulsar y
         // mostrará su panel informativo antes del resultado.
-        escribir("btn-confirmar-jugada", "RESOLVER RONDA");
+        escribir("btn-confirmar-jugada", usaVelocidad ? "RESOLVER RONDA · 2/2" : "RESOLVER RONDA");
     }
     boton.classList.toggle("jugada-lista", jugadaCompleta);
 }
@@ -637,6 +741,7 @@ function activarPrecision() {
     ocultar("acciones");
     ocultar("btn-confirmar-jugada");
     elemento("mano-cartas").classList.add("mano-bloqueada-precision");
+    reproducirSonido("fortaleza");
     return true;
 }
 /** Mantiene la carta ya confirmada y resuelve con la información obtenida. */
@@ -758,6 +863,7 @@ function mostrarResultadoVelocidad(cartaA, cartaB) {
         resolverConCarta(mejor.cartaJugador, true);
     };
     mostrar("zona-velocidad");
+    reproducirSonido("fortaleza");
 }
 function pintarOpcionVelocidad(id, opcion, esMejor) {
     const ficha = elemento(id);
@@ -797,6 +903,7 @@ function pintarResolucionYSiguiente(resumen) {
         return;
     }
     pintarResolucion(resumen);
+    reproducirFeedbackDeRonda(resumen);
     if (partida.estaTerminada()) {
         if (partida.getSaludPlaneta() >= 100) {
             escribir("btn-siguiente", "DESCUBRIR EL DESENLACE");
@@ -829,14 +936,51 @@ function terminarPartida(guardarProgreso = true) {
     if (partida === null) {
         return;
     }
+    cancelarEfectosProgramados();
     const resumen = partida.calcularFinal();
+    finalConMusicaRivalidad = guardarProgreso
+        && resumen.saludPlaneta > 0
+        && resumen.saludPlaneta < 100
+        && (resumen.desenlace === "SUPREMACIA HUMANA"
+            || resumen.desenlace === "SUPREMACIA IA");
     if (guardarProgreso) {
         guardarPerfil(resumen.perfil.nombre);
         guardarMejorMarca(partida.getJugador().getNombre(), resumen);
     }
     pintarFinal(partida, resumen);
     pausarAudioInicio();
+    pausarMusicaIntroduccionConfiguracion(true);
+    pausarMusicaPartida(true);
+    pausarMusicaPlanetaRestaurado(true);
+    pausarMusicaEquilibrioRestablecido(true);
+    pausarMusicaPlanetaColapso(true);
+    pausarMusicaRivalidadFinal(true);
     mostrarPantalla("pantalla-final");
+    reproducirDesenlace();
+    if (resumen.saludPlaneta >= 100) {
+        reproducirMusicaEquilibrioRestablecido(volumenSonido);
+    }
+    else if (resumen.saludPlaneta <= 0) {
+        reproducirMusicaPlanetaColapso(volumenSonido);
+    }
+    else if (correspondeMusicaPlanetaRestaurado(resumen.saludPlaneta)) {
+        reproducirMusicaPlanetaRestaurado(volumenSonido);
+    }
+    else if (finalConMusicaRivalidad) {
+        reproducirMusicaRivalidadFinal(volumenSonido);
+    }
+}
+/** Detiene y rebobina el audio cuando la página deja de estar activa. */
+function detenerAudioAlSalir() {
+    pausarAudioInicio();
+    pausarMusicaIntroduccionConfiguracion(true);
+    pausarMusicaPartida(true);
+    pausarMusicaPlanetaRestaurado(true);
+    pausarMusicaEquilibrioRestablecido(true);
+    pausarMusicaPlanetaColapso(true);
+    pausarMusicaRivalidadFinal(true);
+    detenerEfectos();
 }
 // Arrancamos cuando el HTML ya está cargado, para que existan los elementos.
 window.addEventListener("DOMContentLoaded", iniciar);
+window.addEventListener("pagehide", detenerAudioAlSalir);

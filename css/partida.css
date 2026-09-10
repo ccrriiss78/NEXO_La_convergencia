@@ -2641,8 +2641,8 @@
    Las reglas posteriores solo afectan a estados funcionales concretos.
    ===================================================================== */
 
-/* V22.36 · VELOCIDAD: la primera carta seleccionada no bloquea el clic de las demás. */
-#pantalla-juego .mano-cartas.modo-velocidad .carta-mano.seleccionada{pointer-events:none!important;z-index:12!important;transform:translateY(-22px) scale(1.045) rotate(0)!important}
+/* V24.36 · VELOCIDAD: una carta elegida se puede pulsar otra vez para desmarcarla. */
+#pantalla-juego .mano-cartas.modo-velocidad .carta-mano.seleccionada{pointer-events:auto!important;z-index:12!important;transform:translateY(-22px) scale(1.045) rotate(0)!important}
 
 
 /* =====================================================================

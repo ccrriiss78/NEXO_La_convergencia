@@ -882,34 +882,34 @@ h1, h2, h3, h4 {
 }
 
 /* =====================================================================
-   PORTADA · PULSO DE LA X SINCRONIZADO CON EL LATIDO DEL MP3 · v12
-   El audio presenta un ciclo de unos 1,01 s: golpe principal cerca del
-   22% y segundo golpe, más corto, cerca del 55%.
+   PORTADA · PULSO DE LA X SINCRONIZADO CON EL LATIDO DEL MP3 · v14
+   El ciclo medido es de 1,009272 s: golpe principal cerca del 19,3% y
+   segundo golpe, más corto, cerca del 53%.
    ===================================================================== */
-@keyframes nexo-x-base-latido-humano-v12 {
-  0%, 12%, 34%, 45%, 67%, 100% {
+@keyframes nexo-x-base-latido-humano-v14 {
+  0%, 10%, 31%, 43%, 65%, 100% {
     opacity: 1;
     filter: brightness(1);
   }
-  18% { opacity: .72; }
-  22% { opacity: 0; }
-  27% { opacity: .58; }
-  51% { opacity: .78; }
-  55% { opacity: .28; }
-  60% { opacity: .68; }
+  15.5% { opacity: .72; }
+  19.3% { opacity: 0; }
+  25.3% { opacity: .58; }
+  49% { opacity: .78; }
+  53% { opacity: .28; }
+  59% { opacity: .68; }
 }
 
-@keyframes nexo-x-expansion-latido-humano-v12 {
-  0%, 12%, 34%, 45%, 67%, 100% {
+@keyframes nexo-x-expansion-latido-humano-v14 {
+  0%, 10%, 31%, 43%, 65%, 100% {
     opacity: 0;
     transform: scaleX(1) scaleY(1);
     filter: brightness(1) saturate(1);
   }
-  17% {
+  15% {
     opacity: .32;
     transform: scaleX(1.08) scaleY(1.05);
   }
-  22% {
+  19.3% {
     opacity: 1;
     transform: scaleX(1.28) scaleY(1.17);
     filter:
@@ -919,15 +919,15 @@ h1, h2, h3, h4 {
       drop-shadow(0 0 17px rgba(135, 255, 63, .48))
       drop-shadow(0 0 23px rgba(38, 189, 255, .52));
   }
-  28% {
+  25.3% {
     opacity: .24;
     transform: scaleX(1.05) scaleY(1.03);
   }
-  51% {
+  49% {
     opacity: .28;
     transform: scaleX(1.06) scaleY(1.04);
   }
-  55% {
+  53% {
     opacity: .78;
     transform: scaleX(1.17) scaleY(1.10);
     filter:
@@ -936,7 +936,7 @@ h1, h2, h3, h4 {
       drop-shadow(0 0 8px rgba(255, 255, 255, .55))
       drop-shadow(0 0 17px rgba(55, 200, 255, .38));
   }
-  61% {
+  59% {
     opacity: .18;
     transform: scaleX(1.035) scaleY(1.02);
   }
@@ -986,8 +986,8 @@ h1, h2, h3, h4 {
 
 /* Los nodos siguen las cuatro descargas tecnológicas principales del audio.
    Este ciclo dura la mitad de la pista y se repite dos veces. */
-@keyframes nexo-nodos-descarga-tecnologica-v13 {
-  0%, 6.5%, 10%, 32%, 35.5%, 38.7%, 42%, 61%, 65.8%, 100% {
+@keyframes nexo-nodos-descarga-tecnologica-v14 {
+  0%, 6.33%, 9.38%, 31.5%, 34.6%, 38.52%, 41.44%, 60.74%, 64.7%, 100% {
     background-position:
       7.5% 77.3%, 7.5% 77.3%,
       90.4% 77.3%, 90.4% 77.3%, center;
@@ -996,7 +996,7 @@ h1, h2, h3, h4 {
       0 0, 0 0, 100% 100%;
   }
 
-  7.4%, 32.8%, 39.5%, 61.9%, 64.55% {
+  7.23%, 32.3%, 39.32%, 61.64%, 64.31% {
     background-position:
       16% 77.3%, 16% 77.3%,
       83.4% 77.3%, 83.4% 77.3%, center;
@@ -1005,7 +1005,7 @@ h1, h2, h3, h4 {
       4px 4px, 12px 12px, 100% 100%;
   }
 
-  8.35%, 33.8%, 40.35%, 62.85% {
+  8.18%, 33.29%, 40.17%, 62.58% {
     background-position:
       23% 77.3%, 23% 77.3%,
       77.5% 77.3%, 77.5% 77.3%, center;
@@ -1014,8 +1014,8 @@ h1, h2, h3, h4 {
       7px 7px, 23px 23px, 100% 100%;
   }
 
-  /* Destellos: 0,995 · 3,835 · 4,560 · 7,070 s dentro de cada ciclo. */
-  9%, 34.55%, 41.08%, 63.68% {
+  /* Destellos medidos: 0,980 · 3,780 · 4,540 · 7,040 s por ciclo. */
+  8.83%, 34.05%, 40.89%, 63.41% {
     background-position:
       25.5% 77.3%, 25.5% 77.3%,
       75.5% 77.3%, 75.5% 77.3%, center;
@@ -1024,7 +1024,7 @@ h1, h2, h3, h4 {
       12px 12px, 38px 38px, 100% 100%;
   }
 
-  9.55%, 35.1%, 41.63%, 64.15%, 65.35% {
+  9.38%, 34.6%, 41.44%, 63.88%, 64.7% {
     background-position:
       25.5% 77.3%, 25.5% 77.3%,
       75.5% 77.3%, 75.5% 77.3%, center;
@@ -1034,7 +1034,7 @@ h1, h2, h3, h4 {
   }
 
   /* Pequeña réplica de la descarga más larga. */
-  64.95% {
+  64.31% {
     background-position:
       25.5% 77.3%, 25.5% 77.3%,
       75.5% 77.3%, 75.5% 77.3%, center;
@@ -5138,24 +5138,36 @@ h1, h2, h3, h4 {
 #pantalla-inicio .logo-nexo-animado {
   --desfase-pulso-audio: 0s;
   --desfase-descarga-audio: 0s;
-  animation-name: nexo-nodos-descarga-tecnologica-v13;
-  animation-duration: 11.102s;
+  animation-name: nexo-nodos-descarga-tecnologica-v14;
+  animation-duration: 11.101995s;
   animation-timing-function: linear;
   animation-delay: var(--desfase-descarga-audio);
+  animation-iteration-count: infinite;
 }
 
 #pantalla-inicio .logo-nexo-animado::before {
-  animation-name: nexo-x-base-latido-humano-v12;
-  animation-duration: 1.01s;
+  animation-name: nexo-x-base-latido-humano-v14;
+  animation-duration: 1.009272s;
   animation-timing-function: linear;
   animation-delay: var(--desfase-pulso-audio);
+  animation-iteration-count: infinite;
 }
 
 #pantalla-inicio .logo-nexo-animado::after {
-  animation-name: nexo-x-expansion-latido-humano-v12;
-  animation-duration: 1.01s;
+  animation-name: nexo-x-expansion-latido-humano-v14;
+  animation-duration: 1.009272s;
   animation-timing-function: linear;
   animation-delay: var(--desfase-pulso-audio);
+  animation-iteration-count: infinite;
+}
+
+/* Cambiar una variable no reinicia por sí solo una animación CSS. Esta clase
+   se mantiene un único fotograma para que el siguiente arranque quede fijado
+   al tiempo real del audio, también después de volver a jugar. */
+#pantalla-inicio .logo-nexo-animado.reiniciar-animacion-audio,
+#pantalla-inicio .logo-nexo-animado.reiniciar-animacion-audio::before,
+#pantalla-inicio .logo-nexo-animado.reiniciar-animacion-audio::after {
+  animation-name: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5897,15 +5909,18 @@ h1, h2, h3, h4 {
     min-height:0;
     padding:4px clamp(14px,2vw,26px);
     gap:5px;
-    align-content:center;
+    align-content:start;
   }
-  #pantalla-final .final-cabecera{padding-bottom:6px}
+  #pantalla-final .final-cabecera{padding-bottom:3px}
   #pantalla-final .final-logo-nexo{
-    width:clamp(230px,19vw,320px);
-    max-height:78px;
+    width:clamp(215px,17vw,285px);
+    max-height:66px;
   }
+  #pantalla-final #titulo-final-principal{font-size:clamp(1.7rem,3.5vh,2.55rem)}
+  #pantalla-final .final-planeta-dominante{min-height:48px}
+  #pantalla-final .final-planeta-porcentaje{font-size:clamp(2.7rem,5.9vh,4rem)}
   #pantalla-final .final-evolucion-card{
-    height:clamp(150px,18vh,168px);
+    height:clamp(142px,16.2vh,154px);
     min-height:0;
   }
   #pantalla-final .final-evolucion-info{
@@ -5923,24 +5938,25 @@ h1, h2, h3, h4 {
     line-height:1.12;
   }
   #pantalla-final .final-panel{
-    min-height:102px;
-    padding:7px 14px;
+    min-height:92px;
+    padding:6px 14px;
   }
   #pantalla-final .final-panel h3{margin:.12rem 0 .22rem}
   #pantalla-final .final-panel p:last-child{line-height:1.25}
   #pantalla-final .final-cierre{gap:4px}
   #pantalla-final .final-lectura-estrategica{
-    padding:7px 14px 8px;
+    padding:5px 14px 6px;
   }
   #pantalla-final .final-lectura-estrategica span{margin-bottom:3px}
   #pantalla-final .final-lectura-estrategica p{line-height:1.3}
-  #pantalla-final .coleccion-perfiles{padding:3px 10px}
+  #pantalla-final .coleccion-perfiles{padding:2px 10px}
   #pantalla-final .final-reflexion{
-    padding:7px 14px 8px;
-    line-height:1.3;
+    padding:5px 14px 6px;
+    font-size:clamp(.86rem,1.12vh,.96rem);
+    line-height:1.24;
   }
   #pantalla-final .boton-final-nexo{
-    min-height:48px;
-    max-height:54px;
+    min-height:46px;
+    max-height:50px;
   }
 }

@@ -1,13 +1,17 @@
 import { elemento, mostrarPantalla } from "./interfaz.js";
+import { reproducirSonido } from "./sonidos.js";
 // AUDIO DE PORTADA · PRIMERA CAPA
 // El clic de la pantalla de suspense permite iniciar el sonido sin usar
 // reproducción automática. Esta pista solo acompaña a la portada de NEXO.
-export const audioInicio = new Audio("./assets/audio/inicio/ambos-nexo.mp3");
+export const audioInicio = new Audio("./assets/audio/inicio/ambos-nexo.mp3?v=audio-inicio-v24-38");
 audioInicio.loop = true;
+// La portada no usa los volúmenes internos de la paleta de efectos. Aplicamos
+// un refuerzo propio y limitado para que el antiguo 28% también sea audible.
+const REFUERZO_AUDIO_INICIO = 2.0;
 let temporizadorAudioInicio = null;
 /** Convierte el porcentaje del control en un volumen válido entre 0 y 1. */
 export function actualizarVolumenAudioInicio(porcentaje) {
-    audioInicio.volume = Math.max(0, Math.min(1, porcentaje / 100));
+    audioInicio.volume = Math.max(0, Math.min(1, (porcentaje / 100) * REFUERZO_AUDIO_INICIO));
 }
 /** Inicia la música de la portada con el volumen elegido por el jugador. */
 export function reproducirAudioInicio(porcentaje) {
@@ -163,6 +167,7 @@ function activarJuego() {
     if (activado)
         return;
     activado = true;
+    reproducirSonido("confirmar");
     cancelAnimationFrame(animacionId);
     const sonidoActivo = localStorage.getItem("nexo-sonido") !== "off";
     const volumen = Number(localStorage.getItem("nexo-volumen") || "28");

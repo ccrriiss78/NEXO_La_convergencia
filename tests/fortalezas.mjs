@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { Partida } from "../dist/Partida.js";
+import { Jugador } from "../dist/Jugador.js";
 import { CAPACIDADES_HUMANAS, CAPACIDADES_IA } from "../dist/datos.js";
 
 function darCapacidades(jugador, lista, cantidad) {
@@ -32,6 +33,35 @@ function probarVelocidadPrevisualizaSinMutar() {
   assert.equal(b.suma, 5);
   assert.equal(partida.getSaludPlaneta(), antes);
   assert.equal(partida.getJugador().getEvolucion(), 0);
+}
+
+function probarCicloDeManoTrasGastarDosCartasConVelocidad() {
+  const humano = new Jugador("HUMANO", false, "humano-hombre");
+  const ia = new Jugador("IA", true, "ia-femenina");
+
+  // Una situación como la de la captura es válida: el Humano puede tener
+  // menos cartas porque Velocidad gasta dos y la IA solo gasta una.
+  humano.jugarCarta(2);
+  humano.jugarCarta(3);
+  humano.jugarCarta(4);
+  ia.jugarCarta(3);
+  assert.equal(humano.getCartasDisponibles().length, 2);
+  assert.equal(ia.getCartasDisponibles().length, 4);
+
+  // Las dos últimas cartas se pueden gastar juntas y la mano solo se
+  // recupera cuando queda completamente vacía al preparar el nuevo ciclo.
+  assert.equal(humano.jugarCarta(1), 1);
+  assert.equal(humano.jugarCarta(5), 5);
+  assert.equal(humano.getCartasDisponibles().length, 0);
+  assert.equal(humano.reiniciarManoSiHaceFalta(), true);
+  assert.deepEqual(
+    humano.getCartasDisponibles().map((carta) => carta.getValor()),
+    [1, 2, 3, 4, 5]
+  );
+
+  // La IA conserva sus cuatro cartas: ambas manos tienen ciclos separados.
+  assert.equal(ia.reiniciarManoSiHaceFalta(), false);
+  assert.equal(ia.getCartasDisponibles().length, 4);
 }
 
 function probarIntuicionRevisaCarta() {
@@ -198,12 +228,16 @@ function probarManualYLimpiezaUI() {
 }
 
 function probarAvisoVelocidadVisible() {
-  const main = fs.readFileSync(new URL("../dist/main.js", import.meta.url), "utf8");
+  const main = fs.readFileSync(new URL("../src/main.ts", import.meta.url), "utf8");
   const css = fs.readFileSync(new URL("../css/partida.css", import.meta.url), "utf8");
   assert.match(main, /FORTALEZA ACTIVA · VELOCIDAD — ELIGE DOS CARTAS/);
   assert.match(main, /const necesarias = usaVelocidad \? 2 : 1/);
   assert.match(main, /NEXO selecciona la carta/);
-  assert.match(css, /V24\.21 EFECTIVA · HOVER Y AVISO DE VELOCIDAD PROTEGIDOS/);
+  assert.match(main, /cartasSeleccionadas\.shift\(\)/);
+  assert.match(main, /ELIGE OTRA CARTA · 1\/2/);
+  assert.match(main, /RESOLVER RONDA · 2\/2/);
+  assert.match(css, /modo-velocidad \.carta-mano\.seleccionada\{pointer-events:auto!important/);
+  assert.match(css, /V24\.36 · VELOCIDAD: una carta elegida se puede pulsar otra vez para desmarcarla/);
   assert.match(css, /z-index:60!important/);
   assert.match(css, /z-index:61!important/);
 }
@@ -235,6 +269,7 @@ function probarEstadosVisualesExtremos() {
 probarMemoriaRegistraJugadasIA();
 probarAnalisisDaConsejoUtil();
 probarVelocidadPrevisualizaSinMutar();
+probarCicloDeManoTrasGastarDosCartasConVelocidad();
 probarVelocidadUsaCambiosRealesDeCrisis();
 probarIntuicionRevisaCarta();
 probarEmpatiaSoloConPlanetaEnPeligro();
