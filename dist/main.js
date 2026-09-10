@@ -1,7 +1,7 @@
 import { Partida } from "./Partida.js";
 import { guardarMejorMarca, guardarPerfil, importarProgresoAnteriorSiExiste, listarJugadores, seleccionarJugador } from "./almacenamiento.js";
 import { elemento, escribir, habilitarCartasTrasApuesta, mostrar, mostrarEvento, mostrarPantalla, ocultar, ocultarEvento, ocultarResolucion, pintarApuestaElegida, pintarCabeceraRonda, pintarCapacidades, pintarCartasIA, pintarDeclaracionIA, pintarEvolucionVisual, pintarFinal, pintarMano, pintarMarcadores, pintarMejorMarca, pintarMemoria, pintarPistas, pintarResolucion, pintarSeleccionCartas } from "./interfaz.js";
-import { audioAmbiente } from "./suspense.js";
+import { audioInicio, actualizarVolumenAudioInicio, apagarAudioInicioSuavemente, pausarAudioInicio, reproducirAudioInicio } from "./suspense.js";
 let partida = null;
 let fase = "apuesta";
 let apuestaElegida = null;
@@ -14,14 +14,43 @@ let nombreJugadorElegido = "";
 // Bloque narrativo visible en la introducción (0 = primero, 3 = último).
 let bloqueIntroActual = 0;
 // Ajustes de sonido. Se guardan para respetar la preferencia del usuario.
-audioAmbiente.loop = true;
 let sonidoActivo = localStorage.getItem("nexo-sonido") !== "off";
 let volumenSonido = Number(localStorage.getItem("nexo-volumen") || "28");
-audioAmbiente.volume = volumenSonido / 100;
+// El MP3 contiene un latido doble aproximadamente cada 1,01 segundos.
+// Este valor también se usa en CSS para que la X siga ese mismo compás.
+const DURACION_PULSO_PORTADA = 1.01;
+const DURACION_DESCARGAS_PORTADA = 11.102;
+/**
+ * Ajusta el punto de inicio de la animación al tiempo que lleva sonando el MP3.
+ * Solo modifica una variable CSS; no analiza ni transforma el sonido.
+ */
+function sincronizarPulsoPortada() {
+    const logo = document.querySelector("#pantalla-inicio .logo-nexo-animado");
+    if (logo === null)
+        return;
+    const faseAudio = audioInicio.currentTime % DURACION_PULSO_PORTADA;
+    const faseDescargas = audioInicio.currentTime % DURACION_DESCARGAS_PORTADA;
+    logo.style.setProperty("--desfase-pulso-audio", `-${faseAudio.toFixed(3)}s`);
+    logo.style.setProperty("--desfase-descarga-audio", `-${faseDescargas.toFixed(3)}s`);
+}
 // ---- Arranque ------------------------------------------------------------
 /** Conecta todos los botones de la página. Se ejecuta una sola vez. */
 function iniciar() {
+    // Precargamos la pista desde el archivo principal para evitar que el
+    // navegador conserve una versión anterior del módulo de suspense.
+    audioInicio.preload = "auto";
+    audioInicio.id = "audio-inicio-nexo";
+    audioInicio.hidden = true;
+    audioInicio.setAttribute("aria-hidden", "true");
+    document.body.appendChild(audioInicio);
+    audioInicio.load();
+    audioInicio.addEventListener("playing", function () {
+        sincronizarPulsoPortada();
+        // La portada aparece 700 ms después del clic de suspense.
+        window.setTimeout(sincronizarPulsoPortada, 700);
+    });
     elemento("btn-jugar").addEventListener("click", function () {
+        apagarAudioInicioSuavemente();
         bloqueIntroActual = 0;
         mostrarBloqueIntro();
         mostrarPantalla("pantalla-introduccion");
@@ -60,6 +89,7 @@ function iniciar() {
         partida = null;
         pintarMejorMarca();
         mostrarPantalla("pantalla-inicio");
+        reproducirAudioInicioSiCorresponde();
     });
     prepararOpcionesConfig();
     prepararJugadores();
@@ -252,7 +282,6 @@ function empezarPartida() {
     escribir("nombre-humano", "HUMANO");
     escribir("nombre-jugador-partida", nombreJugadorElegido);
     mostrarPantalla("pantalla-juego");
-    reproducirAmbiente();
     nuevaRonda();
 }
 // ---- Ajustes rápidos -------------------------------------------------------
@@ -283,15 +312,15 @@ function prepararAjustes() {
         controlVolumen.disabled = !sonidoActivo;
         localStorage.setItem("nexo-sonido", sonidoActivo ? "on" : "off");
         if (sonidoActivo) {
-            reproducirAmbiente();
+            reproducirAudioInicioSiCorresponde();
         }
         else {
-            audioAmbiente.pause();
+            pausarAudioInicio();
         }
     });
     controlVolumen.addEventListener("input", function () {
         volumenSonido = Number(controlVolumen.value);
-        audioAmbiente.volume = volumenSonido / 100;
+        actualizarVolumenAudioInicio(volumenSonido);
         localStorage.setItem("nexo-volumen", String(volumenSonido));
     });
 }
@@ -300,14 +329,12 @@ function cerrarAjustes() {
     elemento("btn-ajustes").setAttribute("aria-expanded", "false");
     elemento("btn-ajustes-global").setAttribute("aria-expanded", "false");
 }
-function reproducirAmbiente() {
-    if (!sonidoActivo || partida === null) {
+function reproducirAudioInicioSiCorresponde() {
+    const portadaActiva = elemento("pantalla-inicio").classList.contains("activa");
+    if (!sonidoActivo || !portadaActiva) {
         return;
     }
-    audioAmbiente.play().catch(function () {
-        // Algunos navegadores bloquean el audio hasta una interacción posterior.
-        // No interrumpimos la partida: el siguiente cambio de sonido vuelve a intentarlo.
-    });
+    reproducirAudioInicio(volumenSonido);
 }
 // ---- Ciclo de la ronda ----------------------------------------------------
 /** Prepara la ronda siguiente y deja la pantalla lista para apostar. */
@@ -808,7 +835,7 @@ function terminarPartida(guardarProgreso = true) {
         guardarMejorMarca(partida.getJugador().getNombre(), resumen);
     }
     pintarFinal(partida, resumen);
-    audioAmbiente.pause();
+    pausarAudioInicio();
     mostrarPantalla("pantalla-final");
 }
 // Arrancamos cuando el HTML ya está cargado, para que existan los elementos.

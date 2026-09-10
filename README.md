@@ -289,6 +289,10 @@ La pantalla final muestra también un perfil de evolución relacionado con forta
 
 ## Persistencia y sonido
 
+La portada utiliza `assets/audio/inicio/ambos-nexo.mp3` mediante un objeto `Audio` normal. La pista comienza después de pulsar la pantalla de suspense, se repite mientras permanece visible `#pantalla-inicio` y reduce gradualmente su volumen con `setInterval` al pulsar **JUGAR**. La X del logo reproduce el doble golpe del corazón detectado en la pista —un golpe principal y otro más corto— cada 1,01 segundos. Los nodos luminosos siguen otro reloj independiente de 11,102 segundos y se activan con las cuatro descargas tecnológicas principales, incluida una pequeña réplica en la descarga más larga. Al iniciarse el audio, dos variables CSS corrigen el desfase provocado por los 700 ms de transición entre suspense y portada. Esta integración no utiliza Web Audio API ni añade clases nuevas.
+
+`heartbeat.wav` se conserva temporalmente como respaldo mientras se construyen las siguientes capas de sonido; ya no es la pista de la portada.
+
 El navegador utiliza `localStorage` para conservar información local como:
 
 - jugadores creados;

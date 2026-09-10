@@ -1,9 +1,70 @@
 import { elemento, mostrarPantalla } from "./interfaz.js";
 
-// La pantalla inicial desbloquea el mismo audio que usa el resto del juego.
-// Así no se crean dos pistas superpuestas al comenzar la partida.
-export const audioAmbiente = new Audio("./assets/audio/heartbeat.wav");
-audioAmbiente.loop = true;
+// AUDIO DE PORTADA · PRIMERA CAPA
+// El clic de la pantalla de suspense permite iniciar el sonido sin usar
+// reproducción automática. Esta pista solo acompaña a la portada de NEXO.
+export const audioInicio = new Audio("./assets/audio/inicio/ambos-nexo.mp3");
+audioInicio.loop = true;
+
+let temporizadorAudioInicio: number | null = null;
+
+/** Convierte el porcentaje del control en un volumen válido entre 0 y 1. */
+export function actualizarVolumenAudioInicio(porcentaje: number): void {
+  audioInicio.volume = Math.max(0, Math.min(1, porcentaje / 100));
+}
+
+/** Inicia la música de la portada con el volumen elegido por el jugador. */
+export function reproducirAudioInicio(porcentaje: number): void {
+  if (temporizadorAudioInicio !== null) {
+    window.clearInterval(temporizadorAudioInicio);
+    temporizadorAudioInicio = null;
+  }
+
+  actualizarVolumenAudioInicio(porcentaje);
+  audioInicio.muted = false;
+  audioInicio.currentTime = 0;
+  audioInicio.play().catch(function (error: DOMException) {
+    console.warn("NEXO: el navegador no ha podido reproducir el audio de portada.", error.message);
+  });
+}
+
+/** Detiene inmediatamente la pista cuando el jugador desactiva el sonido. */
+export function pausarAudioInicio(): void {
+  if (temporizadorAudioInicio !== null) {
+    window.clearInterval(temporizadorAudioInicio);
+    temporizadorAudioInicio = null;
+  }
+  audioInicio.pause();
+}
+
+/**
+ * Reduce el volumen poco a poco antes de abandonar la portada.
+ * Utiliza setInterval y operaciones sencillas, sin Web Audio API.
+ */
+export function apagarAudioInicioSuavemente(): void {
+  if (temporizadorAudioInicio !== null) {
+    window.clearInterval(temporizadorAudioInicio);
+  }
+  if (audioInicio.paused) return;
+
+  const volumenInicial = audioInicio.volume;
+  const numeroPasos = 14;
+  let pasoActual = 0;
+
+  temporizadorAudioInicio = window.setInterval(function () {
+    pasoActual++;
+    audioInicio.volume = Math.max(0, volumenInicial * (1 - pasoActual / numeroPasos));
+
+    if (pasoActual >= numeroPasos) {
+      if (temporizadorAudioInicio !== null) {
+        window.clearInterval(temporizadorAudioInicio);
+        temporizadorAudioInicio = null;
+      }
+      audioInicio.pause();
+      audioInicio.currentTime = 0;
+    }
+  }, 50);
+}
 
 const pantallaSuspense = elemento("pantalla-suspense") as HTMLElement;
 const svg = elemento("svg-suspense") as unknown as SVGSVGElement;
@@ -130,11 +191,8 @@ function activarJuego(): void {
 
   const sonidoActivo = localStorage.getItem("nexo-sonido") !== "off";
   const volumen = Number(localStorage.getItem("nexo-volumen") || "28");
-  audioAmbiente.volume = Math.max(0, Math.min(1, volumen / 100));
   if (sonidoActivo) {
-    audioAmbiente.play().catch(function () {
-      // El acceso al juego no depende de que el navegador permita reproducir audio.
-    });
+    reproducirAudioInicio(volumen);
   }
 
   pantallaSuspense.classList.add("fade-out");

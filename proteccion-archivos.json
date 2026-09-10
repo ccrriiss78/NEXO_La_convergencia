@@ -8,6 +8,7 @@
   ],
   "assetsProtegidos": [
     "assets/audio/heartbeat.wav",
+    "assets/audio/inicio/ambos-nexo.mp3",
     "assets/images/configuracion/avatares/avatar-humano-hombre.webp",
     "assets/images/configuracion/avatares/avatar-humano-mujer.webp",
     "assets/images/configuracion/avatares/avatar-ia-01.webp",
