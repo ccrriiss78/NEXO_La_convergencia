@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { Partida } from "../dist/Partida.js";
+import { Jugador } from "../dist/Jugador.js";
 import { CAPACIDADES_HUMANAS, CAPACIDADES_IA } from "../dist/datos.js";
 
 function darCapacidades(jugador, lista, cantidad) {
@@ -32,6 +33,35 @@ function probarVelocidadPrevisualizaSinMutar() {
   assert.equal(b.suma, 5);
   assert.equal(partida.getSaludPlaneta(), antes);
   assert.equal(partida.getJugador().getEvolucion(), 0);
+}
+
+function probarCicloDeManoTrasGastarDosCartasConVelocidad() {
+  const humano = new Jugador("HUMANO", false, "humano-hombre");
+  const ia = new Jugador("IA", true, "ia-femenina");
+
+  // Una situación como la de la captura es válida: el Humano puede tener
+  // menos cartas porque Velocidad gasta dos y la IA solo gasta una.
+  humano.jugarCarta(2);
+  humano.jugarCarta(3);
+  humano.jugarCarta(4);
+  ia.jugarCarta(3);
+  assert.equal(humano.getCartasDisponibles().length, 2);
+  assert.equal(ia.getCartasDisponibles().length, 4);
+
+  // Las dos últimas cartas se pueden gastar juntas y la mano solo se
+  // recupera cuando queda completamente vacía al preparar el nuevo ciclo.
+  assert.equal(humano.jugarCarta(1), 1);
+  assert.equal(humano.jugarCarta(5), 5);
+  assert.equal(humano.getCartasDisponibles().length, 0);
+  assert.equal(humano.reiniciarManoSiHaceFalta(), true);
+  assert.deepEqual(
+    humano.getCartasDisponibles().map((carta) => carta.getValor()),
+    [1, 2, 3, 4, 5]
+  );
+
+  // La IA conserva sus cuatro cartas: ambas manos tienen ciclos separados.
+  assert.equal(ia.reiniciarManoSiHaceFalta(), false);
+  assert.equal(ia.getCartasDisponibles().length, 4);
 }
 
 function probarIntuicionRevisaCarta() {
@@ -163,7 +193,19 @@ function probarConfirmacionNoTieneEstadoMuerto() {
   assert.match(main, /cartasSeleccionadas\.length < necesarias/);
   assert.match(main, /fase = "carta";/);
   assert.match(main, /puedeUsarPrecision && activarPrecision\(\)/);
-  assert.match(main, /ACTIVAR PRECISIÓN/);
+  assert.doesNotMatch(main, /ACTIVAR PRECISIÓN/);
+  assert.match(main, /RESOLVER RONDA/);
+  assert.match(main, /puedeUsarPrecision && activarPrecision\(\)/);
+}
+
+function probarPrecisionNoOfreceCorreccionImposible() {
+  const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  const main = fs.readFileSync(new URL("../src/main.ts", import.meta.url), "utf8");
+  assert.match(html, /id="precision-opciones-texto"/);
+  assert.match(main, /SIN CARTAS ALTERNATIVAS/);
+  assert.match(main, /las cinco se recuperarán al comenzar la ronda siguiente/);
+  assert.match(main, /botonCorregir\.disabled = !hayCartaAlternativa/);
+  assert.match(main, /if \(!hayCartaAlternativa\) \{\s*return;/);
 }
 
 function probarManualYLimpiezaUI() {
@@ -185,9 +227,49 @@ function probarManualYLimpiezaUI() {
   assert.doesNotMatch(main, /mostrarOpcionesVelocidad|textoOpcionVelocidad|laIACambiaDeIdea/);
 }
 
+function probarAvisoVelocidadVisible() {
+  const main = fs.readFileSync(new URL("../src/main.ts", import.meta.url), "utf8");
+  const css = fs.readFileSync(new URL("../css/partida.css", import.meta.url), "utf8");
+  assert.match(main, /FORTALEZA ACTIVA · VELOCIDAD — ELIGE DOS CARTAS/);
+  assert.match(main, /const necesarias = usaVelocidad \? 2 : 1/);
+  assert.match(main, /NEXO selecciona la carta/);
+  assert.match(main, /cartasSeleccionadas\.shift\(\)/);
+  assert.match(main, /ELIGE OTRA CARTA · 1\/2/);
+  assert.match(main, /RESOLVER RONDA · 2\/2/);
+  assert.match(css, /modo-velocidad \.carta-mano\.seleccionada\{pointer-events:auto!important/);
+  assert.match(css, /V24\.36 · VELOCIDAD: una carta elegida se puede pulsar otra vez para desmarcarla/);
+  assert.match(css, /z-index:60!important/);
+  assert.match(css, /z-index:61!important/);
+}
+
+function probarChispaYVelocidadNoCompartenEspacio() {
+  const main = fs.readFileSync(new URL("../src/main.ts", import.meta.url), "utf8");
+  const css = fs.readFileSync(new URL("../css/partida.css", import.meta.url), "utf8");
+  assert.match(main, /"chispa-velocidad-activa"/);
+  assert.match(main, /evento\.getId\(\) === "chispa" && velocidadDisponible\(\)/);
+  assert.match(css, /V24\.23 · CHISPA CREATIVA \+ VELOCIDAD SIN SOLAPE/);
+  assert.match(css, /#pantalla-juego\.chispa-velocidad-activa \.mano-cartas/);
+  assert.match(css, /#pantalla-juego\.chispa-velocidad-activa \.carta-mano/);
+}
+
+function probarEstadosVisualesExtremos() {
+  const interfaz = fs.readFileSync(new URL("../src/interfaz.ts", import.meta.url), "utf8");
+  const css = fs.readFileSync(new URL("../css/partida.css", import.meta.url), "utf8");
+  assert.match(interfaz, /porcentajeHumano === 100 \? 4/);
+  assert.match(interfaz, /porcentajeIA === 100 \? 4/);
+  assert.match(interfaz, /crisisPlaneta === 0 \? RUTA_PLANETA_RECUPERADO/);
+  assert.match(css, /humano-hombre-a-ia-100\.webp/);
+  assert.match(css, /humano-mujer-a-ia-100\.webp/);
+  assert.match(css, /ia-femenina-a-humano-100\.webp/);
+  assert.match(css, /ia-masculina-a-humano-100\.webp/);
+  assert.match(css, /halo-evolucion-humano/);
+  assert.match(css, /halo-evolucion-ia/);
+}
+
 probarMemoriaRegistraJugadasIA();
 probarAnalisisDaConsejoUtil();
 probarVelocidadPrevisualizaSinMutar();
+probarCicloDeManoTrasGastarDosCartasConVelocidad();
 probarVelocidadUsaCambiosRealesDeCrisis();
 probarIntuicionRevisaCarta();
 probarEmpatiaSoloConPlanetaEnPeligro();
@@ -196,5 +278,9 @@ probarAdaptacionReutilizaCartaGanadora();
 probarFracasoNoCuentaComoDerrotaIA();
 probarPrecisionRevelaCartaFiableYPermiteCorreccion();
 probarConfirmacionNoTieneEstadoMuerto();
+probarPrecisionNoOfreceCorreccionImposible();
 probarManualYLimpiezaUI();
+probarAvisoVelocidadVisible();
+probarChispaYVelocidadNoCompartenEspacio();
+probarEstadosVisualesExtremos();
 console.log("NEXO: 8 fortalezas y coherencia V22.36 verificadas.");

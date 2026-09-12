@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Ejecutando Guardián NEXO antes del commit..."
+npm run audit

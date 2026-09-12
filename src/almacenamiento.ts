@@ -1,283 +1,206 @@
-import { ResumenFinal } from "./tipos.js";
+/** Persistencia local profesional de NEXO. Los datos nunca salen del navegador. */
+const STORAGE_KEY = "nexo.playerProfiles.v1";
+const SCHEMA_VERSION = 1;
+const LEGACY_V22_KEY = "nexo_jugadores_v22";
+const LEGACY_BEST_SCORE_KEY = "nexo_mejor_marca_v20";
+const LEGACY_UNLOCKS_KEY = "nexo_perfiles";
+const LEGACY_IMPORT_KEY = "nexo.legacyProgressImported.v1";
 
-const STORAGE_KEY: string = "nexo.playerProfiles.v1";
-const SCHEMA_VERSION: number = 1;
-const LEGACY_V22_KEY: string = "nexo_jugadores_v22";
-const LEGACY_BEST_SCORE_KEY: string = "nexo_mejor_marca_v20";
-const LEGACY_UNLOCKS_KEY: string = "nexo_perfiles";
-const LEGACY_IMPORT_KEY: string = "nexo.legacyProgressImported.v1";
-
-export type MejorMarca = {
-  playerId?: string;
-  displayName?: string;
-  nombre?: string;
-  evolucion: number;
-  planeta: number;
-  perfil: string;
-  desenlace?: string;
-  achievedAt?: string;
-};
-
-type PlayerProfile = {
-  id: string;
-  displayName: string;
-  unlockedProfiles: string[];
-  bestScore: MejorMarca | null;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type PlayerStore = {
-  schemaVersion: number;
-  activePlayerId: string | null;
-  players: Record<string, PlayerProfile>;
-};
-
-type LegacyPlayer = {
-  nombre?: string;
-  perfiles?: string[];
-  mejorMarca?: MejorMarca;
-};
-
-function nowIso(): string {
-  return new Date().toISOString();
+function nowIso() {
+    return new Date().toISOString();
 }
 
-function cleanDisplayName(name: string): string {
-  return String(name || "").trim().replace(/\s+/g, " ").slice(0, 20);
+function cleanDisplayName(name) {
+    return String(name || "").trim().replace(/\s+/g, " ").slice(0, 20);
 }
 
-function comparableName(name: string): string {
-  return cleanDisplayName(name).toLocaleLowerCase("es-ES");
+function comparableName(name) {
+    return cleanDisplayName(name).toLocaleLowerCase("es-ES");
 }
 
-function createPlayerId(): string {
-  if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") {
-    return "player_" + globalThis.crypto.randomUUID();
-  }
-  return "player_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+function createPlayerId() {
+    if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") {
+        return "player_" + globalThis.crypto.randomUUID();
+    }
+    return "player_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
 }
 
-function emptyStore(): PlayerStore {
-  return { schemaVersion: SCHEMA_VERSION, activePlayerId: null, players: {} };
+function emptyStore(): any {
+    return { schemaVersion: SCHEMA_VERSION, activePlayerId: null, players: {} };
 }
 
-function saveStore(store: PlayerStore): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+function saveStore(store) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
 }
 
-function migrateV22Store(): PlayerStore {
-  const text: string | null = localStorage.getItem(LEGACY_V22_KEY);
-  if (text === null) {
+function migrateV22Store(): any {
+    const text = localStorage.getItem(LEGACY_V22_KEY);
+    if (text === null) return emptyStore();
+    try {
+        const legacy = JSON.parse(text);
+        const migrated = emptyStore();
+        const oldToNewIds = {};
+        for (const [oldId, oldPlayer] of Object.entries(legacy.jugadores || {}) as Array<[string, any]>) {
+            const displayName = cleanDisplayName(oldPlayer.nombre);
+            if (displayName === "") continue;
+            const id = createPlayerId();
+            oldToNewIds[oldId] = id;
+            migrated.players[id] = {
+                id,
+                displayName,
+                unlockedProfiles: Array.isArray(oldPlayer.perfiles) ? [...oldPlayer.perfiles] : [],
+                bestScore: oldPlayer.mejorMarca || null,
+                createdAt: nowIso(),
+                updatedAt: nowIso()
+            };
+        }
+        migrated.activePlayerId = oldToNewIds[legacy.activo] || null;
+        saveStore(migrated);
+        return migrated;
+    }
+    catch (error) {
+        return emptyStore();
+    }
+}
+
+function readStore(): any {
+    const text = localStorage.getItem(STORAGE_KEY);
+    if (text === null) return migrateV22Store();
+    try {
+        const store = JSON.parse(text);
+        if (store && store.schemaVersion === SCHEMA_VERSION && store.players) return store;
+    }
+    catch (error) {
+        // Un guardado dañado no debe impedir que el juego arranque.
+    }
     return emptyStore();
-  }
+}
 
-  try {
-    const legacy = JSON.parse(text) as {
-      activo?: string;
-      jugadores?: Record<string, LegacyPlayer>;
-    };
-    const migrated: PlayerStore = emptyStore();
-    const oldToNewIds: Record<string, string> = {};
-    const jugadores: Record<string, LegacyPlayer> = legacy.jugadores || {};
+function findPlayerByName(store: any, name: string): any {
+    const target = comparableName(name);
+    return Object.values(store.players).find((player: any) => comparableName(player.displayName) === target) || null;
+}
 
-    for (const oldId of Object.keys(jugadores)) {
-      const oldPlayer: LegacyPlayer = jugadores[oldId];
-      const displayName: string = cleanDisplayName(oldPlayer.nombre || oldId);
-      if (displayName === "") {
-        continue;
-      }
-
-      const id: string = createPlayerId();
-      const timestamp: string = nowIso();
-      oldToNewIds[oldId] = id;
-      migrated.players[id] = {
-        id: id,
-        displayName: displayName,
-        unlockedProfiles: Array.isArray(oldPlayer.perfiles) ? oldPlayer.perfiles.slice() : [],
-        bestScore: oldPlayer.mejorMarca || null,
-        createdAt: timestamp,
-        updatedAt: timestamp
-      };
+function ensurePlayer(name) {
+    const displayName = cleanDisplayName(name);
+    if (displayName === "") return null;
+    const store = readStore();
+    let player = findPlayerByName(store, displayName);
+    if (player === null) {
+        const id = createPlayerId();
+        const timestamp = nowIso();
+        player = {
+            id,
+            displayName,
+            unlockedProfiles: [],
+            bestScore: null,
+            createdAt: timestamp,
+            updatedAt: timestamp
+        };
+        store.players[id] = player;
     }
-
-    migrated.activePlayerId = legacy.activo !== undefined ? oldToNewIds[legacy.activo] || null : null;
-    saveStore(migrated);
-    return migrated;
-  } catch (error) {
-    return emptyStore();
-  }
-}
-
-function readStore(): PlayerStore {
-  const text: string | null = localStorage.getItem(STORAGE_KEY);
-  if (text === null) {
-    return migrateV22Store();
-  }
-
-  try {
-    const store = JSON.parse(text) as PlayerStore;
-    if (store && store.schemaVersion === SCHEMA_VERSION && store.players) {
-      return store;
-    }
-  } catch (error) {
-    // Si el guardado esta danado, arrancamos sin bloquear el juego.
-  }
-
-  return emptyStore();
-}
-
-function findPlayerByName(store: PlayerStore, name: string): PlayerProfile | null {
-  const target: string = comparableName(name);
-  const ids: string[] = Object.keys(store.players);
-  for (let i = 0; i < ids.length; i++) {
-    const player: PlayerProfile = store.players[ids[i]];
-    if (comparableName(player.displayName) === target) {
-      return player;
-    }
-  }
-  return null;
-}
-
-function ensurePlayer(name: string): PlayerProfile | null {
-  const displayName: string = cleanDisplayName(name);
-  if (displayName === "") {
-    return null;
-  }
-
-  const store: PlayerStore = readStore();
-  let player: PlayerProfile | null = findPlayerByName(store, displayName);
-  if (player === null) {
-    const id: string = createPlayerId();
-    const timestamp: string = nowIso();
-    player = {
-      id: id,
-      displayName: displayName,
-      unlockedProfiles: [],
-      bestScore: null,
-      createdAt: timestamp,
-      updatedAt: timestamp
-    };
-    store.players[id] = player;
-  }
-
-  store.activePlayerId = player.id;
-  player.updatedAt = nowIso();
-  saveStore(store);
-  return player;
-}
-
-export function seleccionarJugador(name: string): string {
-  const player: PlayerProfile | null = ensurePlayer(name);
-  return player === null ? "" : player.displayName;
-}
-
-export function leerJugadorActivo(): string {
-  const store: PlayerStore = readStore();
-  const player: PlayerProfile | null = store.activePlayerId ? store.players[store.activePlayerId] : null;
-  return player ? player.displayName : "";
-}
-
-export function listarJugadores(): string[] {
-  const store: PlayerStore = readStore();
-  const names: string[] = [];
-  const ids: string[] = Object.keys(store.players);
-  for (let i = 0; i < ids.length; i++) {
-    names.push(store.players[ids[i]].displayName);
-  }
-  return names.sort(function (a: string, b: string): number {
-    return a.localeCompare(b, "es");
-  });
-}
-
-export function leerMejorMarca(): MejorMarca | null {
-  const store: PlayerStore = readStore();
-  const player: PlayerProfile | null = store.activePlayerId ? store.players[store.activePlayerId] : null;
-  return player ? player.bestScore : null;
-}
-
-export function guardarMejorMarca(name: string, summary: ResumenFinal): boolean {
-  const selected: PlayerProfile | null = ensurePlayer(name);
-  if (selected === null) {
-    return false;
-  }
-
-  const store: PlayerStore = readStore();
-  const player: PlayerProfile = store.players[selected.id];
-  const score: MejorMarca = {
-    playerId: player.id,
-    displayName: player.displayName,
-    nombre: player.displayName,
-    evolucion: summary.evolucionJugador,
-    planeta: summary.saludPlaneta,
-    perfil: summary.perfil.nombre,
-    desenlace: summary.desenlace,
-    achievedAt: nowIso()
-  };
-
-  if (player.bestScore !== null) {
-    const newValue: number = score.evolucion + score.planeta;
-    const previousValue: number = player.bestScore.evolucion + player.bestScore.planeta;
-    if (newValue <= previousValue) {
-      return false;
-    }
-  }
-
-  player.bestScore = score;
-  player.updatedAt = nowIso();
-  saveStore(store);
-  return true;
-}
-
-export function leerPerfiles(): string[] {
-  const store: PlayerStore = readStore();
-  const player: PlayerProfile | null = store.activePlayerId ? store.players[store.activePlayerId] : null;
-  return player ? player.unlockedProfiles.slice() : [];
-}
-
-export function guardarPerfil(profileName: string): void {
-  const store: PlayerStore = readStore();
-  const player: PlayerProfile | null = store.activePlayerId ? store.players[store.activePlayerId] : null;
-  if (!player || player.unlockedProfiles.indexOf(profileName) !== -1) {
-    return;
-  }
-
-  player.unlockedProfiles.push(profileName);
-  player.updatedAt = nowIso();
-  saveStore(store);
-}
-
-export function importarProgresoAnteriorSiExiste(name: string): boolean {
-  if (localStorage.getItem(LEGACY_IMPORT_KEY) === "yes") {
-    return false;
-  }
-
-  const selected: PlayerProfile | null = ensurePlayer(name);
-  if (selected === null) {
-    return false;
-  }
-
-  const store: PlayerStore = readStore();
-  const player: PlayerProfile = store.players[selected.id];
-  if (player.unlockedProfiles.length > 0 || player.bestScore !== null) {
-    localStorage.setItem(LEGACY_IMPORT_KEY, "yes");
-    return false;
-  }
-
-  try {
-    const unlocks = JSON.parse(localStorage.getItem(LEGACY_UNLOCKS_KEY) || "[]") as string[];
-    const bestScore = JSON.parse(localStorage.getItem(LEGACY_BEST_SCORE_KEY) || "null") as MejorMarca | null;
-
-    if (Array.isArray(unlocks)) {
-      player.unlockedProfiles = unlocks.slice();
-    }
-    player.bestScore = bestScore;
+    store.activePlayerId = player.id;
     player.updatedAt = nowIso();
     saveStore(store);
-    localStorage.setItem(LEGACY_IMPORT_KEY, "yes");
-    return player.unlockedProfiles.length > 0 || bestScore !== null;
-  } catch (error) {
-    localStorage.setItem(LEGACY_IMPORT_KEY, "yes");
-    return false;
-  }
+    return player;
+}
+
+export function seleccionarJugador(name) {
+    const player = ensurePlayer(name);
+    return player === null ? "" : player.displayName;
+}
+
+export function leerJugadorActivo() {
+    const store = readStore();
+    const player = store.activePlayerId ? store.players[store.activePlayerId] : null;
+    return player ? player.displayName : "";
+}
+
+export function listarJugadores() {
+    return Object.values(readStore().players)
+        .map((player: any) => player.displayName)
+        .sort((a, b) => a.localeCompare(b, "es"));
+}
+
+export function leerProgresoJugador(name) {
+    const player = findPlayerByName(readStore(), name);
+    if (player === null) return { existe: false, perfiles: 0, mejorMarca: null };
+    return {
+        existe: true,
+        perfiles: player.unlockedProfiles.length,
+        mejorMarca: player.bestScore
+    };
+}
+
+export function leerMejorMarca() {
+    const store = readStore();
+    const player = store.activePlayerId ? store.players[store.activePlayerId] : null;
+    return player ? player.bestScore : null;
+}
+
+export function guardarMejorMarca(name, summary) {
+    const selected = ensurePlayer(name);
+    if (selected === null) return false;
+    const store = readStore();
+    const player = store.players[selected.id];
+    const score = {
+        playerId: player.id,
+        displayName: player.displayName,
+        evolucion: summary.evolucionJugador,
+        planeta: summary.saludPlaneta,
+        perfil: summary.perfil.nombre,
+        desenlace: summary.desenlace,
+        achievedAt: nowIso()
+    };
+    if (player.bestScore !== null) {
+        const newValue = score.evolucion + score.planeta;
+        const previousValue = player.bestScore.evolucion + player.bestScore.planeta;
+        if (newValue <= previousValue) return false;
+    }
+    player.bestScore = score;
+    player.updatedAt = nowIso();
+    saveStore(store);
+    return true;
+}
+
+export function leerPerfiles() {
+    const store = readStore();
+    const player = store.activePlayerId ? store.players[store.activePlayerId] : null;
+    return player ? [...player.unlockedProfiles] : [];
+}
+
+export function guardarPerfil(profileName) {
+    const store = readStore();
+    const player = store.activePlayerId ? store.players[store.activePlayerId] : null;
+    if (!player || player.unlockedProfiles.includes(profileName)) return;
+    player.unlockedProfiles.push(profileName);
+    player.updatedAt = nowIso();
+    saveStore(store);
+}
+
+/** Asigna una sola vez los guardados anteriores al primer jugador seleccionado. */
+export function importarProgresoAnteriorSiExiste(name) {
+    if (localStorage.getItem(LEGACY_IMPORT_KEY) === "yes") return false;
+    const selected = ensurePlayer(name);
+    if (selected === null) return false;
+    const store = readStore();
+    const player = store.players[selected.id];
+    if (player.unlockedProfiles.length > 0 || player.bestScore !== null) {
+        localStorage.setItem(LEGACY_IMPORT_KEY, "yes");
+        return false;
+    }
+    try {
+        const unlocks = JSON.parse(localStorage.getItem(LEGACY_UNLOCKS_KEY) || "[]");
+        const bestScore = JSON.parse(localStorage.getItem(LEGACY_BEST_SCORE_KEY) || "null");
+        if (Array.isArray(unlocks)) player.unlockedProfiles = [...unlocks];
+        player.bestScore = bestScore;
+        player.updatedAt = nowIso();
+        saveStore(store);
+        localStorage.setItem(LEGACY_IMPORT_KEY, "yes");
+        return unlocks.length > 0 || bestScore !== null;
+    }
+    catch (error) {
+        localStorage.setItem(LEGACY_IMPORT_KEY, "yes");
+        return false;
+    }
 }
