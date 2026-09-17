@@ -1,5 +1,5 @@
-import { PERFILES, SALUD_MAXIMA, buscarCapacidad } from "./datos.js";
-import { leerMejorMarca, leerPerfiles } from "./almacenamiento.js";
+import { EVENTOS, PERFILES, SALUD_MAXIMA, buscarCapacidad } from "./datos.js";
+import { leerJugadorActivo, leerMejorMarca, leerPerfiles } from "./almacenamiento.js";
 /**
  * La interfaz: todo lo que toca el HTML está en este archivo.
  *
@@ -1059,14 +1059,47 @@ export function ocultarResolucion() {
     escribir("apuesta-jugador", "—");
     escribir("apuesta-ia", "—");
 }
-/** Muestra la tarjeta superpuesta de un evento especial. */
-export function mostrarEvento(idEvento, nombre, descripcion) {
-    escribir("nombre-evento", nombre);
-    escribir("descripcion-evento", descripcion);
+/** Devuelve true cuando el texto no está vacío ni conserva el guion inicial. */
+function esTextoEventoValido(texto: string): boolean {
+    return texto !== "" && texto !== "—";
+}
+
+/**
+ * Muestra la tarjeta superpuesta de un evento especial.
+ * Si el llamador entrega texto incompleto, recupera el contenido directamente
+ * del catálogo. De este modo ningún evento conocido puede abrirse con guiones.
+ */
+export function mostrarEvento(idEvento: string, nombre: string, descripcion: string): void {
+    let nombreSeguro = nombre.trim();
+    let descripcionSegura = descripcion.trim();
+
+    // Si falta algún texto, lo buscamos con un bucle sencillo en la lista
+    // de eventos que ya utiliza el resto del juego.
+    if (!esTextoEventoValido(nombreSeguro) || !esTextoEventoValido(descripcionSegura)) {
+        for (let i = 0; i < EVENTOS.length; i++) {
+            if (EVENTOS[i].id === idEvento) {
+                nombreSeguro = EVENTOS[i].nombre;
+                descripcionSegura = EVENTOS[i].descripcion;
+            }
+        }
+    }
+
+    if (!esTextoEventoValido(nombreSeguro) || !esTextoEventoValido(descripcionSegura)) {
+        console.error("NEXO: se intentó abrir un evento sin nombre o explicación.", idEvento);
+        ocultarEvento();
+        return;
+    }
+
+    escribir("nombre-evento", nombreSeguro);
+    escribir("descripcion-evento", descripcionSegura);
     const imagen = elemento("imagen-evento");
     imagen.src = rutaImagenEvento(idEvento);
-    imagen.alt = "Ilustración del evento " + nombre;
-    mostrar("superposicion-evento");
+    imagen.alt = "Ilustración del evento " + nombreSeguro;
+    const superposicion = elemento("superposicion-evento");
+    superposicion.hidden = false;
+    superposicion.setAttribute("aria-hidden", "false");
+    superposicion.classList.remove("oculta");
+    elemento("btn-cerrar-evento").focus();
 }
 /** Cada evento especial usa una imagen raster WebP cinematográfica propia. */
 function rutaImagenEvento(idEvento) {
@@ -1077,7 +1110,10 @@ function rutaImagenEvento(idEvento) {
     return "./assets/images/partida/eventos/evento-punto-sin-retorno.webp";
 }
 export function ocultarEvento() {
-    ocultar("superposicion-evento");
+    const superposicion = elemento("superposicion-evento");
+    superposicion.classList.add("oculta");
+    superposicion.hidden = true;
+    superposicion.setAttribute("aria-hidden", "true");
 }
 // ---- Pantallas de inicio y final --------------------------------------------
 /** Enseña en la pantalla de inicio la mejor marca guardada, si existe. */
@@ -1087,7 +1123,8 @@ export function pintarMejorMarca() {
         escribir("mejor-marca", "Todavía no has jugado ninguna partida en este navegador.");
         return;
     }
-    escribir("mejor-marca", "Mejor marca · " + marca.nombre + " — " + marca.perfil + " (evolución " +
+    const nombre = marca.displayName || marca.nombre || leerJugadorActivo() || "Jugador";
+    escribir("mejor-marca", "Mejor marca · " + nombre + " — " + marca.perfil + " (evolución " +
         marca.evolucion + ", crisis " + (SALUD_MAXIMA - marca.planeta) + "%)");
 }
 /**

@@ -165,8 +165,7 @@
   /* ---- Paneles emergentes: que no se salgan ---- */
   #pantalla-juego .zona-velocidad,
   #pantalla-juego #panel-precision,
-  #pantalla-juego .zona-resolucion,
-  #pantalla-juego .panel-evento {
+  #pantalla-juego .zona-resolucion {
     position: relative !important;
     inset: auto !important;
     width: 100% !important;
@@ -316,8 +315,6 @@
     min-width: 0 !important;
   }
 
-  #pantalla-configuracion .selector-rondas,
-  #pantalla-configuracion .campo-nombre,
   #pantalla-configuracion input[type="text"] {
     width: 100% !important;
     max-width: 100% !important;
@@ -337,6 +334,10 @@
     margin: 0 0 4px !important;
     text-align: center !important;
   }
+
+  #pantalla-configuracion .cabecera-configuracion h2 {
+    font-size: clamp(1.05rem, 4.6vw, 1.25rem) !important;
+  }
 }
 
 /* ============================================================
@@ -348,6 +349,20 @@
   /* El boton de ajustes, que es fijo, tapaba el final del titulo. */
   #pantalla-introduccion .sobrelinea-introduccion {
     padding-right: 48px !important;
+  }
+
+  /* Todos los pasos reservan el espacio del texto mas largo. Asi los
+     botones permanecen en el mismo lugar al avanzar o retroceder. */
+  #pantalla-introduccion .relato-introduccion {
+    min-height: 323px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+
+  #pantalla-introduccion .bloque-intro:not([hidden]) {
+    min-height: 100% !important;
+    justify-content: flex-start !important;
   }
 
   /* La fila "Como jugar / Saltar intro" estaba anclada en absoluto
@@ -392,8 +407,7 @@
   }
 
   #superposicion-manual .panel-manual,
-  #superposicion-ajustes .panel-ajustes,
-  #superposicion-evento .panel-evento {
+  #superposicion-ajustes .panel-ajustes {
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
@@ -436,5 +450,965 @@
 
   #superposicion-evento .marco-imagen-evento {
     border-radius: 13px 13px 0 0 !important;
+  }
+}
+
+/* ============================================================
+   NEXO · Corrección tablet / iPad
+   641px – 1050px
+   Evita que las reglas absolutas de escritorio compriman y
+   superpongan paneles, avatares y zona central.
+   ============================================================ */
+
+@media (min-width: 641px) and (max-width: 1050px) {
+
+  #pantalla-juego {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  #pantalla-juego .cabecera-partida-cinematica {
+    position: relative !important;
+    inset: auto !important;
+    width: calc(100% - 190px) !important;
+    max-width: none !important;
+    margin: 0 12px 0 176px !important;
+  }
+
+  #pantalla-juego .tablero-cinematico {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 18px 14px 90px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas:
+      "central central"
+      "humano ia" !important;
+    gap: 18px !important;
+  }
+
+  #pantalla-juego .zona-central-cinematica {
+    grid-area: central !important;
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 520px !important;
+  }
+
+  #pantalla-juego .panel-personaje {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 10px 12px 14px !important;
+  }
+
+  #pantalla-juego .panel-personaje-humano {
+    grid-area: humano !important;
+    left: auto !important;
+  }
+
+  #pantalla-juego .panel-personaje-ia {
+    grid-area: ia !important;
+    right: auto !important;
+  }
+
+  #pantalla-juego .cabecera-personaje,
+  #pantalla-juego .panel-personaje-ia .cabecera-personaje {
+    min-height: 190px !important;
+    grid-template-columns: 140px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  #pantalla-juego .panel-personaje-ia .cabecera-personaje {
+    grid-template-columns: minmax(0, 1fr) 140px !important;
+  }
+
+  #pantalla-juego .retrato-personaje {
+    width: 140px !important;
+    height: 190px !important;
+    max-width: 140px !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo {
+    width: min(94%, 720px) !important;
+    max-width: 94% !important;
+    grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+/* ============================================================
+   NEXO · INTRODUCCIÓN · Corrección tablet
+   641px – 900px
+   Mantiene visible la escena y evita solapes entre navegación.
+   ============================================================ */
+
+@media (min-width: 641px) and (max-width: 900px) {
+
+  #pantalla-introduccion.activa {
+    height: auto !important;
+    min-height: 100svh !important;
+    padding: 1.25rem 1.5rem 2rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  #pantalla-introduccion .fondo-introduccion {
+    background-position: 45% center !important;
+    background-size: cover !important;
+  }
+
+  #pantalla-introduccion .contenido-introduccion {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: min(92vw, 680px) !important;
+    max-width: 680px !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  #pantalla-introduccion .cabecera-introduccion {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    transform: none !important;
+  }
+
+  #pantalla-introduccion .cabecera-intro-fila {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  #pantalla-introduccion .relato-introduccion {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: .8rem 0 0 !important;
+    transform: none !important;
+  }
+
+  #pantalla-introduccion .progreso-intro {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: min(52%, 330px) !important;
+    margin: 1.15rem auto .65rem !important;
+    transform: none !important;
+  }
+
+  #pantalla-introduccion .controles-intro {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: min(82%, 560px) !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+
+  #pantalla-introduccion .acciones-secundarias-intro {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    margin: .7rem auto 0 !important;
+    transform: none !important;
+    justify-content: center !important;
+    gap: 14px !important;
+  }
+
+  #pantalla-introduccion .acciones-secundarias-intro .btn-saltar-intro {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+  }
+}
+
+/* ============================================================
+   NEXO · CONFIGURACIÓN · Corrección tablet
+   641px – 1050px
+   Mantiene los avatares en dos columnas y reserva una franja
+   propia para jugador, rondas e inicio del protocolo.
+   ============================================================ */
+
+@media (min-width: 641px) and (max-width: 1050px) {
+
+  #pantalla-configuracion.activa {
+    height: auto !important;
+    min-height: 100svh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  #pantalla-configuracion .contenido-configuracion {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100svh !important;
+    padding: 1rem 1.25rem 2rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas:
+      "cabecera cabecera"
+      "humano ia"
+      "inferior inferior" !important;
+    align-items: start !important;
+    gap: 1rem 1.25rem !important;
+  }
+
+  #pantalla-configuracion .cabecera-configuracion {
+    grid-area: cabecera !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+
+  #pantalla-configuracion .cabecera-configuracion h2 {
+    font-size: clamp(1.45rem, 3.2vw, 1.75rem) !important;
+  }
+
+  #pantalla-configuracion .panel-identidad {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    /* El eje real de la esfera queda entre 7 y 9 px a la derecha
+       al recortar el fondo de tablet. Movemos ambos paneles juntos
+       para mantener la misma distancia respecto a ese eje. */
+    transform: translateX(clamp(7px, .9vh, 9px)) !important;
+  }
+
+  #pantalla-configuracion .panel-identidad-humano {
+    grid-area: humano !important;
+  }
+
+  #pantalla-configuracion .panel-identidad-ia {
+    grid-area: ia !important;
+  }
+
+  #pantalla-configuracion .tarjeta-avatar {
+    height: 220px !important;
+  }
+
+  #pantalla-configuracion .configuracion-inferior {
+    grid-area: inferior !important;
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: min(100%, 620px) !important;
+    margin: 0 auto !important;
+    transform: none !important;
+    grid-template-columns: 1fr !important;
+    gap: .65rem !important;
+  }
+
+  #pantalla-configuracion .grupo-jugador,
+  #pantalla-configuracion .grupo-rondas {
+    width: 100% !important;
+  }
+
+  #pantalla-configuracion .control-jugador,
+  #pantalla-configuracion .opciones-rondas {
+    width: 100% !important;
+  }
+
+  #pantalla-configuracion .boton-iniciar-nexo {
+    width: min(100%, 570px) !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1050px) and (max-height: 760px) {
+  #pantalla-configuracion .cabecera-configuracion h2 {
+    font-size: clamp(1.3rem, 2.7vw, 1.45rem) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  #pantalla-introduccion .relato-introduccion {
+    min-height: 360px !important;
+  }
+}
+
+@media (max-width: 340px) {
+  #pantalla-introduccion .relato-introduccion {
+    min-height: 400px !important;
+  }
+}
+
+/* ============================================================
+   NEXO · CONFIGURACION · Nombre del jugador en responsive
+   La etiqueta y el campo forman un unico bloque, separado de los
+   avatares, para que no parezca un titulo asociado al panel de IA.
+   ============================================================ */
+
+@media (max-width: 1050px) {
+
+  #pantalla-configuracion .grupo-jugador {
+    width: 100% !important;
+    margin-top: .65rem !important;
+    padding: .65rem !important;
+    gap: .4rem !important;
+    border: 1px solid rgba(147, 237, 199, .28) !important;
+    border-radius: 11px !important;
+    background: rgba(2, 18, 23, .78) !important;
+    box-shadow: 0 0 20px rgba(104, 225, 158, .10) !important;
+  }
+
+  #pantalla-configuracion .grupo-jugador label {
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: .5rem .7rem !important;
+    border-left: 3px solid #a7ef55 !important;
+    border-radius: 7px !important;
+    background: rgba(7, 34, 33, .82) !important;
+    text-align: center !important;
+  }
+}
+
+/* ============================================================
+   NEXO · CONFIGURACION · Nombre del jugador en escritorio
+   Conserva la posicion del bloque humano y agrupa visualmente
+   su etiqueta con el campo para escribir o elegir el nombre.
+   ============================================================ */
+
+@media (min-width: 1051px) {
+
+  #pantalla-configuracion .grupo-jugador {
+    width: 440px !important;
+    grid-template-rows: auto auto !important;
+    gap: .45rem !important;
+    padding: .65rem !important;
+    border: 1px solid rgba(147, 237, 199, .28) !important;
+    border-radius: 11px !important;
+    background: rgba(2, 18, 23, .78) !important;
+    box-shadow: 0 0 20px rgba(104, 225, 158, .10) !important;
+  }
+
+  #pantalla-configuracion .grupo-jugador label {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: .5rem .7rem !important;
+    border-left: 3px solid #a7ef55 !important;
+    background: rgba(7, 34, 33, .82) !important;
+  }
+
+  #pantalla-configuracion .control-jugador {
+    width: 100% !important;
+  }
+}
+
+/* ============================================================
+   NEXO · PARTIDA · Corrección estructural tablet
+   641px – 1050px
+   HUD separado del logo, decisión en flujo y acciones sin solape.
+   ============================================================ */
+
+@media (min-width: 641px) and (max-width: 1050px) {
+
+  /* LOGO + HUD: el HUD empieza debajo de la fila superior. */
+  #pantalla-juego .logo-partida-estatico {
+    top: 12px !important;
+    left: 14px !important;
+    width: 122px !important;
+    max-width: none !important;
+  }
+
+  #pantalla-juego .cabecera-partida-cinematica {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: calc(100% - 24px) !important;
+    margin: 56px 12px 0 !important;
+    transform: none !important;
+    display: grid !important;
+    grid-template-columns: 90px minmax(0, 1.35fr) minmax(0, 1fr) !important;
+    grid-template-rows: auto 48px !important;
+  }
+
+  #pantalla-juego .hud-segmento {
+    min-height: 78px !important;
+    padding: 7px 9px !important;
+  }
+
+  #pantalla-juego .hud-ronda .contador-ronda {
+    font-size: 13px !important;
+    line-height: 1.15 !important;
+    letter-spacing: .05em !important;
+    white-space: normal !important;
+  }
+
+  #pantalla-juego .hud-crisis {
+    padding-left: 14px !important;
+  }
+
+  #pantalla-juego .hud-crisis #nombre-crisis {
+    font-size: 19px !important;
+  }
+
+  #pantalla-juego .hud-crisis .descripcion-crisis {
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+  }
+
+  #pantalla-juego .puntos-en-juego-lineal {
+    font-size: 10.5px !important;
+    line-height: 1.2 !important;
+  }
+
+  #pantalla-juego .hud-planeta {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    min-height: 48px !important;
+    padding: 4px 12px 6px !important;
+    grid-template-columns: 120px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* TABLERO: centro primero y personajes después. */
+  #pantalla-juego .tablero-cinematico {
+    grid-template-rows: auto auto !important;
+    align-items: start !important;
+    padding-top: 14px !important;
+    padding-bottom: 24px !important;
+  }
+
+  #pantalla-juego .zona-central-cinematica {
+    min-height: 0 !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding: 0 0 10px !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* DECISIÓN: deja de usar coordenadas absolutas de escritorio. */
+  #pantalla-juego .zona-decision-activa {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo {
+    order: 1 !important;
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: min(96%, 720px) !important;
+    max-width: 720px !important;
+    min-height: 118px !important;
+    margin: 0 auto !important;
+    padding: 9px 13px 38px !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  /* PRECISIÓN / VELOCIDAD aparecen antes de las cartas, nunca encima. */
+  #pantalla-juego .panel-precision-nexo,
+  #pantalla-juego.precision-decision-activa #panel-precision,
+  #pantalla-juego.precision-correccion-activa #panel-precision {
+    order: 2 !important;
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: min(94%, 720px) !important;
+    min-width: 0 !important;
+    margin: 4px auto 6px !important;
+    transform: none !important;
+  }
+
+  #pantalla-juego .zona-velocidad.fortaleza-eleccion {
+    order: 2 !important;
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: min(94%, 720px) !important;
+    margin: 4px auto 6px !important;
+    transform: none !important;
+  }
+
+  /* MANO: siempre visible y separada de avisos y botones. */
+  #pantalla-juego .zona-mano-cinematica,
+  #pantalla-juego.precision-correccion-activa .zona-mano-cinematica {
+    order: 3 !important;
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: min(96%, 760px) !important;
+    margin: 0 auto !important;
+    transform: none !important;
+    z-index: 55 !important;
+  }
+
+  #pantalla-juego .mano-cartas,
+  #pantalla-juego.precision-correccion-activa .mano-cartas {
+    min-height: 174px !important;
+    padding: 6px 8px 0 !important;
+    gap: 7px !important;
+  }
+
+  /* RESOLVER RONDA vuelve al flujo; deja de pegarse al borde de pantalla. */
+  #pantalla-juego .acciones-partida,
+  #pantalla-juego.precision-correccion-activa .acciones-partida {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: min(360px, 90%) !important;
+    min-height: 64px !important;
+    margin: 12px auto 6px !important;
+    transform: none !important;
+    z-index: 80 !important;
+  }
+
+  #pantalla-juego #btn-confirmar-jugada {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ============================================================
+   NEXO · INTRODUCCIÓN · Estabilidad de navegación tablet
+   Mantiene fija la zona narrativa para que los botones no salten
+   entre los distintos pasos de la introducción.
+   ============================================================ */
+
+@media (min-width: 641px) and (max-width: 900px) {
+
+  #pantalla-introduccion .relato-introduccion {
+    height: 175px !important;
+    min-height: 175px !important;
+    max-height: 175px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+
+  #pantalla-introduccion .bloque-intro:not([hidden]) {
+    height: 100% !important;
+    min-height: 100% !important;
+    justify-content: flex-start !important;
+  }
+}
+
+/* ============================================================
+   NEXO · EVENTO ESPECIAL · Centrado tablet
+   641px – 1050px
+   ============================================================ */
+
+@media (min-width: 641px) and (max-width: 1050px) {
+
+  #pantalla-juego ~ #superposicion-evento,
+  #superposicion-evento.superposicion-evento-nexo {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px !important;
+  }
+
+  #superposicion-evento .tarjeta-evento-nexo {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0 auto !important;
+    width: min(700px, calc(100vw - 48px)) !important;
+    max-width: 700px !important;
+  }
+
+  #pantalla-juego ~ #superposicion-evento.oculta,
+  #superposicion-evento.superposicion-evento-nexo.oculta {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   NEXO · INTRODUCCION · Composicion vertical en tablet
+   El texto queda un poco mas bajo y la navegacion se coloca
+   centrada al pie, fuera de la zona ocupada por Humano e IA.
+   ============================================================ */
+
+@media (min-width: 641px) and (max-width: 900px) and (min-height: 800px) {
+
+  #pantalla-introduccion.activa {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-introduccion .contenido-introduccion {
+    position: relative !important;
+    width: min(92vw, 680px) !important;
+    height: 100svh !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    padding: 3rem 0 190px !important;
+  }
+
+  #pantalla-introduccion .relato-introduccion {
+    margin-top: 1rem !important;
+  }
+
+  #pantalla-introduccion .progreso-intro {
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 148px !important;
+    width: min(52%, 330px) !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+  }
+
+  #pantalla-introduccion .controles-intro {
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 66px !important;
+    width: min(82%, 560px) !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+  }
+
+  #pantalla-introduccion .acciones-secundarias-intro {
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 14px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+  }
+}
+
+/* ============================================================
+   NEXO · PANTALLA FINAL RESPONSIVE
+   Conserva el orden de PC y mantiene VOLVER A JUGAR como cierre,
+   abajo y centrado, sin desplazamiento vertical.
+   ============================================================ */
+
+@media (min-width: 641px) and (max-width: 1050px) {
+  #pantalla-final {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    overflow: hidden !important;
+    padding: 5px 10px !important;
+  }
+
+  #pantalla-final .contenido-final.final-campo-lectura {
+    width: min(100%, 920px) !important;
+    height: calc(100svh - 10px) !important;
+    min-height: 0 !important;
+    padding: 2px 8px !important;
+    display: grid !important;
+    grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+    gap: 8px !important;
+    align-content: stretch !important;
+  }
+
+  #pantalla-final .final-cabecera {
+    padding-bottom: 4px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr) !important;
+    column-gap: 14px !important;
+    row-gap: 2px !important;
+    align-items: center !important;
+  }
+
+  #pantalla-final .final-logo-nexo {
+    grid-column: 1 / -1 !important;
+    width: min(210px, 30vw) !important;
+    max-height: 48px !important;
+    margin-bottom: 0 !important;
+  }
+
+  #pantalla-final .final-sobrelinea { grid-column: 1 / -1 !important; font-size: 9px !important; }
+  #pantalla-final #titulo-final-principal {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+    margin: 0 !important;
+    font-size: clamp(22px, 3.4vh, 34px) !important;
+    white-space: nowrap !important;
+  }
+  #pantalla-final .final-planeta-dominante {
+    grid-column: 3 !important;
+    grid-row: 3 !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+  }
+  #pantalla-final .final-planeta-porcentaje { font-size: clamp(38px, 5.6vh, 54px) !important; }
+  #pantalla-final .final-planeta-etiqueta { font-size: clamp(12px, 1.7vh, 16px) !important; }
+  #pantalla-final .final-subtitulo,
+  #pantalla-final .final-mensaje-planeta {
+    grid-column: 1 / -1 !important;
+    font-size: clamp(10px, 1.25vh, 13px) !important;
+    line-height: 1.2 !important;
+  }
+
+  #pantalla-final .final-evolucion {
+    width: min(100%, 860px) !important;
+    grid-template-columns: minmax(0, 1fr) 54px minmax(0, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  #pantalla-final .final-evolucion-humano { grid-column: 1 !important; grid-row: 1 !important; }
+  #pantalla-final .final-rondas-nucleo { grid-column: 2 !important; grid-row: 1 !important; }
+  #pantalla-final .final-evolucion-ia { grid-column: 3 !important; grid-row: 1 !important; }
+
+  #pantalla-final .final-evolucion-card,
+  #pantalla-final .final-evolucion-ia {
+    min-height: 126px !important;
+    height: clamp(126px, 15vh, 146px) !important;
+    grid-template-columns: 96px minmax(0, 1fr) !important;
+  }
+
+  #pantalla-final .final-evolucion-ia .final-evolucion-info { grid-column: 1 !important; }
+  #pantalla-final .final-evolucion-ia .final-avatar-ia { grid-column: 2 !important; grid-row: 1 !important; }
+  #pantalla-final .final-avatar-ia {
+    background-size: auto 84% !important;
+    background-position: center center !important;
+    background-color: rgba(1, 13, 18, .78) !important;
+  }
+  #pantalla-final .final-evolucion-info { padding: 7px 9px !important; }
+  #pantalla-final .final-evolucion-tipo { font-size: 12px !important; }
+  #pantalla-final .final-evolucion-valor strong { font-size: 20px !important; }
+  #pantalla-final .final-evolucion-info h3 { font-size: 8px !important; margin: 1px 0 2px !important; }
+  #pantalla-final .final-evolucion-info ul { gap: 1px !important; }
+  #pantalla-final .final-evolucion-info li { font-size: 9px !important; line-height: 1.05 !important; padding: 1px 0 1px 12px !important; }
+  #pantalla-final .final-rondas-nucleo { min-height: 50px !important; }
+  #pantalla-final .final-rondas-icono { width: 28px !important; height: 28px !important; }
+
+  #pantalla-final .final-hologramas-principales {
+    width: min(100%, 860px) !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+  }
+
+  #pantalla-final .final-panel-perfil { grid-column: 1 !important; }
+  #pantalla-final .final-panel-desenlace { grid-column: 2 !important; }
+  #pantalla-final .final-panel { min-height: 76px !important; padding: 5px 9px !important; }
+  #pantalla-final .final-panel-etiqueta { font-size: 8px !important; }
+  #pantalla-final .final-panel h3 { margin: 1px 0 2px !important; font-size: 15px !important; }
+  #pantalla-final .final-panel p:last-child { font-size: 9px !important; line-height: 1.16 !important; }
+
+  #pantalla-final .final-cierre {
+    width: min(100%, 860px) !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto auto auto auto !important;
+    align-content: end !important;
+    gap: 3px !important;
+  }
+
+  #pantalla-final .final-lectura-estrategica { padding: 4px 8px !important; }
+  #pantalla-final .final-lectura-estrategica span { margin-bottom: 1px !important; font-size: 8px !important; }
+  #pantalla-final .final-lectura-estrategica p { font-size: 10px !important; line-height: 1.15 !important; }
+  #pantalla-final .coleccion-perfiles { padding: 2px 6px !important; font-size: 8px !important; line-height: 1.12 !important; }
+  #pantalla-final .final-reflexion { padding: 3px 8px !important; font-size: 10px !important; line-height: 1.15 !important; }
+  #pantalla-final .boton-final-nexo {
+    justify-self: center !important;
+    min-width: 230px !important;
+    min-height: 44px !important;
+    max-height: 48px !important;
+    margin: 0 auto !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #pantalla-final {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    overflow: hidden !important;
+    padding: 3px 5px !important;
+  }
+
+  #pantalla-final .contenido-final.final-campo-lectura {
+    width: 100% !important;
+    height: calc(100svh - 6px) !important;
+    min-height: 0 !important;
+    padding: 1px 3px !important;
+    display: grid !important;
+    grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+    gap: 5px !important;
+    align-content: stretch !important;
+  }
+
+  #pantalla-final .final-cabecera {
+    padding-bottom: 2px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr) !important;
+    column-gap: 6px !important;
+    row-gap: 1px !important;
+    align-items: center !important;
+  }
+  #pantalla-final .final-logo-nexo { grid-column: 1 / -1 !important; width: min(145px, 40vw) !important; max-height: 34px !important; margin: 0 !important; }
+  #pantalla-final .final-sobrelinea { grid-column: 1 / -1 !important; font-size: 6px !important; letter-spacing: .12em !important; }
+  #pantalla-final #titulo-final-principal {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+    margin: 0 !important;
+    font-size: clamp(15px, 4.2vh, 21px) !important;
+    white-space: nowrap !important;
+  }
+  #pantalla-final .final-planeta-dominante {
+    grid-column: 3 !important;
+    grid-row: 3 !important;
+    min-height: 28px !important;
+    gap: 4px !important;
+    margin: 0 !important;
+  }
+  #pantalla-final .final-planeta-porcentaje { font-size: clamp(27px, 7vh, 38px) !important; }
+  #pantalla-final .final-planeta-etiqueta { font-size: 8px !important; }
+  #pantalla-final .final-subtitulo,
+  #pantalla-final .final-mensaje-planeta { grid-column: 1 / -1 !important; margin: 0 !important; font-size: 7px !important; line-height: 1.08 !important; }
+
+  #pantalla-final .final-evolucion {
+    width: 100% !important;
+    grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr) !important;
+    gap: 3px !important;
+  }
+
+  #pantalla-final .final-evolucion-humano { grid-column: 1 !important; grid-row: 1 !important; }
+  #pantalla-final .final-rondas-nucleo { grid-column: 2 !important; grid-row: 1 !important; }
+  #pantalla-final .final-evolucion-ia { grid-column: 3 !important; grid-row: 1 !important; }
+
+  #pantalla-final .final-evolucion-card,
+  #pantalla-final .final-evolucion-ia {
+    min-height: 92px !important;
+    height: clamp(92px, 13vh, 108px) !important;
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+    border-radius: 7px !important;
+  }
+
+  #pantalla-final .final-evolucion-ia .final-evolucion-info { grid-column: 1 !important; }
+  #pantalla-final .final-evolucion-ia .final-avatar-ia { grid-column: 2 !important; grid-row: 1 !important; }
+  #pantalla-final .final-avatar-ia {
+    background-size: auto 84% !important;
+    background-position: center center !important;
+    background-color: rgba(1, 13, 18, .78) !important;
+  }
+  #pantalla-final .final-evolucion-info { padding: 3px 4px !important; }
+  #pantalla-final .final-evolucion-tipo { font-size: 8px !important; }
+  #pantalla-final .final-evolucion-valor { gap: 2px !important; }
+  #pantalla-final .final-evolucion-valor strong { font-size: 13px !important; }
+  #pantalla-final .final-evolucion-valor span { font-size: 5px !important; }
+  #pantalla-final .final-mini-barra { height: 3px !important; margin: 0 0 2px !important; }
+  #pantalla-final .final-evolucion-info h3 { font-size: 5px !important; margin: 0 0 1px !important; letter-spacing: .03em !important; }
+  #pantalla-final .final-evolucion-info ul { gap: 0 !important; }
+  #pantalla-final .final-evolucion-info li { font-size: 6px !important; line-height: 1 !important; padding: 1px 0 1px 8px !important; }
+  #pantalla-final .final-evolucion-info li::before { left: 0 !important; width: 4px !important; height: 4px !important; }
+  #pantalla-final .final-rondas-nucleo { min-height: 38px !important; }
+  #pantalla-final .final-rondas-icono { width: 20px !important; height: 20px !important; font-size: 8px !important; }
+  #pantalla-final .final-rondas-nucleo strong { font-size: 13px !important; }
+  #pantalla-final .final-rondas-nucleo small { font-size: 5px !important; }
+
+  #pantalla-final .final-hologramas-principales {
+    width: 100% !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 3px !important;
+  }
+  #pantalla-final .final-panel-perfil { grid-column: 1 !important; }
+  #pantalla-final .final-panel-desenlace { grid-column: 2 !important; }
+  #pantalla-final .final-panel { min-height: 54px !important; padding: 3px 5px !important; border-radius: 6px !important; }
+  #pantalla-final .final-panel-etiqueta { font-size: 5px !important; }
+  #pantalla-final .final-panel h3 { margin: 1px 0 !important; font-size: 9px !important; }
+  #pantalla-final .final-panel p:last-child { font-size: 6px !important; line-height: 1.05 !important; }
+
+  #pantalla-final .final-cierre {
+    width: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto auto auto auto !important;
+    align-content: end !important;
+    gap: 1px !important;
+  }
+  #pantalla-final .final-lectura-estrategica { padding: 2px 4px !important; border-radius: 5px !important; }
+  #pantalla-final .final-lectura-estrategica span { margin: 0 !important; font-size: 5px !important; }
+  #pantalla-final .final-lectura-estrategica p { font-size: 6px !important; line-height: 1.04 !important; }
+  #pantalla-final .coleccion-perfiles { padding: 1px 3px !important; font-size: 5px !important; line-height: 1 !important; }
+  #pantalla-final .final-reflexion { padding: 2px 4px !important; font-size: 6px !important; line-height: 1.04 !important; border-radius: 5px !important; }
+  #pantalla-final .boton-final-nexo {
+    justify-self: center !important;
+    min-width: 180px !important;
+    min-height: 38px !important;
+    max-height: 40px !important;
+    margin: 0 auto !important;
+    padding: 0 1rem !important;
+    font-size: 9px !important;
   }
 }

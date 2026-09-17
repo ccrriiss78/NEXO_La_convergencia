@@ -547,7 +547,7 @@ export class Partida {
       resultado, ganador, suma, cartaJugador, valorIA, paridad, apuestaJugador, apuestaIA
     );
     resumen.intuicionIA = usaIntuicion;
-    this.actualizarMemorias(resultado, ganador, cartaJugador, apuestaJugador, apuestaIA);
+    this.actualizarMemorias(ganador, cartaJugador, apuestaJugador, apuestaIA);
     this.comprobarFinal();
     return resumen;
   }
@@ -681,7 +681,6 @@ export class Partida {
    * la última jugada ganadora de la IA (Adaptación).
    */
   private actualizarMemorias(
-    resultado: Resultado,
     ganador: Bando,
     cartaJugador: number,
     apuestaJugador: Apuesta,
