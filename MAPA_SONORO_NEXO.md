@@ -1,8 +1,10 @@
-# Mapa sonoro de NEXO — continuidad narrativa y finales V24.46
+# Mapa sonoro de NEXO — continuidad narrativa y finales V24.48
 
 Esta fase conserva la música de partida y todos los efectos breves que tienen una función activa. `ambos-nexo.mp3` sigue siendo la segunda mezcla entregada para la portada. La X se mantiene ajustada al ciclo medido de `1,009272 s` y los nodos a las cuatro descargas del ciclo de `11,101995 s`. Introducción y Configuración comparten una pista continua. Los dos extremos del resultado mantienen música propia: **0% de Crisis** utiliza `equilibrio-restablecido.mp3`, **100% de Crisis** utiliza `planeta-colapso.mp3`; la franja de **1–40% de Crisis** utiliza `planeta-restaurado.mp3`. Desde el 41% se conserva la música que ya corresponda al desenlace, incluido el final de Rivalidad para **SUPREMACÍA HUMANA** o **SUPREMACÍA IA**.
 
-En V24.46, la portada conserva un refuerzo moderado de volumen. Introducción y Configuración empiezan en el segundo 2 de su MP3 y entran con un fundido de 900 ms. Al pulsar **INICIAR PROTOCOLO**, esa pista baja y la música de partida sube en paralelo durante el mismo intervalo. Todo se realiza con objetos `Audio`, `volume` y `setInterval`.
+En V24.48, la portada conserva un refuerzo moderado de volumen. Introducción y Configuración empiezan en el segundo 4 de su MP3 y entran en 225 ms, con un nivel ligeramente reforzado para que se perciban desde el primer momento. Al pulsar **INICIAR PROTOCOLO**, esa pista baja y la música de partida sube en paralelo durante 900 ms. Todo se realiza con objetos `Audio`, `volume` y `setInterval`.
+
+En V24.47, el primer gesto de la pantalla de suspense prepara también las pistas que se usarán más tarde. Esto evita que Safari móvil bloquee la música de Introducción, Partida o desenlace. La preparación se realiza en silencio, incluso si el usuario tenía el sonido desactivado. El clic de acceso se solicita primero y la pista de portada permanece silenciada durante los 700 ms de transición; al aparecer la portada empieza desde el principio, sin solaparse con el clic. También se precarga la música de Equilibrio Restablecido.
 
 ## Criterio de uso
 

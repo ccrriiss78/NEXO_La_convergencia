@@ -1,5 +1,5 @@
 import { elemento, mostrarPantalla } from "./interfaz.js";
-import { reproducirSonido } from "./sonidos.js";
+import { desbloquearAudioMovil, reproducirSonido } from "./sonidos.js";
 
 // AUDIO DE PORTADA · PRIMERA CAPA
 // El clic de la pantalla de suspense permite iniciar el sonido sin usar
@@ -10,8 +10,10 @@ audioInicio.loop = true;
 // La portada no usa los volúmenes internos de la paleta de efectos. Aplicamos
 // un refuerzo propio y limitado para que el antiguo 28% también sea audible.
 const REFUERZO_AUDIO_INICIO = 2.0;
+const RETRASO_ENTRADA_AUDIO_INICIO = 700;
 
 let temporizadorAudioInicio: number | null = null;
+let temporizadorEntradaAudioInicio: number | null = null;
 
 /** Convierte el porcentaje del control en un volumen válido entre 0 y 1. */
 export function actualizarVolumenAudioInicio(porcentaje: number): void {
@@ -19,18 +21,31 @@ export function actualizarVolumenAudioInicio(porcentaje: number): void {
 }
 
 /** Inicia la música de la portada con el volumen elegido por el jugador. */
-export function reproducirAudioInicio(porcentaje: number): void {
+export function reproducirAudioInicio(porcentaje: number, retrasarEntrada = false): void {
   if (temporizadorAudioInicio !== null) {
     window.clearInterval(temporizadorAudioInicio);
     temporizadorAudioInicio = null;
   }
+  if (temporizadorEntradaAudioInicio !== null) {
+    window.clearTimeout(temporizadorEntradaAudioInicio);
+    temporizadorEntradaAudioInicio = null;
+  }
 
   actualizarVolumenAudioInicio(porcentaje);
-  audioInicio.muted = false;
+  audioInicio.muted = retrasarEntrada;
   audioInicio.currentTime = 0;
   audioInicio.play().catch(function (error: DOMException) {
     console.warn("NEXO: el navegador no ha podido reproducir el audio de portada.", error.message);
   });
+
+  if (retrasarEntrada) {
+    temporizadorEntradaAudioInicio = window.setTimeout(function () {
+      audioInicio.currentTime = 0;
+      audioInicio.muted = false;
+      audioInicio.dispatchEvent(new Event("nexo-portada-visible"));
+      temporizadorEntradaAudioInicio = null;
+    }, RETRASO_ENTRADA_AUDIO_INICIO);
+  }
 }
 
 /** Detiene inmediatamente la pista cuando el jugador desactiva el sonido. */
@@ -39,7 +54,12 @@ export function pausarAudioInicio(): void {
     window.clearInterval(temporizadorAudioInicio);
     temporizadorAudioInicio = null;
   }
+  if (temporizadorEntradaAudioInicio !== null) {
+    window.clearTimeout(temporizadorEntradaAudioInicio);
+    temporizadorEntradaAudioInicio = null;
+  }
   audioInicio.pause();
+  audioInicio.muted = false;
 }
 
 /**
@@ -198,8 +218,9 @@ function activarJuego(): void {
   const sonidoActivo = localStorage.getItem("nexo-sonido") !== "off";
   const volumen = Number(localStorage.getItem("nexo-volumen") || "28");
   if (sonidoActivo) {
-    reproducirAudioInicio(volumen);
+    reproducirAudioInicio(volumen, true);
   }
+  desbloquearAudioMovil();
 
   pantallaSuspense.classList.add("fade-out");
   window.setTimeout(function () {

@@ -118,13 +118,14 @@ const SONIDOS = {
 // INTRODUCCIÓN + CONFIGURACIÓN · V24.44
 // Un único objeto Audio continúa sonando al pasar de una pantalla a la otra.
 // Solo se detiene cuando el jugador inicia el protocolo.
-const VOLUMEN_BASE_MUSICA_INTRO_CONFIG = 0.18;
+const VOLUMEN_BASE_MUSICA_INTRO_CONFIG = 0.22;
 const musicaIntroduccionConfiguracion = new Audio("./assets/audio/musica/introduccion-configuracion.mp3");
 musicaIntroduccionConfiguracion.loop = true;
 musicaIntroduccionConfiguracion.preload = "auto";
-// La pista entregada tiene un comienzo muy tenue. Empezamos en el segundo 2
-// y usamos un fundido sencillo para que entre de forma progresiva.
-const INICIO_MUSICA_INTRO_CONFIG = 2;
+// La pista entregada tiene un comienzo muy tenue. Empezamos en el segundo 4
+// y usamos una entrada breve para que se escuche desde el primer momento.
+const INICIO_MUSICA_INTRO_CONFIG = 4;
+const PASOS_ENTRADA_MUSICA_INTRO_CONFIG = 5;
 const PASOS_FUNDIDO_MUSICA = 20;
 const INTERVALO_FUNDIDO_MUSICA = 45;
 let temporizadorMusicaIntroConfig = null;
@@ -174,6 +175,7 @@ const canalesActivos = {};
 const audiosPreparados = {};
 const temporizadoresSonido = [];
 let interfazConectada = false;
+let audioMovilDesbloqueado = false;
 function sonidoPermitido() {
     return localStorage.getItem("nexo-sonido") !== "off";
 }
@@ -190,6 +192,58 @@ function obtenerAudio(nombre, configuracion) {
         audiosPreparados[nombre] = audio;
     }
     return audio;
+}
+/**
+ * Desbloquea todos los elementos de audio durante el primer gesto real.
+ * Safari móvil autoriza la reproducción por elemento, no solo por página;
+ * por eso preparar únicamente la pista de portada no basta para la música
+ * de introducción, partida, desenlace y los efectos posteriores.
+ */
+export function desbloquearAudioMovil() {
+    if (audioMovilDesbloqueado)
+        return;
+    audioMovilDesbloqueado = true;
+    const pistas = [
+        musicaIntroduccionConfiguracion,
+        musicaPartida,
+        musicaPlanetaRestaurado,
+        musicaEquilibrioRestablecido,
+        musicaPlanetaColapso,
+        musicaRivalidadFinal
+    ];
+    const nombres = Object.keys(SONIDOS);
+    for (let i = 0; i < nombres.length; i += 1) {
+        const nombre = nombres[i];
+        // El clic de acceso reproduce "confirmar" de verdad justo después.
+        // No lo incluimos aquí para que el final del desbloqueo no lo pause.
+        if (nombre !== "confirmar") {
+            pistas.push(obtenerAudio(nombre, SONIDOS[nombre]));
+        }
+    }
+    for (let i = 0; i < pistas.length; i += 1) {
+        const pista = pistas[i];
+        const volumenAnterior = pista.volume;
+        pista.muted = true;
+        pista.volume = 0;
+        const intento = pista.play();
+        if (intento !== undefined) {
+            intento.then(function () {
+                pista.pause();
+                pista.currentTime = 0;
+                pista.volume = volumenAnterior;
+                pista.muted = false;
+            }).catch(function () {
+                pista.volume = volumenAnterior;
+                pista.muted = false;
+            });
+        }
+        else {
+            pista.pause();
+            pista.currentTime = 0;
+            pista.volume = volumenAnterior;
+            pista.muted = false;
+        }
+    }
 }
 /** Reproduce un efecto y detiene únicamente el anterior de su mismo canal. */
 export function reproducirSonido(nombre) {
@@ -251,8 +305,8 @@ export function reproducirMusicaIntroduccionConfiguracion(porcentaje) {
     let pasoActual = 0;
     temporizadorMusicaIntroConfig = setInterval(function () {
         pasoActual += 1;
-        musicaIntroduccionConfiguracion.volume = volumenObjetivoMusicaIntroConfig * (pasoActual / PASOS_FUNDIDO_MUSICA);
-        if (pasoActual >= PASOS_FUNDIDO_MUSICA) {
+        musicaIntroduccionConfiguracion.volume = volumenObjetivoMusicaIntroConfig * (pasoActual / PASOS_ENTRADA_MUSICA_INTRO_CONFIG);
+        if (pasoActual >= PASOS_ENTRADA_MUSICA_INTRO_CONFIG) {
             if (temporizadorMusicaIntroConfig !== null)
                 clearInterval(temporizadorMusicaIntroConfig);
             temporizadorMusicaIntroConfig = null;
@@ -474,6 +528,7 @@ export function precargarEfectos() {
     musicaPartida.load();
     musicaIntroduccionConfiguracion.load();
     musicaPlanetaRestaurado.load();
+    musicaEquilibrioRestablecido.load();
     musicaPlanetaColapso.load();
     musicaRivalidadFinal.load();
 }
@@ -580,11 +635,11 @@ export function conectarSonidosInterfaz() {
     });
 }
 /** Todos los eventos especiales comparten una misma señal reconocible. */
-export function reproducirEvento(idEvento) {
+export function reproducirEvento(_idEvento) {
     reproducirSonido("eventoAlerta");
 }
 /** Todas las cartas/modificadores de crisis comparten su propia señal fija. */
-export function reproducirCartaCrisis(tipo) {
+export function reproducirCartaCrisis(_tipo) {
     reproducirSonido("cartaMixta");
 }
 function porcentaje(valor, maximo) {

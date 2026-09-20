@@ -53,11 +53,10 @@ function iniciar() {
     audioInicio.setAttribute("aria-hidden", "true");
     document.body.appendChild(audioInicio);
     audioInicio.load();
-    audioInicio.addEventListener("playing", function () {
-        sincronizarPulsoPortada();
-        // La portada aparece 700 ms después del clic de suspense.
-        window.setTimeout(sincronizarPulsoPortada, 700);
-    });
+    audioInicio.addEventListener("playing", sincronizarPulsoPortada);
+    // En el acceso inicial la pista empieza silenciada. Esta señal se lanza
+    // justo cuando la portada aparece y el audio vuelve al segundo cero.
+    audioInicio.addEventListener("nexo-portada-visible", sincronizarPulsoPortada);
     elemento("btn-jugar").addEventListener("click", function () {
         apagarAudioInicioSuavemente();
         bloqueIntroActual = 0;
@@ -302,6 +301,9 @@ function empezarPartida() {
     escribir("nombre-jugador-partida", nombreJugadorElegido);
     apagarMusicaIntroduccionConfiguracionSuavemente();
     mostrarPantalla("pantalla-juego");
+    // Configuración puede necesitar desplazamiento en pantallas pequeñas.
+    // La partida siempre debe empezar desde su cabecera, no conservarlo.
+    window.scrollTo(0, 0);
     reproducirMusicaPartidaSiCorresponde();
     nuevaRonda();
 }

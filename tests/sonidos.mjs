@@ -42,6 +42,16 @@ assert.match(sonidos, /}, true\);/);
 assert.match(sonidos, /function reproducirEvento[\s\S]*reproducirSonido\("eventoAlerta"\)/);
 assert.match(sonidos, /function reproducirCartaCrisis[\s\S]*reproducirSonido\("cartaMixta"\)/);
 assert.doesNotMatch(sonidos, /idEvento ===|tipo\.toLowerCase/);
+assert.match(suspense, /reproducirSonido\("confirmar"\)[\s\S]*reproducirAudioInicio\(volumen, true\);[\s\S]*desbloquearAudioMovil\(\)/);
+assert.match(suspense, /const RETRASO_ENTRADA_AUDIO_INICIO = 700/);
+assert.match(suspense, /audioInicio\.muted = retrasarEntrada/);
+assert.match(suspense, /audioInicio\.currentTime = 0;\s*audioInicio\.muted = false;[\s\S]*RETRASO_ENTRADA_AUDIO_INICIO/);
+assert.match(suspense, /dispatchEvent\(new Event\("nexo-portada-visible"\)\)/);
+assert.match(main, /audioInicio\.addEventListener\("nexo-portada-visible", sincronizarPulsoPortada\)/);
+assert.doesNotMatch(main, /setTimeout\(sincronizarPulsoPortada, 700\)/);
+assert.match(sonidos, /if \(audioMovilDesbloqueado\) return;/);
+assert.match(sonidos, /if \(nombre !== "confirmar"\)/);
+assert.match(sonidos, /musicaEquilibrioRestablecido\.load\(\)/);
 
 // La pista aprobada de portada conserva su ruta, bucle y objeto Audio normal.
 assert.match(suspense, /new Audio\("\.\/assets\/audio\/inicio\/ambos-nexo\.mp3\?v=audio-inicio-v24-38"\)/);
@@ -73,15 +83,16 @@ assert.match(sonidos, /const VOLUMEN_BASE_MUSICA_PARTIDA = 0\.18/);
 assert.match(sonidos, /musicaPartida\.volume = empiezaDesdeElPrincipio \? 0 : volumenObjetivoMusicaPartida/);
 assert.match(sonidos, /const REFUERZO_MEZCLA_AUDIO = 2\.2/);
 assert.match(sonidos, /Math\.min\(1, volumenBase \* volumenGeneral \* REFUERZO_MEZCLA_AUDIO\)/);
-assert.match(main, /mostrarPantalla\("pantalla-juego"\);\s*reproducirMusicaPartidaSiCorresponde\(\);/);
+assert.match(main, /mostrarPantalla\("pantalla-juego"\);[\s\S]*?window\.scrollTo\(0, 0\);[\s\S]*?reproducirMusicaPartidaSiCorresponde\(\);/);
 assert.match(main, /actualizarVolumenMusicaPartida\(volumenSonido\)/);
 assert.match(main, /pausarMusicaPartida\(true\);\s*pausarMusicaPlanetaRestaurado\(true\);\s*pausarMusicaEquilibrioRestablecido\(true\);\s*pausarMusicaPlanetaColapso\(true\);\s*pausarMusicaRivalidadFinal\(true\);\s*mostrarPantalla\("pantalla-final"\);/);
 
 // Introducción y Configuración comparten un solo Audio sin reiniciarlo entre pantallas.
 assert.match(sonidos, /new Audio\("\.\/assets\/audio\/musica\/introduccion-configuracion\.mp3"\)/);
 assert.match(sonidos, /musicaIntroduccionConfiguracion\.loop = true/);
-assert.match(sonidos, /const VOLUMEN_BASE_MUSICA_INTRO_CONFIG = 0\.18/);
-assert.match(sonidos, /const INICIO_MUSICA_INTRO_CONFIG = 2/);
+assert.match(sonidos, /const VOLUMEN_BASE_MUSICA_INTRO_CONFIG = 0\.22/);
+assert.match(sonidos, /const INICIO_MUSICA_INTRO_CONFIG = 4/);
+assert.match(sonidos, /const PASOS_ENTRADA_MUSICA_INTRO_CONFIG = 5/);
 assert.match(sonidos, /const PASOS_FUNDIDO_MUSICA = 20/);
 assert.match(sonidos, /musicaIntroduccionConfiguracion\.currentTime = INICIO_MUSICA_INTRO_CONFIG/);
 assert.match(main, /mostrarPantalla\("pantalla-introduccion"\);\s*reproducirMusicaIntroduccionConfiguracionSiCorresponde\(\);/);
@@ -145,9 +156,10 @@ assert.equal(fs.existsSync(new URL("../assets/audio/sfx/eventos/positivo.mp3", i
 // Prueba de comportamiento con un Audio mínimo simulado: comprueba volumen,
 // bucle, pausa y rebobinado sin necesitar reproducir sonido desde Node.
 const audiosCreados = [];
+let sonidoGuardado = "off";
 globalThis.localStorage = {
   getItem: function (clave) {
-    if (clave === "nexo-sonido") return "on";
+    if (clave === "nexo-sonido") return sonidoGuardado;
     if (clave === "nexo-volumen") return "28";
     return null;
   }
@@ -159,6 +171,7 @@ globalThis.Audio = class {
     this.volume = 1;
     this.loop = false;
     this.preload = "";
+    this.muted = false;
     this.paused = true;
     this.reproducciones = 0;
     audiosCreados.push(this);
@@ -172,7 +185,10 @@ globalThis.Audio = class {
   }
 };
 
-const moduloSonidos = await import("../dist/sonidos.js?test=audio-transiciones-v24-46");
+const carpetaCompilada = process.env.NEXO_DIST_PRUEBA === "comprobacion"
+  ? "../dist-comprobacion/sonidos.js"
+  : "../dist/sonidos.js";
+const moduloSonidos = await import(carpetaCompilada + "?test=audio-transiciones-v24-47");
 const musicaIntroConfig = audiosCreados.find(function (audio) {
   return audio.src.endsWith("/assets/audio/musica/introduccion-configuracion.mp3");
 });
@@ -202,12 +218,37 @@ assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(99), true);  // 1%
 assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(60), true);  // 40% Crisis
 assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(59), false); // 41% Crisis
 assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(0), false);  // 100% Crisis
+
+// Aunque el sonido estuviera desactivado al entrar, el primer gesto prepara
+// las pistas de Safari móvil sin hacerlas audibles. El clic "confirmar" queda
+// fuera de esa preparación porque se reproduce de verdad inmediatamente.
+moduloSonidos.desbloquearAudioMovil();
+await Promise.resolve();
+const confirmarPreparado = audiosCreados.find(function (audio) {
+  return audio.src.endsWith("/assets/audio/sfx/ui/confirmar.mp3");
+});
+assert.equal(confirmarPreparado, undefined);
+assert.equal(audiosCreados.filter(function (audio) { return audio.reproducciones === 1; }).length, 25);
+assert.equal(audiosCreados.every(function (audio) { return audio.muted === false; }), true);
+assert.equal(audiosCreados.every(function (audio) { return audio.paused === true; }), true);
+for (const audio of audiosCreados) audio.reproducciones = 0;
+
+sonidoGuardado = "on";
+moduloSonidos.reproducirSonido("confirmar");
+const confirmarReal = audiosCreados.find(function (audio) {
+  return audio.src.endsWith("/assets/audio/sfx/ui/confirmar.mp3");
+});
+assert.notEqual(confirmarReal, undefined);
+assert.equal(confirmarReal.reproducciones, 1);
+assert.equal(confirmarReal.paused, false);
+assert.equal(confirmarReal.muted, false);
+
 moduloSonidos.reproducirMusicaIntroduccionConfiguracion(28);
 assert.equal(musicaIntroConfig.reproducciones, 1);
-assert.equal(musicaIntroConfig.currentTime, 2);
+assert.equal(musicaIntroConfig.currentTime, 4);
 assert.equal(musicaIntroConfig.volume, 0);
 await new Promise(function (resolver) { setTimeout(resolver, 1000); });
-assert.ok(Math.abs(musicaIntroConfig.volume - 0.11088) < 0.000001);
+assert.ok(Math.abs(musicaIntroConfig.volume - 0.13552) < 0.000001);
 musicaIntroConfig.currentTime = 9;
 moduloSonidos.pausarMusicaIntroduccionConfiguracion();
 assert.equal(musicaIntroConfig.currentTime, 9);
