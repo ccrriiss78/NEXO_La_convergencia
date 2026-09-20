@@ -4224,11 +4224,12 @@ h1, h2, h3, h4 {
 /* V22.12 · Controles simétricos, compactos y legibles sobre el fondo. */
 @media (min-width:1101px) {
   #pantalla-configuracion .configuracion-inferior{
-    grid-template-columns:440px minmax(300px,1fr) 440px;
-    column-gap:clamp(2rem,4vw,5rem);
+    width:min(96vw,1180px)!important;
+    grid-template-columns:minmax(260px,440px) minmax(220px,1fr) minmax(260px,440px)!important;
+    column-gap:clamp(1rem,2.5vw,3rem)!important;
   }
   #pantalla-configuracion .grupo-jugador,
-  #pantalla-configuracion .grupo-rondas{width:440px!important}
+  #pantalla-configuracion .grupo-rondas{width:100%!important;max-width:440px!important;min-width:0!important}
   #pantalla-configuracion .grupo-jugador label,
   #pantalla-configuracion .grupo-rondas h3{
     width:max-content;max-width:100%;margin:0 auto 7px!important;padding:7px 18px!important;
@@ -4238,9 +4239,9 @@ h1, h2, h3, h4 {
     text-shadow:0 2px 5px #000,0 0 12px currentColor;
   }
   #pantalla-configuracion .grupo-jugador label{border-color:rgba(157,239,72,.30);box-shadow:inset 0 -2px 0 rgba(150,238,68,.36),0 0 20px rgba(126,226,66,.15)}
-  #pantalla-configuracion .control-jugador{width:440px!important}
-  #pantalla-configuracion .opciones-rondas{width:440px!important;justify-content:center!important;gap:10px!important}
-  #pantalla-configuracion .boton-opcion{width:102px!important;min-width:102px!important}
+  #pantalla-configuracion .control-jugador{width:100%!important;max-width:440px!important;min-width:0!important}
+  #pantalla-configuracion .opciones-rondas{width:100%!important;min-width:0!important;justify-content:center!important;gap:clamp(6px,1vw,14px)!important}
+  #pantalla-configuracion .opciones-rondas .boton-opcion{flex:1 1 0!important;width:auto!important;min-width:0!important;max-width:102px!important}
 }
 
 /* V22.3 · La navegación de la introducción permanece anclada. */
@@ -5921,4 +5922,32 @@ h1, h2, h3, h4 {
     min-height:46px;
     max-height:50px;
   }
+}
+
+/* =====================================================================
+   V24.63 - TEXTO DE LA INTRODUCCION: UNA SOLA CAJA, JUSTIFICADO
+   ---------------------------------------------------------------------
+   Habia tres reglas pisandose: la base justificaba, dos posteriores lo
+   pasaban a izquierda y otra dejaba el primer parrafo centrado. Ademas la
+   anchura se fijaba por parrafo en unidades 'ch', asi que la negrita de
+   apertura, al tener mayor cuerpo, ocupaba un ancho distinto y sobresalia
+   por los dos lados. Aqui la medida se fija en el bloque y todos los
+   parrafos comparten margen izquierdo y derecho.
+   ===================================================================== */
+#pantalla-introduccion .bloque-intro {
+  max-width: 64ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#pantalla-introduccion .bloque-intro p,
+#pantalla-introduccion .bloque-intro p:first-child,
+#pantalla-introduccion .bloque-intro p:last-child {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
 }
