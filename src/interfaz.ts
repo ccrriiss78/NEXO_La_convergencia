@@ -321,7 +321,7 @@ export function pintarCapacidades(idLista, capacidades) {
 // ---- La zona de la ronda --------------------------------------------------
 /** Escribe la ronda, la crisis y, si la hay, la carta de crisis. */
 export function pintarCabeceraRonda(partida) {
-    let texto = "RONDA " + partida.getRonda();
+    let texto = String(partida.getRonda());
     if (partida.getTotalRondas() > 0) {
         texto = texto + " / " + partida.getTotalRondas();
     }

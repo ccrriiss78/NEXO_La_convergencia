@@ -124,9 +124,11 @@
 #modal-evento{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(0,5,9,.74);backdrop-filter:blur(7px)}#modal-evento.oculta{display:none}.contenido-evento{position:relative;width:min(760px,90vw);overflow:hidden;border:1px solid rgba(145,210,220,.34);border-radius:18px;background:#071016;box-shadow:0 30px 90px rgba(0,0,0,.55)}.imagen-evento{display:block;width:100%;height:280px;object-fit:cover;filter:brightness(.7) contrast(1.08)}.texto-evento{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;background:linear-gradient(180deg,transparent 15%,rgba(2,9,13,.42) 48%,rgba(2,9,13,.96) 100%)}.texto-evento h2{margin:4px 0 8px;font-size:30px}.texto-evento p{font-size:15px;line-height:1.45}.texto-evento .boton{align-self:center;margin-top:18px;min-width:180px;padding:11px 20px}
 
 /* ---------- Feedback global ---------- */
-#pantalla-juego.feedback-fracaso{animation:fracaso-vibracion .42s ease-in-out}#pantalla-juego.feedback-fracaso::after,#pantalla-juego.feedback-recuperacion::after{content:'';position:absolute;inset:0;z-index:80;pointer-events:none}#pantalla-juego.feedback-fracaso::after{background:radial-gradient(circle at center,transparent 25%,rgba(150,22,10,.34));animation:flash-fracaso .65s ease-out}#pantalla-juego.feedback-recuperacion::after{background:radial-gradient(circle at center,rgba(212,255,226,.26),rgba(92,229,191,.12) 32%,transparent 70%);animation:flash-recuperacion .72s ease-out}
-#pantalla-juego.feedback-fracaso-fuerte{animation:fracaso-vibracion-fuerte .62s ease-in-out}#pantalla-juego.feedback-recuperacion-fuerte::after{background:radial-gradient(circle at center,rgba(240,255,247,.5),rgba(90,238,196,.19) 35%,transparent 74%);animation:flash-recuperacion .9s ease-out}
-@keyframes fracaso-vibracion{20%{transform:translate(-3px,1px)}40%{transform:translate(3px,-1px)}60%{transform:translate(-2px,1px)}80%{transform:translate(2px,0)}}@keyframes fracaso-vibracion-fuerte{15%{transform:translate(-7px,2px)}30%{transform:translate(7px,-2px)}45%{transform:translate(-5px,2px)}60%{transform:translate(5px,-1px)}75%{transform:translate(-3px,1px)}}@keyframes flash-fracaso{from{opacity:1}to{opacity:0}}@keyframes flash-recuperacion{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+/* El fracaso conserva el destello y la animación del núcleo, pero la interfaz
+   completa permanece quieta para que ningún panel parezca descolocarse. */
+#pantalla-juego.feedback-fracaso::after,#pantalla-juego.feedback-recuperacion::after{content:'';position:absolute;inset:0;z-index:80;pointer-events:none}#pantalla-juego.feedback-fracaso::after{background:radial-gradient(circle at center,transparent 25%,rgba(150,22,10,.34));animation:flash-fracaso .65s ease-out}#pantalla-juego.feedback-recuperacion::after{background:radial-gradient(circle at center,rgba(212,255,226,.26),rgba(92,229,191,.12) 32%,transparent 70%);animation:flash-recuperacion .72s ease-out}
+#pantalla-juego.feedback-recuperacion-fuerte::after{background:radial-gradient(circle at center,rgba(240,255,247,.5),rgba(90,238,196,.19) 35%,transparent 74%);animation:flash-recuperacion .9s ease-out}
+@keyframes flash-fracaso{from{opacity:1}to{opacity:0}}@keyframes flash-recuperacion{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
 
 /* FEEDBACK DE UMBRAL EN BARRAS (los avatares cambian solo de asset) */
 .barra-evoluciona{animation:barra-pulso .78s ease}@keyframes barra-pulso{35%{filter:brightness(1.9);box-shadow:0 0 20px currentColor}}
@@ -1608,7 +1610,7 @@
 #superposicion-evento .tarjeta-evento-nexo{
   position:relative!important;left:auto!important;top:auto!important;transform:none!important;
   width:min(900px,78vw)!important;min-width:0!important;max-width:none!important;height:auto!important;min-height:300px!important;
-  padding:0!important;text-align:left!important;
+  padding:0!important;text-align:center!important;
   display:grid!important;grid-template-columns:minmax(360px,1.12fr) minmax(330px,.88fr)!important;align-items:stretch!important;
   border:1px solid rgba(91,225,205,.48)!important;border-radius:18px!important;overflow:visible!important;
   background:linear-gradient(135deg,rgba(2,18,21,.98),rgba(3,11,18,.98))!important;
@@ -1629,7 +1631,7 @@
 }
 #superposicion-evento .halo-evento{box-shadow:inset 0 0 32px rgba(90,234,206,.13)!important}
 #superposicion-evento .contenido-evento{
-  padding:32px 31px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;
+  padding:32px 31px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;
   border-radius:0 17px 17px 0!important;background:linear-gradient(160deg,rgba(3,18,23,.94),rgba(4,12,21,.98))!important;
 }
 #superposicion-evento .evento-sobrelinea{font-size:10px!important;letter-spacing:.24em!important;color:#9debd7!important}
@@ -2197,6 +2199,13 @@
   max-width:100%!important;
   font-size:16px!important;
   letter-spacing:.07em!important;
+}
+
+@media (min-width:1051px) and (max-width:1440px){
+  #pantalla-juego .hud-ronda .contador-ronda{
+    font-size:15px!important;
+    letter-spacing:.06em!important;
+  }
 }
 
 #pantalla-juego .zona-declaraciones-nexo{

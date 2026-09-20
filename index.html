@@ -6,13 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO — La Convergencia</title>
   <link rel="icon" type="image/webp" href="./assets/images/portada/logo/nexo_x_estatica_centrada_sin_limite.webp">
-  <link rel="stylesheet" href="./css/style.css?v=ui-v24-46-responsive-audit">
+  <link rel="stylesheet" href="./css/style.css?v=ui-v24-63-texto-intro">
   <!-- Pantalla de partida aislada para que su diseño sea fácil de estudiar/modificar -->
-  <link rel="stylesheet" href="./css/partida.css?v=eventos-v25">
+  <link rel="stylesheet" href="./css/partida.css?v=eventos-centrados-v25u">
   <!-- Pantalla de suspense previa a INICIO: pulso interactivo + desbloqueo de audio -->
   <link rel="stylesheet" href="./css/suspense.css?v=suspense-v1">
   <!-- Adaptacion a movil: se carga la ultima para poder corregir las anteriores. -->
-  <link rel="stylesheet" href="./css/movil.css?v=responsive-config-v25j-responsive-audit">
+  <link rel="stylesheet" href="./css/movil.css?v=eventos-centrados-v25u-audio-v24-62">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-25-49-equilibrio-fragil.webp">
@@ -371,7 +371,10 @@
     <!-- CABECERA V17 · información distribuida en una franja cinematográfica. -->
     <header id="marcadores" class="cabecera-juego cabecera-partida-cinematica">
       <section class="hud-ronda hud-segmento" aria-label="Ronda actual">
-        <p id="contador-ronda" class="contador-ronda">RONDA 1 DE 12</p>
+        <p class="contador-ronda">
+          <span class="contador-ronda-etiqueta">RONDA</span>
+          <span id="contador-ronda" class="contador-ronda-valor">1 / 12</span>
+        </p>
       </section>
 
       <section id="tarjeta-crisis" class="hud-crisis hud-segmento tarjeta-crisis">
@@ -927,6 +930,6 @@
 
   <!-- NEXO V5 · efecto visual aislado de la lógica del juego -->
   <script type="module" src="./src/efecto-energia-esfera.js?v=config-v10-esfera-alineada"></script>
-  <script type="module" src="./dist/main.js?v=responsive-v26"></script>
+  <script type="module" src="./dist/main.js?v=responsive-hud-v25t-audio-v24-48"></script>
 </body>
 </html>
