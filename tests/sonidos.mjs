@@ -82,6 +82,8 @@ assert.doesNotMatch(suspense, /reproducirSonido\("confirmar"\)/);
 // Esto evita el retraso de un ciclo completo observado en Safari de iPad.
 assert.match(interfaz, /idPantalla === "pantalla-inicio"[\s\S]*classList\.add\("animacion-portada-activa"\)/);
 assert.match(interfaz, /ajustarFaseAnimacionPortada[\s\S]*--desfase-pulso-audio[\s\S]*--desfase-descarga-audio/);
+assert.match(interfaz, /function ocultarResolucion[\s\S]*hidden = true[\s\S]*setAttribute\("inert"[\s\S]*pointer-events[\s\S]*none/);
+assert.match(interfaz, /temporizadorPanelResultado = window\.setTimeout[\s\S]*hidden = false[\s\S]*removeAttribute\("inert"[\s\S]*removeProperty\("pointer-events"\)/);
 assert.match(suspense, /mostrarPantalla\("pantalla-inicio", audioInicio\.currentTime\)/);
 assert.match(suspense, /sincronizarAnimacionPortadaCuandoAvance[\s\S]*audioInicio\.currentTime > tiempoInicial \+ 0\.012[\s\S]*ajustarFaseAnimacionPortada\(audioInicio\.currentTime\)/);
 assert.doesNotMatch(main, /sincronizarPulsoPortada/);

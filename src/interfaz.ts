@@ -747,6 +747,12 @@ export function pintarApuestaElegida(apuesta) {
 export function pintarResolucion(resumen) {
     const panelResultado = elemento("zona-resolucion");
     ocultar("zona-resolucion");
+    // Safari/iPad puede conservar durante unos segundos la zona táctil de una
+    // capa fixed que acaba de ocultarse. hidden + inert la retiran también del
+    // mapa de interacción, no solo de la pintura de la página.
+    panelResultado.hidden = true;
+    panelResultado.setAttribute("inert", "");
+    panelResultado.style.setProperty("pointer-events", "none", "important");
     panelResultado.classList.remove("panel-resultado-entra");
     if (temporizadorPanelResultado !== null) {
         window.clearTimeout(temporizadorPanelResultado);
@@ -805,6 +811,9 @@ export function pintarResolucion(resumen) {
     const duracionHito = mostrarHitosDeEvolucion(resumen);
     const retraso = duracionHito > 0 ? duracionHito : 820;
     temporizadorPanelResultado = window.setTimeout(function () {
+        panelResultado.hidden = false;
+        panelResultado.removeAttribute("inert");
+        panelResultado.style.removeProperty("pointer-events");
         mostrar("zona-resolucion");
         panelResultado.classList.remove("panel-resultado-entra");
         void panelResultado.offsetWidth;
@@ -1063,7 +1072,12 @@ function activarRivalidadVisual(ganador) {
     if (ganador === "IA") nucleo.classList.add("rivalidad-ia-activa");
 }
 export function ocultarResolucion() {
+    const panelResultado = elemento("zona-resolucion");
     ocultar("zona-resolucion");
+    panelResultado.hidden = true;
+    panelResultado.setAttribute("inert", "");
+    panelResultado.style.setProperty("pointer-events", "none", "important");
+    panelResultado.classList.remove("panel-resultado-entra");
     if (temporizadorPanelResultado !== null) {
         window.clearTimeout(temporizadorPanelResultado);
         temporizadorPanelResultado = null;
