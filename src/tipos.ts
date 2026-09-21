@@ -36,13 +36,6 @@ export type CartaCrisis = {
   tipo: "Positiva" | "Negativa" | "Mixta";
 };
 
-/** Ficha de un evento especial (se dispara cada cuatro rondas). */
-export type FichaEvento = {
-  id: string;
-  nombre: string;
-  descripcion: string;
-};
-
 /** Ficha de una capacidad conquistable. */
 export type FichaCapacidad = {
   id: string;
