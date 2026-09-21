@@ -66,9 +66,9 @@ assert.match(sonidos, /const audioEfectos = new Audio\(\)/);
 assert.match(sonidos, /const pistas: HTMLAudioElement\[\] = \[musicaGlobal, audioEfectos\]/);
 assert.match(main, /pantalla-suspense[\s\S]*desbloquearAudioMovil\(\)/);
 assert.match(main, /conectarBotonApuesta[\s\S]*pointerdown[\s\S]*pointerType === "touch"[\s\S]*elegirApuesta\(apuesta\)/);
-assert.match(main, /function prepararRescateControlesIPad[\s\S]*pointerdown[\s\S]*pointerType[\s\S]*maxTouchPoints[\s\S]*getBoundingClientRect[\s\S]*elegirApuesta/);
-assert.match(main, /botonResolver\.disabled[\s\S]*cajaResolver[\s\S]*dentroResolver[\s\S]*confirmar\(\)/);
-assert.match(main, /botonSiguiente\.disabled[\s\S]*cajaSiguiente[\s\S]*dentroSiguiente[\s\S]*preventDefault\(\)[\s\S]*siguiente\(\)/);
+assert.match(main, /function prepararRescateControlesIPad[\s\S]*pointerdown[\s\S]*pointerType[\s\S]*maxTouchPoints[\s\S]*composedPath[\s\S]*getBoundingClientRect[\s\S]*botonSiguiente[\s\S]*siguiente\(\)[\s\S]*elegirApuesta[\s\S]*botonResolver[\s\S]*confirmar\(\)/);
+assert.match(main, /!botonResolver\.disabled[\s\S]*tocaControl\(botonResolver\)[\s\S]*confirmar\(\)/);
+assert.match(main, /!botonSiguiente\.disabled[\s\S]*tocaControl\(botonSiguiente\)[\s\S]*preventDefault\(\)[\s\S]*siguiente\(\)/);
 assert.match(main, /pointerdown[\s\S]*capture: true/);
 const reinicioDesplazamientoPartida = main.match(/function reiniciarDesplazamientoPartida[\s\S]*?^}/m)?.[0] || "";
 assert.match(reinicioDesplazamientoPartida, /requestAnimationFrame\(llevarAlInicio\)/);
@@ -90,6 +90,7 @@ assert.match(interfaz, /function ocultarResolucion[\s\S]*hidden = true[\s\S]*set
 assert.match(interfaz, /temporizadorPanelResultado = window\.setTimeout[\s\S]*hidden = false[\s\S]*removeAttribute\("inert"[\s\S]*removeProperty\("pointer-events"\)/);
 assert.match(interfaz, /function ocultarEvento[\s\S]*\.blur\(\)[\s\S]*hidden = true[\s\S]*setAttribute\("inert"[\s\S]*display[\s\S]*pointer-events[\s\S]*offsetWidth/);
 assert.match(interfaz, /function mostrarEvento[\s\S]*hidden = false[\s\S]*removeAttribute\("inert"[\s\S]*removeProperty\("display"\)[\s\S]*removeProperty\("pointer-events"\)/);
+assert.match(interfaz, /function precargarFondosPlaneta[\s\S]*navigator\.maxTouchPoints > 0[\s\S]*Math\.min\(window\.screen\.width, window\.screen\.height\) <= 640[\s\S]*if \(esTelefonoTactil\)[\s\S]*return/);
 assert.match(suspense, /mostrarPantalla\("pantalla-inicio", audioInicio\.currentTime\)/);
 assert.match(suspense, /sincronizarAnimacionPortadaCuandoAvance[\s\S]*audioInicio\.currentTime > tiempoInicial \+ 0\.012[\s\S]*ajustarFaseAnimacionPortada\(audioInicio\.currentTime\)/);
 assert.doesNotMatch(main, /sincronizarPulsoPortada/);
@@ -142,26 +143,26 @@ assert.match(main, /pausarAudioInicio\(\);\s*pausarMusicaIntroduccionConfiguraci
 const funcionAbrirConfiguracion = main.match(/function abrirConfiguracion\(\) \{[\s\S]*?\n\}/)?.[0] || "";
 assert.doesNotMatch(funcionAbrirConfiguracion, /pausarMusicaIntroduccionConfiguracion|reproducirMusicaIntroduccionConfiguracion/);
 
-// PLANETA RESTAURADO usa el canal común para 1–40% de Crisis.
+// PLANETA RESTAURADO usa el canal común exclusivamente para 0% de Crisis.
 assert.match(sonidos, /const RUTA_MUSICA_PLANETA_RESTAURADO = "\.\/assets\/audio\/final\/planeta-restaurado\.mp3"/);
 assert.match(sonidos, /const musicaPlanetaRestaurado = musicaGlobal/);
 assert.match(sonidos, /const VOLUMEN_BASE_PLANETA_RESTAURADO = 0\.22/);
-assert.match(sonidos, /const CRISIS_MINIMA_PLANETA_RESTAURADO = 1/);
-assert.match(sonidos, /const CRISIS_MAXIMA_PLANETA_RESTAURADO = 40/);
+assert.match(sonidos, /const CRISIS_MINIMA_PLANETA_RESTAURADO = 0/);
+assert.match(sonidos, /const CRISIS_MAXIMA_PLANETA_RESTAURADO = 0/);
 assert.match(sonidos, /function correspondeMusicaPlanetaRestaurado[\s\S]*const crisisPlaneta = 100 - saludPlaneta;[\s\S]*crisisPlaneta >= CRISIS_MINIMA_PLANETA_RESTAURADO[\s\S]*crisisPlaneta <= CRISIS_MAXIMA_PLANETA_RESTAURADO/);
-assert.match(main, /const crisisPlaneta = 100 - saludPlaneta;[\s\S]*else if \(crisisPlaneta <= 40\) \{\s*reproducirMusicaPlanetaRestaurado\(volumenSonido\);\s*\}\s*else \{\s*reproducirMusicaRivalidadFinal\(volumenSonido\);/);
+assert.match(main, /const crisisPlaneta = 100 - saludPlaneta;[\s\S]*if \(crisisPlaneta <= 0\) \{\s*reproducirMusicaPlanetaRestaurado\(volumenSonido\);[\s\S]*else if \(crisisPlaneta <= 40\) \{\s*reproducirMusicaEquilibrioRestablecido\(volumenSonido\);\s*\}\s*else \{\s*reproducirMusicaRivalidadFinal\(volumenSonido\);/);
 assert.match(main, /btn-volver-jugar[\s\S]*pausarMusicaPlanetaRestaurado\(true\);[\s\S]*partida = null/);
 assert.match(main, /reproducirMusicaFinalSiCorresponde\(\)/);
 assert.match(main, /pausarMusicaIntroduccionConfiguracion\(\);[\s\S]*pausarMusicaPlanetaRestaurado\(\);\s*pausarMusicaEquilibrioRestablecido\(\);\s*pausarMusicaPlanetaColapso\(\);\s*pausarMusicaRivalidadFinal\(\);\s*detenerEfectos\(\);/);
 assert.match(main, /actualizarVolumenMusicaPlanetaRestaurado\(volumenSonido\)/);
 
-// EQUILIBRIO RESTABLECIDO es la música exclusiva del 0% de Crisis.
+// EQUILIBRIO RESTABLECIDO es la música del 1–40% de Crisis.
 assert.match(sonidos, /const RUTA_MUSICA_EQUILIBRIO_RESTABLECIDO = "\.\/assets\/audio\/final\/equilibrio-restablecido\.mp3"/);
 assert.match(sonidos, /const musicaEquilibrioRestablecido = musicaGlobal/);
 assert.match(sonidos, /const VOLUMEN_BASE_EQUILIBRIO_RESTABLECIDO = 0\.22/);
-assert.match(main, /if \(crisisPlaneta <= 0\) \{\s*reproducirMusicaEquilibrioRestablecido\(volumenSonido\);/);
+assert.match(main, /else if \(crisisPlaneta <= 40\) \{\s*reproducirMusicaEquilibrioRestablecido\(volumenSonido\);/);
 assert.match(main, /function reproducirMusicaFinalSiCorresponde[\s\S]*reproducirMusicaDelDesenlace\(partida\.getSaludPlaneta\(\)\)/);
-assert.match(main, /function terminarPartida[\s\S]*reproducirMusicaDelDesenlace\(resumen\.saludPlaneta\)/);
+assert.match(main, /function terminarPartida[\s\S]*reproducirDesenlace\(function \(\) \{[\s\S]*reproducirMusicaDelDesenlace\(resumen\.saludPlaneta\)/);
 assert.match(main, /btn-volver-jugar[\s\S]*pausarMusicaEquilibrioRestablecido\(true\);[\s\S]*partida = null/);
 assert.match(main, /actualizarVolumenMusicaEquilibrioRestablecido\(volumenSonido\)/);
 assert.match(main, /window\.addEventListener\("pagehide", detenerAudioAlSalir\)/);
@@ -191,7 +192,10 @@ assert.match(sonidos, /reproducirMusicaRivalidadFinal[\s\S]*musicaRivalidadFinal
 assert.doesNotMatch(main, /ultimoResultadoRonda/);
 assert.doesNotMatch(main, /finalConMusicaRivalidad/);
 assert.match(main, /cancelarEfectosProgramados\(\);\s*detenerEfectos\(\);\s*const resumen = partida\.calcularFinal\(\)/);
-assert.match(main, /reproducirMusicaDelDesenlace\(resumen\.saludPlaneta\);[\s\S]*if \(crisisFinal < 41 \|\| crisisFinal >= 100\) reproducirDesenlace\(\);/);
+assert.match(main, /mostrarPantalla\("pantalla-final"\);[\s\S]*reproducirDesenlace\(function \(\) \{[\s\S]*reproducirMusicaDelDesenlace\(resumen\.saludPlaneta\);/);
+assert.match(sonidos, /export function reproducirSonido\(nombre: string, alTerminar\?: \(\) => void\)[\s\S]*audio\.onended = function \(\) \{\s*completar\(\);/);
+assert.match(sonidos, /const DURACION_ENTRADA_DESENLACE_MS = 3000/);
+assert.match(sonidos, /reproducirDesenlace[\s\S]*activo\.audio\.pause\(\);\s*activo\.audio\.currentTime = 0;[\s\S]*completarEntrada\(\);/);
 assert.match(main, /btn-volver-jugar[\s\S]*pausarMusicaRivalidadFinal\(true\);[\s\S]*partida = null/);
 assert.match(main, /actualizarVolumenMusicaRivalidadFinal\(volumenSonido\)/);
 assert.doesNotMatch(sonidos, /eventoPositivo|eventos\/positivo\.mp3/);
@@ -222,6 +226,7 @@ globalThis.document = {
   removeEventListener: function () {},
   getElementById: function () { return null; }
 };
+globalThis.window = globalThis;
 globalThis.Audio = class {
   constructor(ruta) {
     this.src = ruta;
@@ -255,9 +260,9 @@ assert.equal(audiosCreados.length, 2);
 const musicaCompartida = audiosCreados[0];
 const canalEfectos = audiosCreados[1];
 assert.equal(musicaCompartida.loop, true);
-assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(100), false); // 0% Crisis
-assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(99), true);  // 1% Crisis
-assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(60), true);  // 40% Crisis
+assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(100), true);  // 0% Crisis
+assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(99), false); // 1% Crisis
+assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(60), false); // 40% Crisis
 assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(59), false); // 41% Crisis
 assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(1), false);  // 99% Crisis
 assert.equal(moduloSonidos.correspondeMusicaPlanetaRestaurado(0), false);  // 100% Crisis
@@ -279,6 +284,19 @@ assert.equal(canalEfectos.src, "./assets/audio/sfx/ui/confirmar.mp3");
 assert.equal(canalEfectos.reproducciones, 1);
 assert.equal(canalEfectos.paused, false);
 assert.equal(canalEfectos.muted, false);
+
+// La entrada final debe completar desenlace.mp3 antes de habilitar la
+// continuación que iniciará la música larga correspondiente al porcentaje.
+let entradasFinalesCompletadas = 0;
+moduloSonidos.reproducirDesenlace(function () {
+  entradasFinalesCompletadas += 1;
+});
+assert.equal(canalEfectos.src, "./assets/audio/sfx/transiciones/desenlace.mp3");
+assert.equal(entradasFinalesCompletadas, 0);
+canalEfectos.onended();
+assert.equal(entradasFinalesCompletadas, 1);
+canalEfectos.onended();
+assert.equal(entradasFinalesCompletadas, 1);
 
 moduloSonidos.reproducirMusicaIntroduccionConfiguracion(28);
 assert.equal(musicaCompartida.src, "./assets/audio/musica/introduccion-configuracion.mp3");

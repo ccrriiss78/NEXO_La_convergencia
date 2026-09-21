@@ -465,13 +465,13 @@ function reproducirMusicaFinalSiCorresponde() {
 function reproducirMusicaDelDesenlace(saludPlaneta) {
     const crisisPlaneta = 100 - saludPlaneta;
     if (crisisPlaneta <= 0) {
-        reproducirMusicaEquilibrioRestablecido(volumenSonido);
+        reproducirMusicaPlanetaRestaurado(volumenSonido);
     }
     else if (crisisPlaneta >= 100) {
         reproducirMusicaPlanetaColapso(volumenSonido);
     }
     else if (crisisPlaneta <= 40) {
-        reproducirMusicaPlanetaRestaurado(volumenSonido);
+        reproducirMusicaEquilibrioRestablecido(volumenSonido);
     }
     else {
         reproducirMusicaRivalidadFinal(volumenSonido);
@@ -615,19 +615,47 @@ function prepararRescateControlesIPad() {
             return;
         if (!elemento("pantalla-juego").classList.contains("activa"))
             return;
+        const tocaControl = function (boton) {
+            // composedPath() identifica el botón aunque el toque caiga sobre uno
+            // de sus hijos. Las coordenadas quedan como respaldo para el fallo de
+            // WebKit que conserva una capa de la ronda anterior sobre el control.
+            if (evento.composedPath().includes(boton))
+                return true;
+            const caja = boton.getBoundingClientRect();
+            if (caja.width === 0 || caja.height === 0)
+                return false;
+            return evento.clientX >= caja.left && evento.clientX <= caja.right &&
+                evento.clientY >= caja.top && evento.clientY <= caja.bottom;
+        };
         const modalEvento = elemento("superposicion-evento");
-        if (!modalEvento.hidden && !modalEvento.classList.contains("oculta"))
+        if (!modalEvento.hidden && !modalEvento.classList.contains("oculta")) {
+            // Con el evento abierto ningún control del tablero debe responder,
+            // pero CONTINUAR necesita la misma ruta táctil fiable del iPad.
+            const botonCerrarEvento = elemento("btn-cerrar-evento");
+            if (!botonCerrarEvento.disabled && tocaControl(botonCerrarEvento)) {
+                evento.preventDefault();
+                evento.stopPropagation();
+                cerrarEventoDeRonda();
+            }
             return;
+        }
+        // En la resolución solo existe SIGUIENTE RONDA. Debe comprobarse antes
+        // que los controles de decisión para que un botón oculto no interrumpa
+        // el rescate táctil de la siguiente ronda.
+        const botonSiguiente = elemento("btn-siguiente");
+        if (!botonSiguiente.disabled && !botonSiguiente.classList.contains("oculta") && tocaControl(botonSiguiente)) {
+            evento.preventDefault();
+            evento.stopPropagation();
+            siguiente();
+            return;
+        }
         const opciones = [
             { id: "btn-apuesta-par", apuesta: "PAR" },
             { id: "btn-apuesta-impar", apuesta: "IMPAR" }
         ];
         for (let i = 0; i < opciones.length; i++) {
             const boton = elemento(opciones[i].id);
-            const caja = boton.getBoundingClientRect();
-            const dentro = evento.clientX >= caja.left && evento.clientX <= caja.right &&
-                evento.clientY >= caja.top && evento.clientY <= caja.bottom;
-            if (dentro) {
+            if (tocaControl(boton)) {
                 evento.preventDefault();
                 evento.stopPropagation();
                 elegirApuesta(opciones[i].apuesta);
@@ -635,27 +663,10 @@ function prepararRescateControlesIPad() {
             }
         }
         const botonResolver = elemento("btn-confirmar-jugada");
-        if (botonResolver.disabled || botonResolver.classList.contains("oculta"))
-            return;
-        const cajaResolver = botonResolver.getBoundingClientRect();
-        const dentroResolver = evento.clientX >= cajaResolver.left && evento.clientX <= cajaResolver.right &&
-            evento.clientY >= cajaResolver.top && evento.clientY <= cajaResolver.bottom;
-        if (dentroResolver) {
+        if (!botonResolver.disabled && !botonResolver.classList.contains("oculta") && tocaControl(botonResolver)) {
             evento.preventDefault();
             evento.stopPropagation();
             confirmar();
-            return;
-        }
-        const botonSiguiente = elemento("btn-siguiente");
-        if (botonSiguiente.disabled || botonSiguiente.classList.contains("oculta"))
-            return;
-        const cajaSiguiente = botonSiguiente.getBoundingClientRect();
-        const dentroSiguiente = evento.clientX >= cajaSiguiente.left && evento.clientX <= cajaSiguiente.right &&
-            evento.clientY >= cajaSiguiente.top && evento.clientY <= cajaSiguiente.bottom;
-        if (dentroSiguiente) {
-            evento.preventDefault();
-            evento.stopPropagation();
-            siguiente();
         }
     }, { capture: true });
 }
@@ -1092,7 +1103,6 @@ function terminarPartida(guardarProgreso = true) {
     cancelarEfectosProgramados();
     detenerEfectos();
     const resumen = partida.calcularFinal();
-    const crisisFinal = 100 - resumen.saludPlaneta;
     if (guardarProgreso) {
         guardarPerfil(resumen.perfil.nombre);
         guardarMejorMarca(partida.getJugador().getNombre(), resumen);
@@ -1105,12 +1115,15 @@ function terminarPartida(guardarProgreso = true) {
     pausarMusicaEquilibrioRestablecido(true);
     pausarMusicaPlanetaColapso(true);
     mostrarPantalla("pantalla-final");
-    reproducirMusicaDelDesenlace(resumen.saludPlaneta);
-    // iPadOS concede a veces un único canal multimedia: el efecto corto podía
-    // interrumpir inmediatamente rivalidad-final.mp3. En el tramo 41–99% la
-    // canción larga es el único audio del desenlace.
-    if (crisisFinal < 41 || crisisFinal >= 100)
-        reproducirDesenlace();
+    // Todos los finales comparten la misma entrada breve. La música larga
+    // empieza únicamente cuando desenlace.mp3 termina, para que Safari no
+    // solape ni interrumpa los dos canales.
+    reproducirDesenlace(function () {
+        const finalActivo = elemento("pantalla-final").classList.contains("activa");
+        if (sonidoActivo && finalActivo && partida !== null) {
+            reproducirMusicaDelDesenlace(resumen.saludPlaneta);
+        }
+    });
 }
 /** Detiene y rebobina el audio cuando la página deja de estar activa. */
 function detenerAudioAlSalir() {

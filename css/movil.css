@@ -3897,6 +3897,43 @@
   }
 }
 
+/* El último botón de la introducción usa una imagen 1552:400. En horizontal
+   no se debe combinar un ancho grande con una altura fija de 32px, porque la
+   imagen se encoge dentro de la caja mientras el rótulo conserva todo el ancho. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) and (hover: none) and (pointer: coarse) {
+  #pantalla-introduccion #btn-ir-configuracion.ultimo-paso {
+    box-sizing: border-box !important;
+    width: min(42vw, 190px) !important;
+    min-width: 0 !important;
+    max-width: 190px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 1552 / 400 !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    border-radius: 9px !important;
+    transform: none !important;
+  }
+
+  #pantalla-introduccion #btn-ir-configuracion.ultimo-paso::before {
+    inset: 25% 9% !important;
+    border-radius: 5px !important;
+  }
+
+  #pantalla-introduccion #btn-ir-configuracion.ultimo-paso::after {
+    inset: 24% 10% !important;
+    padding: 0 2px !important;
+    font-size: clamp(7.5px, 2.35dvh, 9.5px) !important;
+    letter-spacing: .08em !important;
+  }
+
+  #pantalla-introduccion #btn-ir-configuracion.ultimo-paso .boton-continuar-estado {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+}
+
 @media (orientation: landscape) and (max-width: 950px) and (max-height: 350px) {
   #pantalla-juego #zona-mano,
   #pantalla-juego .zona-mano-cinematica,
@@ -4264,6 +4301,40 @@
 /* Chispa creativa en telefono vertical: el aviso ocupa todo el panel y la
    declaracion queda centrada debajo, sin una columna derecha vacia. */
 @media (orientation: portrait) and (max-width: 640px) and (hover: none) and (pointer: coarse) {
+  /* La barra inferior de Safari reduce el alto util de algunos iPhone. Una
+     regla antigua cerraba esta pantalla a 100svh con overflow:hidden y
+     comprimía el marco panoramico de INICIAR PROTOCOLO. Dejamos que el
+     documento crezca y conservamos la proporcion completa del asset. */
+  #pantalla-configuracion,
+  #pantalla-configuracion.activa {
+    height: auto !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  #pantalla-configuracion .contenido-configuracion {
+    height: auto !important;
+    min-height: 100dvh !important;
+    padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px)) !important;
+  }
+
+  #pantalla-configuracion .configuracion-inferior {
+    overflow: visible !important;
+  }
+
+  #pantalla-configuracion .boton-iniciar-nexo,
+  #pantalla-configuracion #btn-iniciar-partida {
+    width: min(100%, 570px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 1552 / 400 !important;
+    flex: 0 0 auto !important;
+  }
+
   #pantalla-juego #zona-declaraciones.chispa-activa,
   #pantalla-juego .zona-declaraciones-nexo.chispa-activa {
     box-sizing: border-box !important;
@@ -4329,5 +4400,276 @@
     min-width: 0 !important;
     max-width: 380px !important;
     margin: 0 auto !important;
+  }
+}
+
+/* Móvil horizontal: la jugada sigue ocupando la primera pantalla, pero los
+   paneles de Humano e IA que están debajo deben ser alcanzables. Una regla de
+   compactación anterior fijaba overflow:hidden y los dejaba recortados, por
+   lo que se perdían la evolución, las fortalezas y las cartas disponibles IA. */
+@media (orientation: landscape) and (max-width: 1050px) and (max-height: 560px) and (hover: none) and (pointer: coarse) {
+  #pantalla-juego,
+  #pantalla-juego.activa {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+  }
+
+  #pantalla-juego #tablero,
+  #pantalla-juego .tablero-cinematico {
+    position: relative !important;
+    inset: auto !important;
+    width: calc(100% - max(16px, env(safe-area-inset-left) + env(safe-area-inset-right))) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 146px auto 0 !important;
+    padding-bottom: max(28px, env(safe-area-inset-bottom)) !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas:
+      "central central"
+      "humano ia" !important;
+    grid-template-rows: auto auto !important;
+    align-items: start !important;
+    gap: 12px !important;
+    overflow: visible !important;
+  }
+
+  #pantalla-juego #centro-partida,
+  #pantalla-juego .zona-central-cinematica {
+    grid-area: central !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  #pantalla-juego #zona-decision-activa {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    justify-content: flex-start !important;
+    overflow: visible !important;
+  }
+
+  #pantalla-juego .panel-personaje-humano,
+  #pantalla-juego .panel-personaje-ia {
+    display: block !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  #pantalla-juego .panel-personaje-humano { grid-area: humano !important; }
+  #pantalla-juego .panel-personaje-ia { grid-area: ia !important; }
+}
+
+/* Chispa Creativa en móvil horizontal: la información que revela la carta IA
+   ocupa una fila propia entre las declaraciones y la mano. Nunca comparte el
+   mismo plano con PAR/IMPAR ni queda escondida detrás de sus botones. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) and (hover: none) and (pointer: coarse) {
+  #pantalla-juego #zona-declaraciones.chispa-activa,
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa {
+    height: auto !important;
+    min-height: 130px !important;
+    max-height: none !important;
+    padding: 2px 8px 4px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: 52px 58px 12px !important;
+    column-gap: 8px !important;
+    row-gap: 2px !important;
+    align-items: center !important;
+    overflow: visible !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .declaracion-humano {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .declaracion-ia-cinematica {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .pista-chispa-nexo {
+    position: relative !important;
+    inset: auto !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    margin: 0 !important;
+    padding: 3px 9px !important;
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr) !important;
+    gap: 9px !important;
+    align-items: center !important;
+    overflow: hidden !important;
+    animation: none !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .pista-chispa-nexo img {
+    grid-column: 1 !important;
+    width: 36px !important;
+    height: 52px !important;
+    margin: 0 auto !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa {
+    grid-column: 2 !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: auto auto minmax(0, 1fr) !important;
+    gap: 8px !important;
+    align-items: center !important;
+    text-align: left !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa span,
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa strong,
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa p {
+    min-width: 0 !important;
+    margin: 0 !important;
+    line-height: 1.1 !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa span { font-size: 7px !important; white-space: nowrap !important; }
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa strong { font-size: 12px !important; white-space: nowrap !important; }
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa p { font-size: 9px !important; }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .consecuencia {
+    grid-column: 1 / -1 !important;
+    grid-row: 3 !important;
+    display: block !important;
+  }
+
+  /* Los demás eventos conservan su efecto en una franja independiente bajo
+     el HUD. Se reserva espacio real antes del tablero para que nunca cubra la
+     declaración. Chispa usa el panel detallado anterior y evita duplicados. */
+  #pantalla-juego #evento-activo-resumen:not(.oculta) {
+    position: absolute !important;
+    top: 143px !important;
+    left: max(8px, env(safe-area-inset-left)) !important;
+    right: max(8px, env(safe-area-inset-right)) !important;
+    bottom: auto !important;
+    box-sizing: border-box !important;
+    width: auto !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    max-height: 28px !important;
+    padding: 3px 9px !important;
+    display: grid !important;
+    grid-template-columns: auto auto minmax(0, 1fr) !important;
+    gap: 7px !important;
+    align-items: center !important;
+    overflow: hidden !important;
+    z-index: 90 !important;
+  }
+
+  #pantalla-juego #evento-activo-resumen:not(.oculta) span,
+  #pantalla-juego #evento-activo-resumen:not(.oculta) strong {
+    white-space: nowrap !important;
+  }
+
+  #pantalla-juego #evento-activo-resumen:not(.oculta) p {
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) #tablero,
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) .tablero-cinematico {
+    margin-top: 174px !important;
+  }
+
+  #pantalla-juego:has(.zona-declaraciones-nexo.chispa-activa) #evento-activo-resumen {
+    display: none !important;
+  }
+
+  #pantalla-juego:has(.zona-declaraciones-nexo.chispa-activa) #tablero,
+  #pantalla-juego:has(.zona-declaraciones-nexo.chispa-activa) .tablero-cinematico {
+    margin-top: 146px !important;
+  }
+
+  /* Modificador de ronda: ahora que la pantalla completa se desplaza, es más
+     legible ampliar el HUD que crear un scroll diminuto dentro de la tarjeta.
+     El texto se muestra entero y el tablero comienza después de ese contenido. */
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)) #marcadores {
+    height: 150px !important;
+    min-height: 150px !important;
+    grid-template-rows: 116px 30px !important;
+    overflow: visible !important;
+  }
+
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)) .hud-impacto {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  #pantalla-juego #tarjeta-carta-crisis:not(.oculta) {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin-top: 3px !important;
+    padding: 3px 6px !important;
+    overflow: visible !important;
+  }
+
+  #pantalla-juego #tarjeta-carta-crisis:not(.oculta) #descripcion-carta-crisis,
+  #pantalla-juego #tarjeta-carta-crisis:not(.oculta) #impacto-carta-crisis {
+    display: block !important;
+    margin: 1px 0 0 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)) #tablero,
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)) .tablero-cinematico {
+    margin-top: 184px !important;
+  }
+
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)) #evento-activo-resumen:not(.oculta) {
+    top: 181px !important;
+  }
+
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)):has(#evento-activo-resumen:not(.oculta)) #tablero,
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)):has(#evento-activo-resumen:not(.oculta)) .tablero-cinematico {
+    margin-top: 214px !important;
+  }
+
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)):has(.zona-declaraciones-nexo.chispa-activa) #tablero,
+  #pantalla-juego:has(#tarjeta-carta-crisis:not(.oculta)):has(.zona-declaraciones-nexo.chispa-activa) .tablero-cinematico {
+    margin-top: 184px !important;
+  }
+
+  /* El aviso de evento ya no comparte la fila de la acción. Se anula la regla
+     heredada de teléfonos muy bajos que reservaba su mitad derecha y empujaba
+     RESOLVER RONDA hacia la izquierda. */
+  #pantalla-juego #acciones,
+  #pantalla-juego .acciones-partida,
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) #acciones,
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) .acciones-partida {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  #pantalla-juego #btn-confirmar-jugada,
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) #btn-confirmar-jugada {
+    width: min(340px, 76vw) !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
   }
 }

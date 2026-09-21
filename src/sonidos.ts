@@ -169,17 +169,17 @@ let temporizadorMusicaPartida: number | null = null;
 let volumenObjetivoMusicaPartida = 0;
 
 // PLANETA RESTAURADO · V24.46
-// Acompaña la pantalla final cuando la Crisis queda entre el 1% y el 40%.
+// Acompaña exclusivamente la recuperación completa: 0% de Crisis.
 // Se repite hasta que el jugador vuelve a jugar, abandona la página o silencia
 // el proyecto.
 const VOLUMEN_BASE_PLANETA_RESTAURADO = 0.22;
-const CRISIS_MINIMA_PLANETA_RESTAURADO = 1;
-const CRISIS_MAXIMA_PLANETA_RESTAURADO = 40;
+const CRISIS_MINIMA_PLANETA_RESTAURADO = 0;
+const CRISIS_MAXIMA_PLANETA_RESTAURADO = 0;
 const RUTA_MUSICA_PLANETA_RESTAURADO = "./assets/audio/final/planeta-restaurado.mp3";
 const musicaPlanetaRestaurado = musicaGlobal;
 
 // EQUILIBRIO RESTABLECIDO · V24.46
-// Es la música exclusiva del mejor estado planetario: 0% de Crisis.
+// Acompaña la recuperación parcial entre el 1% y el 40% de Crisis.
 // Su nivel se mantiene alineado con la pista de recuperación parcial.
 const VOLUMEN_BASE_EQUILIBRIO_RESTABLECIDO = 0.22;
 const RUTA_MUSICA_EQUILIBRIO_RESTABLECIDO = "./assets/audio/final/equilibrio-restablecido.mp3";
@@ -196,6 +196,12 @@ const musicaPlanetaColapso = musicaGlobal;
 // la partida para evitar bloqueos de reproductores secundarios en Safari.
 const VOLUMEN_BASE_RIVALIDAD_FINAL = 0.18;
 const musicaRivalidadFinal = musicaPartida;
+
+// desenlace.mp3 dura 7,37 s, pero su golpe principal termina antes de 3 s y
+// el resto es una cola cada vez más tenue. Esperar el archivo completo dejaba
+// la pantalla final varios segundos sin música. Cortamos esa cola antes de
+// iniciar la pista larga: los dos sonidos nunca llegan a solaparse.
+const DURACION_ENTRADA_DESENLACE_MS = 3000;
 
 const canalesActivos: { [canal: string]: CanalActivo } = {};
 const audiosPreparados: { [nombre: string]: HTMLAudioElement } = {};
@@ -290,7 +296,7 @@ export function desbloquearAudioMovil(): void {
 }
 
 /** Reproduce un efecto y detiene únicamente el anterior de su mismo canal. */
-export function reproducirSonido(nombre: string): void {
+export function reproducirSonido(nombre: string, alTerminar?: () => void): void {
   const configuracion = SONIDOS[nombre];
   if (!sonidoPermitido() || configuracion === undefined) return;
 
@@ -310,16 +316,27 @@ export function reproducirSonido(nombre: string): void {
     volumenBase: configuracion.volumen
   };
 
-  audio.onended = function () {
+  let finalizado = false;
+  const completar = function (): void {
+    if (finalizado) return;
+    finalizado = true;
     if (canalesActivos[configuracion.canal]?.audio === audio) {
       delete canalesActivos[configuracion.canal];
     }
+    if (alTerminar !== undefined) alTerminar();
+  };
+
+  audio.onended = function () {
+    completar();
   };
   audio.play().catch(function (error: DOMException) {
     // Si llega otro clic muy rápido, rebobinar el mismo sonido cancela la
     // reproducción anterior de forma normal. Solo avisamos de errores reales.
     if (error.name !== "AbortError") {
       console.warn("NEXO: el navegador no ha podido reproducir un efecto de sonido.", error.message);
+      // Si Safari rechaza únicamente el efecto breve, el desenlace no debe
+      // quedarse también sin su música larga.
+      completar();
     }
   });
 }
@@ -779,6 +796,36 @@ export function reproducirFeedbackDeRonda(resumen: ResumenRonda): void {
   }
 }
 
-export function reproducirDesenlace(): void {
-  reproducirSonido("desenlace");
+export function reproducirDesenlace(alTerminar?: () => void): void {
+  if (!sonidoPermitido()) return;
+
+  let entradaCompletada = false;
+  let temporizador: number | null = null;
+  const completarEntrada = function (): void {
+    if (entradaCompletada) return;
+    entradaCompletada = true;
+    if (temporizador !== null) {
+      window.clearTimeout(temporizador);
+      const posicion = temporizadoresSonido.indexOf(temporizador);
+      if (posicion !== -1) temporizadoresSonido.splice(posicion, 1);
+      temporizador = null;
+    }
+    if (alTerminar !== undefined) alTerminar();
+  };
+
+  reproducirSonido("desenlace", completarEntrada);
+  temporizador = window.setTimeout(function () {
+    const posicion = temporizadoresSonido.indexOf(temporizador as number);
+    if (posicion !== -1) temporizadoresSonido.splice(posicion, 1);
+    temporizador = null;
+
+    const activo = canalesActivos.desenlace;
+    if (activo !== undefined) {
+      activo.audio.pause();
+      activo.audio.currentTime = 0;
+      delete canalesActivos.desenlace;
+    }
+    completarEntrada();
+  }, DURACION_ENTRADA_DESENLACE_MS);
+  temporizadoresSonido.push(temporizador);
 }

@@ -5,24 +5,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO — La Convergencia</title>
+  <!-- Protección del primer fotograma en dispositivos lentos. El documento
+       permanece negro y sin texto sin estilos hasta que las cuatro hojas
+       locales están listas. El temporizador evita bloquear la página si una
+       petición falla. -->
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #020609; }
+    body { visibility: hidden; }
+    html.nexo-estilos-listos body { visibility: visible; }
+  </style>
+  <script>
+    (function () {
+      var pendientes = 4;
+      var mostrar = function () {
+        document.documentElement.classList.add("nexo-estilos-listos");
+      };
+      window.nexoEstiloCargado = function () {
+        pendientes -= 1;
+        if (pendientes <= 0) mostrar();
+      };
+      window.setTimeout(mostrar, 4000);
+    }());
+  </script>
   <link rel="icon" type="image/webp" href="./assets/images/portada/logo/nexo_x_estatica_centrada_sin_limite.webp">
-    <link rel="stylesheet" href="./css/style.css?v=portada-pulso-sincrono-v29j">
+    <link rel="stylesheet" href="./css/style.css?v=portada-pulso-sincrono-v29j" onload="nexoEstiloCargado()" onerror="nexoEstiloCargado()">
   <!-- Pantalla de partida aislada para que su diseño sea fácil de estudiar/modificar -->
-  <link rel="stylesheet" href="./css/partida.css?v=eventos-centrados-v25u">
+  <link rel="stylesheet" href="./css/partida.css?v=eventos-centrados-v25u" onload="nexoEstiloCargado()" onerror="nexoEstiloCargado()">
   <!-- Pantalla de suspense previa a INICIO: pulso interactivo + desbloqueo de audio -->
-  <link rel="stylesheet" href="./css/suspense.css?v=esquinas-iphone-v29a">
+  <link rel="stylesheet" href="./css/suspense.css?v=esquinas-iphone-v29a" onload="nexoEstiloCargado()" onerror="nexoEstiloCargado()">
   <!-- Adaptacion a movil: se carga la ultima para poder corregir las anteriores. -->
-    <link rel="stylesheet" href="./css/movil.css?v=movil-horizontal-ordenado-v29j">
+    <link rel="stylesheet" href="./css/movil.css?v=movil-vertical-iniciar-v44" onload="nexoEstiloCargado()" onerror="nexoEstiloCargado()">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp">
   <link rel="preload" as="image" href="./assets/images/portada/fondos/fondo-inicio-nexo.webp">
   <link rel="preload" as="image" href="./assets/images/portada/logo/nexo_logo_base_tipografia_original_hd.webp">
   <link rel="preload" as="image" href="./assets/images/portada/logo/nexo_x_estatica_centrada_sin_limite.webp">
   <link rel="preload" as="image" href="./assets/images/portada/botones/boton-jugar-prismatico-transparente.webp">
-  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-25-49-equilibrio-fragil.webp">
-  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-50-74-equilibrio-critico.webp">
-  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-75-99-colapso-inminente.webp">
-  <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-100-crisis-catastrofica.webp">
 </head>
 <body>
 
@@ -934,6 +952,6 @@
 
   <!-- NEXO V5 · efecto visual aislado de la lógica del juego -->
   <script type="module" src="./src/efecto-energia-esfera.js?v=config-v10-esfera-alineada"></script>
-  <script type="module" src="./dist/main.js?v=ipad-controles-rondas-v33"></script>
+  <script type="module" src="./dist/main.js?v=audio-final-v46"></script>
 </body>
 </html>

@@ -26,6 +26,15 @@ const RUTA_PLANETA_RECUPERADO = "./assets/images/partida/fondos-planeta/partida-
 // Así, al cruzar 25/50/75/100 no aparece un hueco negro mientras llega el nuevo fondo.
 const FONDOS_PLANETA_PRECARGADOS = [];
 function precargarFondosPlaneta() {
+    // Safari puede reconstruir una pestaña cuando un teléfono con poca memoria
+    // conserva decodificados todos los fondos grandes a la vez. En teléfonos
+    // táctiles dejamos que pintarEvolucionVisual cargue únicamente el tramo que
+    // haga falta; mantiene el fondo anterior hasta recibir el nuevo, sin flashes.
+    const esTelefonoTactil = navigator.maxTouchPoints > 0 &&
+        Math.min(window.screen.width, window.screen.height) <= 640;
+    if (esTelefonoTactil) {
+        return;
+    }
     const recuperado = new Image();
     recuperado.src = RUTA_PLANETA_RECUPERADO;
     FONDOS_PLANETA_PRECARGADOS.push(recuperado);
