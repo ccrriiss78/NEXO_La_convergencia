@@ -16,6 +16,12 @@
 
 @media (max-width: 640px) {
 
+  /* Safari/iPhone amplía toda la página al enfocar inputs menores de 16px.
+     Mantener este tamaño evita el zoom automático sin bloquear el zoom manual. */
+  #pantalla-configuracion #nombre-jugador {
+    font-size: 16px !important;
+  }
+
   /* ---- Contenedor general: que pueda crecer y desplazarse ---- */
   #pantalla-juego {
     height: auto !important;
@@ -2094,10 +2100,104 @@
 }
 
 @media (orientation: landscape) and (max-height: 380px) {
-  #pantalla-juego #marcadores { margin-top: 28px !important; }
+  #pantalla-juego #marcadores { margin-top: 32px !important; }
   #pantalla-juego .hud-segmento { min-height: 32px !important; }
   #pantalla-juego .logo-partida-estatico { height: 20px !important; top: 4px !important; }
-  #pantalla-juego .controles-sistema-juego { transform: scale(.72) !important; }
+  #pantalla-juego .controles-sistema-juego {
+    top: 2px !important;
+    transform: scale(.70) !important;
+  }
+}
+
+/* Tablet horizontal grande: algunos Android informan un ancho de escritorio
+   (hasta 1280px). Se reservan carriles reales para logo, HUD y controles para
+   que RONDA e IMPACTO no queden debajo de elementos flotantes. */
+@media (orientation: landscape) and (min-width: 1051px) and (max-width: 1400px) and (max-height: 900px) {
+  #pantalla-configuracion .panel-identidad {
+    transform: translateY(calc(-50% - 20px)) !important;
+  }
+
+  #pantalla-juego .logo-partida-estatico {
+    left: 14px !important;
+    top: 10px !important;
+    width: 118px !important;
+    max-width: 118px !important;
+  }
+
+  #pantalla-juego .cabecera-partida-cinematica {
+    left: 145px !important;
+    right: 240px !important;
+    grid-template-columns: 100px minmax(280px, 1.12fr) minmax(300px, 1fr) !important;
+  }
+
+  #pantalla-juego .contador-ronda-etiqueta,
+  #pantalla-juego .contador-ronda-valor {
+    display: block !important;
+    white-space: nowrap !important;
+  }
+
+  #pantalla-juego .hud-ronda .contador-ronda {
+    font-size: 16px !important;
+    line-height: 1.12 !important;
+  }
+
+  #pantalla-juego .controles-sistema-juego {
+    top: 10px !important;
+    right: 12px !important;
+    gap: 7px !important;
+    transform: scale(.9) !important;
+    transform-origin: top right !important;
+  }
+}
+
+/* iPad/tablet horizontal: Safari calcula 100vh con la zona que queda detrás
+   de sus barras. 100dvh mantiene toda la partida dentro del área realmente
+   visible. En dispositivos táctiles se eleva únicamente la declaración para
+   que su franja inferior nunca invada el título ni las cinco cartas. */
+@media (orientation: landscape) and (min-width: 1051px) and (max-width: 1400px) and (pointer: coarse) {
+  #pantalla-juego {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo {
+    bottom: calc(clamp(300px, 32dvh, 330px) + 150px) !important;
+    transform: translateX(-50%) !important;
+    z-index: 430 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation;
+  }
+}
+
+/* Safari de iPad actualiza tarde la altura de sus barras al entrar en la
+   partida. La compensación anterior deja desde el primer fotograma el mismo
+   encuadre que el navegador obtiene después de desplazar manualmente. */
+@supports (-webkit-touch-callout: none) {
+  @media (orientation: landscape) and (min-width: 1051px) and (max-width: 1400px) {
+    #pantalla-juego .zona-declaraciones-nexo {
+      bottom: calc(clamp(300px, 32dvh, 330px) + 150px) !important;
+      transform: translateX(-50%) !important;
+      z-index: 430 !important;
+      pointer-events: auto !important;
+      touch-action: manipulation;
+    }
+
+    #pantalla-juego .zona-declaraciones-nexo .boton-apuesta {
+      position: relative !important;
+      z-index: 431 !important;
+      pointer-events: auto !important;
+      touch-action: manipulation;
+    }
+  }
+}
+
+/* La barra de Chrome de algunas tablets deja unos 640px útiles: en ese caso
+   los avatares necesitan subir más para liberar nombre y número de rondas. */
+@media (orientation: landscape) and (min-width: 1051px) and (max-width: 1400px) and (max-height: 680px) {
+  #pantalla-configuracion .panel-identidad {
+    transform: translateY(calc(-50% - 60px)) !important;
+  }
 }
 
 /* Movil vertical bajo (iPhone SE / 8, 667px de alto o menos): la zona de
@@ -2417,6 +2517,7 @@
 
   /* nombre, rondas y boton a la misma altura y en la misma linea */
   #pantalla-configuracion .configuracion-inferior { align-items: end !important; }
+  #pantalla-configuracion .configuracion-inferior { margin-top: 8px !important; }
   #pantalla-configuracion .control-jugador,
   #pantalla-configuracion .opciones-rondas,
   #pantalla-configuracion .boton-iniciar-nexo {
@@ -2426,7 +2527,15 @@
     margin-bottom: 0 !important;
   }
   #pantalla-configuracion .grupo-jugador,
-  #pantalla-configuracion .grupo-rondas { align-content: end !important; }
+  #pantalla-configuracion .grupo-rondas {
+    grid-template-rows: auto auto !important;
+    align-content: end !important;
+  }
+  #pantalla-configuracion #titulo-jugador,
+  #pantalla-configuracion #titulo-duracion {
+    height: auto !important;
+    min-height: 0 !important;
+  }
 }
 
 @media (min-width: 641px) and (max-width: 1050px) and (max-height: 440px) {
@@ -2528,6 +2637,447 @@
   #pantalla-juego #panel-precision { padding: 8px 10px !important; }
 }
 
+/* PORTADA · iPhone horizontal
+   La regla general de pantalla ancha y baja ampliaba el logo al 73vw al
+   girar el teléfono. Aquí se mantiene arriba y con un tamaño propio de móvil,
+   sin invadir el lema ni el botón JUGAR. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
+  #pantalla-inicio.activa {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+  }
+
+  #pantalla-inicio .contenido-inicio {
+    width: min(94vw, 760px) !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding: max(4px, env(safe-area-inset-top)) 0 max(6px, env(safe-area-inset-bottom)) !important;
+  }
+
+  #pantalla-inicio .logo-nexo-animado {
+    top: clamp(5px, 2.2vh, 10px) !important;
+    width: min(42vw, 360px) !important;
+    min-width: 0 !important;
+  }
+
+  #pantalla-inicio .lema-juego {
+    width: min(72vw, 520px) !important;
+    margin: auto auto clamp(5px, 1.8vh, 9px) !important;
+    font-size: clamp(11px, 3.6vh, 15px) !important;
+    line-height: 1.24 !important;
+  }
+
+  #pantalla-inicio .lema-decision,
+  #pantalla-inicio .lema-cierre {
+    margin-top: clamp(3px, 1.4vh, 6px) !important;
+  }
+
+  #pantalla-inicio .lema-cierre {
+    transform: none !important;
+  }
+
+  #pantalla-inicio .boton-jugar-imagen {
+    width: min(22vw, 190px) !important;
+    min-width: 145px !important;
+  }
+}
+
+/* V29.8 · Precisión corregible en móvil horizontal.
+   Al escoger CORREGIR CARTA el aviso deja de ser un modal central: se convierte
+   en una banda informativa dentro del flujo. Así las cartas y el botón de
+   confirmación permanecen visibles y reciben los toques normalmente. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
+  #pantalla-juego.precision-correccion-activa #zona-declaraciones {
+    display: none !important;
+  }
+
+  #pantalla-juego.precision-correccion-activa #zona-decision-activa {
+    justify-content: flex-start !important;
+    gap: 4px !important;
+  }
+
+  #pantalla-juego.precision-correccion-activa #panel-precision:not(.oculta) {
+    order: 2 !important;
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    display: grid !important;
+    grid-template-columns: minmax(150px, .72fr) minmax(0, 1.28fr) !important;
+    align-items: center !important;
+    width: min(660px, 100%) !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    margin: 0 auto 3px !important;
+    padding: 4px 8px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-cabecera {
+    height: 46px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 8px 0 0 !important;
+    gap: 5px !important;
+    border-bottom: 0 !important;
+    border-right: 1px solid rgba(112,216,255,.18) !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-pulso {
+    width: 13px !important;
+    height: 13px !important;
+    flex-basis: 13px !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-cabecera p {
+    margin: 0 0 2px !important;
+    font-size: 7px !important;
+    line-height: 1 !important;
+    letter-spacing: .10em !important;
+    white-space: nowrap !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision #precision-titulo {
+    margin: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+  }
+
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-contenido {
+    height: 46px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 2px 4px 2px 7px !important;
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-carta-visual {
+    width: 28px !important;
+    height: 40px !important;
+    min-width: 28px !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-carta-visual img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-info {
+    min-width: 0 !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    column-gap: 6px !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-info span {
+    font-size: 7px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-info strong {
+    font-size: 17px !important;
+    line-height: 1 !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-info small {
+    margin-top: 2px !important;
+    font-size: 7px !important;
+    line-height: 1.08 !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-recordatorio,
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-decision,
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-acciones {
+    display: none !important;
+  }
+
+  #pantalla-juego.precision-correccion-activa #zona-mano,
+  #pantalla-juego.precision-correccion-activa .zona-mano-cinematica {
+    order: 3 !important;
+    margin-top: 2px !important;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 350px) {
+  #pantalla-juego.precision-correccion-activa #panel-precision:not(.oculta) {
+    grid-template-columns: minmax(135px, .68fr) minmax(0, 1.32fr) !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    padding: 3px 6px !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-cabecera,
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-contenido {
+    height: 40px !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-carta-visual {
+    width: 24px !important;
+    height: 34px !important;
+    min-width: 24px !important;
+  }
+  #pantalla-juego.precision-correccion-activa #panel-precision .precision-info small {
+    font-size: 6.5px !important;
+  }
+}
+
+/* iPhone con la barra de Safari visible: aprovechamos el alto útil sin
+   reducir textos ni controles. Solo retiramos separación estructural que en
+   estas ventanas dejaba el marco de INICIAR PROTOCOLO unos píxeles fuera. */
+@media (orientation: portrait) and (max-width: 640px) and (max-height: 700px) {
+  #pantalla-configuracion {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+
+  #pantalla-configuracion .contenido-configuracion {
+    gap: 10px !important;
+    padding-bottom: 8px !important;
+  }
+}
+
+/* En móviles especialmente estrechos los tres controles comparten la franja
+   superior sin tapar el logotipo. No se desplazan hacia los paneles de juego. */
+@media (max-width: 430px) {
+  #pantalla-juego .controles-sistema-juego {
+    gap: 4px !important;
+  }
+
+  #pantalla-juego .boton-icono-ayuda,
+  #pantalla-juego .boton-icono-ajustes {
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+  }
+
+  #pantalla-juego .boton-abandonar-juego {
+    min-width: 0 !important;
+    padding: 8px !important;
+    font-size: 0.72rem !important;
+  }
+}
+
+@media (max-width: 300px) {
+  #pantalla-juego .logo-partida-estatico {
+    width: 80px !important;
+  }
+}
+
+/* Desenlace en móvil vertical: ningún bloque puede ensanchar el lienzo.
+   La cabecera reparte el título y la crisis en dos columnas reales, y las
+   tarjetas conservan su composición horizontal usando columnas flexibles. */
+@media (orientation: portrait) and (max-width: 430px) {
+  #pantalla-final {
+    overflow-x: hidden !important;
+  }
+
+  #pantalla-final .contenido-final.final-campo-lectura,
+  #pantalla-final .final-cabecera,
+  #pantalla-final .final-evolucion,
+  #pantalla-final .final-hologramas-principales,
+  #pantalla-final .final-cierre {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #pantalla-final .contenido-final.final-campo-lectura > *,
+  #pantalla-final .final-evolucion > *,
+  #pantalla-final .final-hologramas-principales > *,
+  #pantalla-final .final-cierre > * {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #pantalla-final .final-cabecera {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    column-gap: 5px !important;
+  }
+
+  #pantalla-final .final-logo-nexo,
+  #pantalla-final .final-sobrelinea,
+  #pantalla-final .final-subtitulo,
+  #pantalla-final .final-mensaje-planeta {
+    grid-column: 1 / -1 !important;
+  }
+
+  #pantalla-final #titulo-final-principal {
+    grid-column: 1 !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    font-size: clamp(16px, 5.1vw, 20px) !important;
+  }
+
+  #pantalla-final .final-planeta-dominante {
+    grid-column: 2 !important;
+    min-width: 0 !important;
+  }
+
+  #pantalla-final .final-evolucion {
+    grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr) !important;
+  }
+
+  #pantalla-final .final-evolucion-card {
+    width: 100% !important;
+    grid-template-columns: minmax(42px, 30%) minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-final .final-evolucion-ia {
+    grid-template-columns: minmax(0, 1fr) minmax(42px, 30%) !important;
+  }
+
+  #pantalla-final .final-hologramas-principales {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  }
+
+  #pantalla-final .final-panel,
+  #pantalla-final .final-lectura-estrategica,
+  #pantalla-final .coleccion-perfiles,
+  #pantalla-final .final-reflexion {
+    overflow-wrap: anywhere !important;
+  }
+}
+
+/* iPad/tablet en vertical: el cierre del desenlace debe continuar después de
+   los paneles, no quedar anclado al borde inferior dejando un vacío central. */
+@media (orientation: portrait) and (min-width: 500px) and (max-width: 1050px) {
+  #pantalla-final .contenido-final.final-campo-lectura {
+    grid-template-rows: auto auto auto auto !important;
+    align-content: start !important;
+    gap: clamp(12px, 1.5vh, 18px) !important;
+    padding: clamp(10px, 1.2vh, 16px) clamp(14px, 2vw, 24px) !important;
+  }
+
+  #pantalla-final .contenido-final.final-campo-lectura,
+  #pantalla-final .final-cabecera,
+  #pantalla-final .final-evolucion,
+  #pantalla-final .final-hologramas-principales,
+  #pantalla-final .final-cierre {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #pantalla-final .contenido-final.final-campo-lectura > *,
+  #pantalla-final .final-evolucion > *,
+  #pantalla-final .final-hologramas-principales > *,
+  #pantalla-final .final-cierre > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  #pantalla-final .final-evolucion {
+    grid-template-columns: minmax(0, 1fr) clamp(46px, 8vw, 70px) minmax(0, 1fr) !important;
+  }
+
+  #pantalla-final .final-evolucion-card {
+    overflow: hidden !important;
+  }
+
+  #pantalla-final .final-cierre {
+    align-content: start !important;
+    align-self: start !important;
+    margin-top: 0 !important;
+    gap: 7px !important;
+  }
+
+  #pantalla-final .final-logo-nexo {
+    width: min(270px, 36vw) !important;
+    max-height: 66px !important;
+  }
+
+  #pantalla-final .final-sobrelinea { font-size: 11px !important; }
+  #pantalla-final #titulo-final-principal { font-size: clamp(30px, 4.1vh, 42px) !important; }
+  #pantalla-final .final-planeta-porcentaje { font-size: clamp(48px, 6.2vh, 64px) !important; }
+  #pantalla-final .final-planeta-etiqueta { font-size: clamp(14px, 1.8vh, 18px) !important; }
+  #pantalla-final .final-subtitulo,
+  #pantalla-final .final-mensaje-planeta { font-size: clamp(12px, 1.35vh, 15px) !important; }
+
+  #pantalla-final .final-evolucion-card,
+  #pantalla-final .final-evolucion-ia {
+    min-height: 190px !important;
+    height: clamp(190px, 21vh, 225px) !important;
+  }
+
+  #pantalla-final .final-evolucion-humano {
+    grid-template-columns: 132px minmax(0, 1fr) !important;
+  }
+
+  #pantalla-final .final-evolucion-ia {
+    grid-template-columns: minmax(0, 1fr) 132px !important;
+  }
+
+  #pantalla-final .final-evolucion-info { padding: 12px 14px !important; }
+  #pantalla-final .final-evolucion-tipo { font-size: 15px !important; }
+  #pantalla-final .final-evolucion-valor strong { font-size: 27px !important; }
+  #pantalla-final .final-evolucion-valor span { font-size: 10px !important; }
+  #pantalla-final .final-evolucion-info h3 { font-size: 10px !important; margin: 4px 0 !important; }
+  #pantalla-final .final-evolucion-info li { font-size: 11px !important; line-height: 1.2 !important; }
+
+  #pantalla-final .final-panel {
+    min-height: 118px !important;
+    padding: 12px 16px !important;
+  }
+  #pantalla-final .final-panel-etiqueta { font-size: 10px !important; }
+  #pantalla-final .final-panel h3 { font-size: 20px !important; margin: 4px 0 !important; }
+  #pantalla-final .final-panel p:last-child { font-size: 13px !important; line-height: 1.3 !important; }
+
+  #pantalla-final .final-lectura-estrategica { padding: 10px 14px !important; }
+  #pantalla-final .final-lectura-estrategica span { font-size: 10px !important; }
+  #pantalla-final .final-lectura-estrategica p { font-size: 13px !important; line-height: 1.3 !important; }
+  #pantalla-final .coleccion-perfiles { font-size: 10px !important; padding: 4px 8px !important; }
+  #pantalla-final .final-reflexion { font-size: 13px !important; line-height: 1.35 !important; padding: 10px 14px !important; }
+  #pantalla-final .boton-final-nexo {
+    min-height: 54px !important;
+    max-height: 58px !important;
+    min-width: 260px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Al resolver, el carril de la acción deja de ser interactivo pero conserva
+   su altura. Evita que los paneles y avatares suban y bajen en cada ronda. */
+@media (max-width: 1050px) {
+  #pantalla-juego.resolucion-activa #acciones.oculta {
+    display: flex !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+/* En móviles verticales bajos se prioriza el orden de juego: decisión primero
+   y cartas inmediatamente debajo, sin gastar una pantalla en el núcleo. */
+@media (orientation: portrait) and (max-width: 640px) and (max-height: 760px) {
+  #pantalla-juego .nexo-nucleo-partida {
+    width: 72px !important;
+    height: 72px !important;
+    margin: 0 auto 2px !important;
+  }
+}
+
+@media (orientation: portrait) and (max-width: 640px) and (max-height: 600px) {
+  #pantalla-juego .nexo-nucleo-partida {
+    display: none !important;
+  }
+}
+
+/* Los dispositivos táctiles no deben conservar el desplazamiento visual del
+   estado hover al pulsar INICIAR PROTOCOLO. */
+@media (hover: none), (pointer: coarse) {
+  #pantalla-configuracion .boton-iniciar-nexo {
+    transition: none !important;
+  }
+
+  #pantalla-configuracion .boton-iniciar-nexo:hover {
+    transform: none !important;
+  }
+}
+
 /* V24.60 - INTRODUCCION en movil: CONTINUAR, ATRAS, COMO JUGAR y SALTAR INTRO
    quedaban por debajo del borde. Aqui el relato y los controles se ajustan al
    alto disponible para que los cuatro botones se vean sin desplazar. */
@@ -2557,6 +3107,20 @@
 }
 
 @media (orientation: portrait) and (max-width: 640px) and (max-height: 700px) {
+  #pantalla-introduccion .relato-introduccion,
+  #pantalla-introduccion .bloque-intro:not([hidden]) {
+    min-height: 230px !important;
+    height: 230px !important;
+  }
+  #pantalla-introduccion .relato-introduccion {
+    margin-top: 6px !important;
+  }
+  #pantalla-introduccion .progreso-intro {
+    margin: 8px auto 4px !important;
+  }
+  #pantalla-introduccion .controles-intro {
+    margin-top: 0 !important;
+  }
   #pantalla-introduccion .bloque-intro p { font-size: 12px !important; line-height: 1.25 !important; }
   #pantalla-introduccion .acciones-secundarias-intro { margin-top: 4px !important; }
   #pantalla-introduccion #btn-como-jugar-intro,
@@ -2617,4 +3181,979 @@
   #pantalla-introduccion .paso-nexo { flex: 0 0 13px !important; }
   #pantalla-introduccion .paso-nexo::before,
   #pantalla-introduccion .paso-nexo::after { height: 1.6px !important; }
+}
+
+/* =====================================================================
+   V24.63 - MOVIL HORIZONTAL: PARTIDA EN TRES FILAS ESTABLES
+   ---------------------------------------------------------------------
+   Regla CSS sencilla y exclusiva para telefonos apaisados. Se eliminan
+   aqui las posiciones heredadas del tablero de escritorio y se ordenan los
+   controles esenciales en el flujo normal: declarar, elegir carta y resolver.
+   No afecta a movil vertical, tablet ni escritorio.
+   ===================================================================== */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
+  #pantalla-juego,
+  #pantalla-juego.activa {
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-juego .logo-partida-estatico {
+    top: max(4px, env(safe-area-inset-top)) !important;
+    left: max(12px, env(safe-area-inset-left)) !important;
+    width: 72px !important;
+    max-width: 72px !important;
+    height: auto !important;
+  }
+
+  #pantalla-juego .controles-sistema-juego {
+    top: max(3px, env(safe-area-inset-top)) !important;
+    right: max(7px, env(safe-area-inset-right)) !important;
+    gap: 5px !important;
+    transform: scale(.72) !important;
+    transform-origin: top right !important;
+  }
+
+  /* Cabecera compacta: informacion de ronda arriba y crisis planetaria abajo. */
+  #pantalla-juego #marcadores {
+    position: absolute !important;
+    top: 31px !important;
+    left: max(8px, env(safe-area-inset-left)) !important;
+    right: max(8px, env(safe-area-inset-right)) !important;
+    width: auto !important;
+    height: 112px !important;
+    min-height: 112px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: 82px minmax(0, 1.2fr) minmax(0, 1fr) !important;
+    grid-template-rows: 78px 30px !important;
+    gap: 3px 5px !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-juego #marcadores > .hud-segmento {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 3px 7px !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-juego .hud-ronda { grid-column: 1 !important; grid-row: 1 !important; }
+  #pantalla-juego .hud-crisis { grid-column: 2 !important; grid-row: 1 !important; }
+  #pantalla-juego .hud-impacto { grid-column: 3 !important; grid-row: 1 !important; }
+  #pantalla-juego .hud-planeta {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    display: grid !important;
+    grid-template-columns: clamp(150px, 22vw, 180px) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 1px 10px !important;
+  }
+
+  #pantalla-juego .contador-ronda { font-size: 12px !important; line-height: 1.05 !important; }
+  #pantalla-juego .etiqueta-crisis,
+  #pantalla-juego .hud-kicker { font-size: 8px !important; line-height: 1 !important; }
+  #pantalla-juego #nombre-crisis { font-size: 13px !important; line-height: 1.05 !important; }
+  #pantalla-juego #descripcion-crisis { font-size: 8.5px !important; line-height: 1.08 !important; }
+  #pantalla-juego #puntos-en-juego,
+  #pantalla-juego #regla-ronda,
+  #pantalla-juego #descripcion-carta-crisis,
+  #pantalla-juego #impacto-carta-crisis { font-size: 8px !important; line-height: 1.06 !important; }
+  #pantalla-juego #regla-ronda { display: none !important; }
+  #pantalla-juego #tarjeta-carta-crisis {
+    max-height: 38px !important;
+    margin-top: 2px !important;
+    padding: 2px 5px !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego #tarjeta-carta-crisis #descripcion-carta-crisis { display: none !important; }
+  #pantalla-juego .hud-planeta .estado-planeta-mini {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 24px !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    padding: 0 !important;
+    font-size: 8.5px !important;
+    line-height: 1 !important;
+    letter-spacing: .04em !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego #valor-salud-planeta {
+    display: inline !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+  }
+  #pantalla-juego .bloque-barra-planeta {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    height: 24px !important;
+    min-height: 0 !important;
+    max-height: 24px !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego .barra-planeta-logica {
+    box-sizing: border-box !important;
+    height: 9px !important;
+    min-height: 9px !important;
+    max-height: 9px !important;
+  }
+  #pantalla-juego .numeros-barra-planeta {
+    height: 10px !important;
+    min-height: 0 !important;
+    margin-top: 1px !important;
+    font-size: 7px !important;
+    line-height: 10px !important;
+  }
+
+  /* El tablero ocupa exactamente el espacio que queda bajo la cabecera. */
+  #pantalla-juego #tablero,
+  #pantalla-juego .tablero-cinematico {
+    position: absolute !important;
+    inset: 146px max(8px, env(safe-area-inset-right)) max(3px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)) !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-juego .panel-personaje,
+  #pantalla-juego #nexo-nucleo-partida { display: none !important; }
+
+  #pantalla-juego #centro-partida,
+  #pantalla-juego .zona-central-cinematica {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-juego #zona-decision-activa {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: space-evenly !important;
+    gap: 3px !important;
+    overflow: hidden !important;
+    pointer-events: auto !important;
+  }
+
+  #pantalla-juego #zona-declaraciones,
+  #pantalla-juego .zona-declaraciones-nexo {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: min(660px, 100%) !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+    margin: 0 auto !important;
+    padding: 2px 8px 16px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: 52px 6px !important;
+    column-gap: 8px !important;
+    row-gap: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    z-index: 60 !important;
+  }
+
+  #pantalla-juego #zona-apuesta,
+  #pantalla-juego #declaracion-ia {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 52px !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego #zona-apuesta {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: 12px 36px !important;
+    align-items: start !important;
+    justify-items: stretch !important;
+    row-gap: 2px !important;
+  }
+  #pantalla-juego #zona-apuesta { grid-column: 1 !important; grid-row: 1 !important; }
+  #pantalla-juego #declaracion-ia { grid-column: 2 !important; grid-row: 1 !important; }
+  #pantalla-juego .versus-declaraciones { display: none !important; }
+  #pantalla-juego #zona-declaraciones .etiqueta-declaracion { font-size: 8px !important; line-height: 1 !important; margin: 0 0 2px !important; }
+  #pantalla-juego .botones-declaracion {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 36px !important;
+    margin: 0 !important;
+    transform: none !important;
+    justify-self: stretch !important;
+    gap: 5px !important;
+  }
+  #pantalla-juego #btn-apuesta-par,
+  #pantalla-juego #btn-apuesta-impar {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+  }
+  #pantalla-juego #declaracion-ia h3 {
+    margin: 0 !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+  #pantalla-juego #consecuencia-apuesta {
+    position: absolute !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 3px !important;
+    width: auto !important;
+    height: 12px !important;
+    min-height: 12px !important;
+    max-height: 12px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    font-size: 8px !important;
+    line-height: 12px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #pantalla-juego #zona-mano,
+  #pantalla-juego .zona-mano-cinematica,
+  #pantalla-juego.precision-correccion-activa .zona-mano-cinematica {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    z-index: 55 !important;
+  }
+  #pantalla-juego #instruccion-mano { display: none !important; }
+  #pantalla-juego #mano-cartas,
+  #pantalla-juego .mano-cartas {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    margin: 0 !important;
+    padding: 2px 0 0 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    overflow: visible !important;
+  }
+  #pantalla-juego .carta-mano,
+  #pantalla-juego .carta-mano:nth-child(n) {
+    flex: 0 0 58px !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 78px !important;
+    min-height: 78px !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  #pantalla-juego #acciones,
+  #pantalla-juego .acciones-partida {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    flex: 0 0 42px !important;
+    width: 100% !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    margin: 1px 0 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    overflow: visible !important;
+    z-index: 80 !important;
+  }
+  #pantalla-juego #btn-confirmar-jugada {
+    width: min(340px, 76vw) !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+  }
+
+  /* Configuración: incluso los teléfonos de 568px conservan dos columnas de
+     avatares y una única fila inferior para nombre, rondas e inicio. */
+  #pantalla-configuracion,
+  #pantalla-configuracion.activa {
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  #pantalla-configuracion .contenido-configuracion {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding: max(7px, env(safe-area-inset-top)) max(9px, env(safe-area-inset-right)) max(5px, env(safe-area-inset-bottom)) max(9px, env(safe-area-inset-left)) !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: minmax(0, 1fr) 84px !important;
+    grid-template-areas: "humano ia" "inferior inferior" !important;
+    gap: 5px 8px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+  #pantalla-configuracion .cabecera-configuracion { display: none !important; }
+  #pantalla-configuracion .panel-identidad {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    align-self: center !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 2px 4px !important;
+    overflow: visible !important;
+  }
+  #pantalla-configuracion .panel-identidad-humano { grid-area: humano !important; }
+  #pantalla-configuracion .panel-identidad-ia { grid-area: ia !important; }
+  #pantalla-configuracion #titulo-avatar-humano,
+  #pantalla-configuracion #titulo-avatar-ia {
+    position: static !important;
+    height: 14px !important;
+    margin: 0 0 3px !important;
+    font-size: 8px !important;
+    line-height: 14px !important;
+    white-space: nowrap !important;
+  }
+  #pantalla-configuracion .opciones-avatar {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 5px !important;
+  }
+  #pantalla-configuracion .tarjeta-avatar {
+    width: 100% !important;
+    height: clamp(104px, 39dvh, 150px) !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
+  #pantalla-configuracion .texto-avatar strong { font-size: 9px !important; line-height: 1.05 !important; }
+  #pantalla-configuracion .texto-avatar small { font-size: 6.5px !important; line-height: 1.05 !important; }
+
+  #pantalla-configuracion .configuracion-inferior {
+    grid-area: inferior !important;
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    align-self: end !important;
+    width: 100% !important;
+    height: 84px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas: "jugador rondas iniciar" !important;
+    align-items: end !important;
+    gap: 7px !important;
+    overflow: visible !important;
+  }
+  #pantalla-configuracion .grupo-jugador,
+  #pantalla-configuracion .grupo-rondas {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 58px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-rows: 18px 40px !important;
+  }
+  #pantalla-configuracion .grupo-jugador { grid-area: jugador !important; }
+  #pantalla-configuracion .grupo-rondas { grid-area: rondas !important; }
+  #pantalla-configuracion #titulo-jugador,
+  #pantalla-configuracion #titulo-duracion {
+    min-height: 0 !important;
+    height: 18px !important;
+    margin: 0 !important;
+    padding: 0 3px !important;
+    font-size: 7px !important;
+    line-height: 18px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+  #pantalla-configuracion .control-jugador,
+  #pantalla-configuracion .opciones-rondas {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    margin: 0 !important;
+  }
+  #pantalla-configuracion .control-jugador { grid-template-columns: minmax(0, 1fr) 34px !important; }
+  #pantalla-configuracion #nombre-jugador {
+    min-width: 0 !important;
+    height: 40px !important;
+    padding: 0 7px !important;
+    font-size: 9px !important;
+  }
+  #pantalla-configuracion #selector-jugadores { width: 34px !important; height: 40px !important; }
+  #pantalla-configuracion .opciones-rondas { gap: 3px !important; }
+  #pantalla-configuracion .opciones-rondas .boton-opcion {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    padding: 0 !important;
+    font-size: 12px !important;
+  }
+  #pantalla-configuracion .boton-iniciar-nexo,
+  #pantalla-configuracion #btn-iniciar-partida {
+    grid-area: iniciar !important;
+    align-self: end !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    padding: 0 5px !important;
+    transform: none !important;
+    font-size: 10px !important;
+    letter-spacing: .03em !important;
+  }
+  #pantalla-configuracion #btn-iniciar-partida span {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    font-size: 10px !important;
+    letter-spacing: .03em !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* V29.9 · Precisión completa y sin scroll en móvil horizontal. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
+  #pantalla-juego.precision-decision-activa #panel-precision:not(.oculta) {
+    width: min(620px, calc(100vw - 18px)) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 12px) !important;
+    padding: 6px 10px !important;
+    display: grid !important;
+    grid-template-rows: auto auto auto auto auto !important;
+    gap: 4px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-cabecera {
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 0 4px !important;
+    gap: 5px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-pulso {
+    width: 13px !important;
+    height: 13px !important;
+    flex-basis: 13px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-cabecera p {
+    margin: 0 0 1px !important;
+    font-size: 7px !important;
+    line-height: 1 !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision #precision-titulo {
+    margin: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.05 !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-contenido {
+    min-height: 0 !important;
+    padding: 3px 6px !important;
+    grid-template-columns: 34px minmax(0, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-carta-visual {
+    width: 30px !important;
+    height: 42px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-carta-visual img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-info span {
+    font-size: 7px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-info strong {
+    font-size: 17px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-info small {
+    margin-top: 2px !important;
+    font-size: 7px !important;
+    line-height: 1.05 !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-recordatorio {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 5px !important;
+    margin: 0 !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-recordatorio-item {
+    min-height: 0 !important;
+    padding: 3px 6px !important;
+    gap: 1px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-recordatorio-item span {
+    font-size: 6.5px !important;
+    line-height: 1 !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-recordatorio-item strong {
+    font-size: 11px !important;
+    line-height: 1 !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-decision {
+    margin: 0 !important;
+    font-size: 7.5px !important;
+    line-height: 1.1 !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-decision strong {
+    font-size: 8.5px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-acciones {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  #pantalla-juego.precision-decision-activa #panel-precision .precision-accion {
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 9px !important;
+  }
+}
+
+/* V29.7 · Móvil horizontal: texto final de la introducción y cartas separadas.
+   El rótulo CONFIGURAR PARTIDA queda dentro de la zona útil de su imagen.
+   La mano conserva un pasillo bajo PAR/IMPAR y la carta elegida se destaca
+   con brillo y escala, pero ya no asciende por debajo del panel. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
+  #pantalla-introduccion #btn-ir-configuracion.ultimo-paso::after {
+    inset: 24% 13% !important;
+    box-sizing: border-box !important;
+    padding: 0 3px !important;
+    overflow: hidden !important;
+    font-size: clamp(8px, 2.55dvh, 11px) !important;
+    line-height: 1 !important;
+    letter-spacing: .10em !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  #pantalla-juego #zona-mano,
+  #pantalla-juego .zona-mano-cinematica,
+  #pantalla-juego.precision-correccion-activa .zona-mano-cinematica {
+    margin-top: clamp(6px, 1.8dvh, 9px) !important;
+  }
+
+  #pantalla-juego .carta-mano.seleccionada,
+  #pantalla-juego .carta-mano.seleccionada:hover:not(:disabled):not(.descartada),
+  #pantalla-juego .carta-mano.seleccionada:focus-visible:not(:disabled):not(.descartada),
+  #pantalla-juego .mano-cartas.modo-velocidad .carta-mano.seleccionada {
+    transform: translateY(0) scale(1.025) rotate(0) !important;
+    z-index: 58 !important;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 350px) {
+  #pantalla-juego #zona-mano,
+  #pantalla-juego .zona-mano-cinematica,
+  #pantalla-juego.precision-correccion-activa .zona-mano-cinematica {
+    margin-top: 4px !important;
+  }
+
+  #pantalla-juego .carta-mano.seleccionada,
+  #pantalla-juego .carta-mano.seleccionada:hover:not(:disabled):not(.descartada),
+  #pantalla-juego .carta-mano.seleccionada:focus-visible:not(:disabled):not(.descartada),
+  #pantalla-juego .mano-cartas.modo-velocidad .carta-mano.seleccionada {
+    transform: translateY(0) scale(1.018) rotate(0) !important;
+  }
+}
+
+/* Teléfonos muy bajos en horizontal (por ejemplo 568 x 320): la zona de
+   decisión conserva el mismo orden, pero reduce alturas para que las cinco
+   cartas y Resolver ronda permanezcan visibles y separadas. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 350px) {
+  #pantalla-juego #zona-declaraciones,
+  #pantalla-juego .zona-declaraciones-nexo {
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    padding: 2px 6px 13px !important;
+    column-gap: 6px !important;
+    grid-template-rows: 45px 4px !important;
+  }
+  #pantalla-juego #zona-apuesta,
+  #pantalla-juego #declaracion-ia {
+    height: 45px !important;
+  }
+  #pantalla-juego #zona-apuesta {
+    grid-template-rows: 11px 30px !important;
+    row-gap: 2px !important;
+  }
+  #pantalla-juego .botones-declaracion {
+    height: 30px !important;
+  }
+  #pantalla-juego #btn-apuesta-par,
+  #pantalla-juego #btn-apuesta-impar {
+    height: 30px !important;
+    min-height: 30px !important;
+    font-size: 13px !important;
+  }
+  #pantalla-juego #declaracion-ia h3 {
+    font-size: 20px !important;
+  }
+  #pantalla-juego #consecuencia-apuesta {
+    bottom: 2px !important;
+    height: 10px !important;
+    min-height: 10px !important;
+    max-height: 10px !important;
+    line-height: 10px !important;
+    font-size: 7px !important;
+  }
+  #pantalla-juego #zona-mano,
+  #pantalla-juego .zona-mano-cinematica,
+  #pantalla-juego.precision-correccion-activa .zona-mano-cinematica,
+  #pantalla-juego #mano-cartas,
+  #pantalla-juego .mano-cartas {
+    height: 57px !important;
+    min-height: 57px !important;
+  }
+  #pantalla-juego #mano-cartas,
+  #pantalla-juego .mano-cartas {
+    gap: 4px !important;
+    padding-top: 1px !important;
+  }
+  #pantalla-juego .carta-mano,
+  #pantalla-juego .carta-mano:nth-child(n) {
+    flex-basis: 48px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    height: 54px !important;
+    min-height: 54px !important;
+  }
+  #pantalla-juego #acciones,
+  #pantalla-juego .acciones-partida {
+    flex-basis: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    margin-top: 1px !important;
+  }
+  #pantalla-juego #btn-confirmar-jugada {
+    height: 36px !important;
+    min-height: 36px !important;
+  }
+
+  #pantalla-juego.resolucion-activa #zona-resolucion,
+  #pantalla-juego.resolucion-activa .zona-resultado-cinematica {
+    inset: 7px 10px auto !important;
+    width: auto !important;
+    height: calc(100dvh - 14px) !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    transform: none !important;
+    padding: 8px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    gap: 4px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+  #pantalla-juego #zona-resolucion .cartas-reveladas {
+    width: 100% !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 7px !important;
+  }
+  #pantalla-juego #zona-resolucion .carta-revelada {
+    flex: 0 1 126px !important;
+    width: 126px !important;
+    min-width: 0 !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    padding: 5px 7px !important;
+  }
+  #pantalla-juego #zona-resolucion .carta-revelada p,
+  #pantalla-juego #zona-resolucion .carta-revelada small {
+    margin: 0 !important;
+    font-size: 9px !important;
+    line-height: 1.05 !important;
+  }
+  #pantalla-juego #zona-resolucion .carta-revelada > span {
+    margin: 2px 0 !important;
+    font-size: 28px !important;
+    line-height: 1 !important;
+  }
+  #pantalla-juego #zona-resolucion .signo-suma {
+    flex: 0 0 auto !important;
+    font-size: 20px !important;
+  }
+  #pantalla-juego #resultado-ronda {
+    flex: 0 0 30px !important;
+    min-height: 30px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 25px !important;
+    line-height: 30px !important;
+  }
+  #pantalla-juego #zona-resolucion .cambios-ronda {
+    flex: 0 0 19px !important;
+    width: 100% !important;
+    min-height: 19px !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    gap: 9px !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego #zona-resolucion .cambio-ronda {
+    font-size: 9px !important;
+    line-height: 19px !important;
+    white-space: nowrap !important;
+  }
+  #pantalla-juego #detalle-ronda {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    max-height: 38px !important;
+    margin: 0 !important;
+    padding: 2px 8px !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
+    overflow: hidden !important;
+  }
+  #pantalla-juego #btn-siguiente {
+    flex: 0 0 42px !important;
+    width: min(330px, 78vw) !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    margin: 0 auto !important;
+    font-size: 12px !important;
+  }
+}
+
+/* V29.5 · Resolución estable en móvil horizontal.
+   La maqueta compacta usa display:flex para el panel final, pero nunca debe
+   ganar a .oculta mientras JavaScript prepara el resultado. Además se elimina
+   aquí el desplazamiento heredado de escritorio: el panel aparece una sola vez
+   en su posición definitiva, sin asomarse previamente por una esquina. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
+  #pantalla-juego #zona-resolucion.oculta {
+    display: none !important;
+    animation: none !important;
+  }
+
+  #pantalla-juego #zona-resolucion.panel-resultado-entra,
+  #pantalla-juego .zona-resultado-cinematica.panel-resultado-entra {
+    animation: none !important;
+  }
+}
+
+/* V29.6 · Introducción estable y botón de configuración contenido.
+   Safari desplazaba unos píxeles toda la página al enfocar CONTINUAR porque
+   la pantalla medía más que el viewport. Los cuatro relatos comparten además
+   la misma caja, de modo que título, progreso y botones no cambian de sitio. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
+  #pantalla-introduccion,
+  #pantalla-introduccion.activa {
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    box-sizing: border-box !important;
+  }
+
+  #pantalla-introduccion .contenido-introduccion {
+    width: min(92vw, 680px) !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    margin: 0 auto !important;
+    padding: clamp(4px, 1.5vh, 8px) 0 !important;
+    box-sizing: border-box !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-introduccion .relato-introduccion {
+    flex: 0 0 clamp(82px, 24vh, 112px) !important;
+    width: 100% !important;
+    height: clamp(82px, 24vh, 112px) !important;
+    min-height: clamp(82px, 24vh, 112px) !important;
+    max-height: clamp(82px, 24vh, 112px) !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-introduccion .bloque-intro:not([hidden]) {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    justify-content: center !important;
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  #pantalla-introduccion .cabecera-introduccion,
+  #pantalla-introduccion .progreso-intro,
+  #pantalla-introduccion .controles-intro,
+  #pantalla-introduccion .acciones-secundarias-intro {
+    flex-shrink: 0 !important;
+  }
+
+  #pantalla-configuracion #btn-iniciar-partida {
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+  }
+
+  #pantalla-configuracion #btn-iniciar-partida span {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 0 3px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    font-size: clamp(7px, 1.4vw, 10px) !important;
+    line-height: 1 !important;
+    letter-spacing: .03em !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
 }

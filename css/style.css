@@ -4534,7 +4534,9 @@ h1, h2, h3, h4 {
 .superposicion-manual{
   position:fixed;
   inset:0;
-  z-index:220;
+  /* Debe cubrir también el acceso global a ajustes (z-index: 900).
+     Así la rueda no se superpone al botón de cierre del manual. */
+  z-index:950;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -5101,7 +5103,7 @@ h1, h2, h3, h4 {
 #pantalla-inicio .logo-nexo-animado {
   --desfase-pulso-audio: 0s;
   --desfase-descarga-audio: 0s;
-  animation-name: nexo-nodos-descarga-tecnologica-v14;
+  animation-name: none;
   animation-duration: 11.101995s;
   animation-timing-function: linear;
   animation-delay: var(--desfase-descarga-audio);
@@ -5109,7 +5111,7 @@ h1, h2, h3, h4 {
 }
 
 #pantalla-inicio .logo-nexo-animado::before {
-  animation-name: nexo-x-base-latido-humano-v14;
+  animation-name: none;
   animation-duration: 1.009272s;
   animation-timing-function: linear;
   animation-delay: var(--desfase-pulso-audio);
@@ -5117,16 +5119,28 @@ h1, h2, h3, h4 {
 }
 
 #pantalla-inicio .logo-nexo-animado::after {
-  animation-name: nexo-x-expansion-latido-humano-v14;
+  animation-name: none;
   animation-duration: 1.009272s;
   animation-timing-function: linear;
   animation-delay: var(--desfase-pulso-audio);
   animation-iteration-count: infinite;
 }
 
-/* Cambiar una variable no reinicia por sí solo una animación CSS. Esta clase
-   se mantiene un único fotograma para que el siguiente arranque quede fijado
-   al tiempo real del audio, también después de volver a jugar. */
+/* La clase se añade de forma síncrona al activar la portada. De esta manera
+   WebKit inicia las tres animaciones desde cero aunque el audio siga cargando. */
+#pantalla-inicio .logo-nexo-animado.animacion-portada-activa {
+  animation-name: nexo-nodos-descarga-tecnologica-v14;
+}
+
+#pantalla-inicio .logo-nexo-animado.animacion-portada-activa::before {
+  animation-name: nexo-x-base-latido-humano-v14;
+}
+
+#pantalla-inicio .logo-nexo-animado.animacion-portada-activa::after {
+  animation-name: nexo-x-expansion-latido-humano-v14;
+}
+
+/* Salvaguarda para versiones anteriores. */
 #pantalla-inicio .logo-nexo-animado.reiniciar-animacion-audio,
 #pantalla-inicio .logo-nexo-animado.reiniciar-animacion-audio::before,
 #pantalla-inicio .logo-nexo-animado.reiniciar-animacion-audio::after {
