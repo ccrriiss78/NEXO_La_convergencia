@@ -87,6 +87,7 @@ function iniciar() {
     };
     conectarBotonApuesta("btn-apuesta-par", "PAR");
     conectarBotonApuesta("btn-apuesta-impar", "IMPAR");
+    prepararRescateControlesIPad();
 
     // CARTAS · V10
     // Los botones conectan su click directamente al crearse en pintarMano().
@@ -617,6 +618,64 @@ function recuperarFaseInteractiva(): void {
     mostrar("zona-mano");
     mostrar("acciones");
     actualizarBotonConfirmar();
+}
+
+/**
+ * Safari de iPad puede conservar el mapa táctil de la ronda anterior aunque
+ * los botones ya estén pintados en su nueva posición horizontal. Escuchamos el
+ * gesto en captura y comparamos sus coordenadas con los botones visibles: así
+ * la declaración llega incluso si WebKit atribuye el toque a una capa antigua.
+ */
+function prepararRescateControlesIPad(): void {
+    document.addEventListener("pointerdown", function (evento: PointerEvent) {
+        const esToqueHorizontal = (evento.pointerType === "touch" || evento.pointerType === "pen") &&
+            navigator.maxTouchPoints > 0 && window.innerWidth > window.innerHeight;
+        if (!esToqueHorizontal) return;
+        if (!elemento("pantalla-juego").classList.contains("activa")) return;
+
+        const modalEvento = elemento("superposicion-evento");
+        if (!modalEvento.hidden && !modalEvento.classList.contains("oculta")) return;
+
+        const opciones: Array<{ id: string; apuesta: "PAR" | "IMPAR" }> = [
+            { id: "btn-apuesta-par", apuesta: "PAR" },
+            { id: "btn-apuesta-impar", apuesta: "IMPAR" }
+        ];
+        for (let i = 0; i < opciones.length; i++) {
+            const boton = elemento(opciones[i].id);
+            const caja = boton.getBoundingClientRect();
+            const dentro = evento.clientX >= caja.left && evento.clientX <= caja.right &&
+                evento.clientY >= caja.top && evento.clientY <= caja.bottom;
+            if (dentro) {
+                evento.preventDefault();
+                evento.stopPropagation();
+                elegirApuesta(opciones[i].apuesta);
+                return;
+            }
+        }
+
+        const botonResolver = elemento("btn-confirmar-jugada") as HTMLButtonElement;
+        if (botonResolver.disabled || botonResolver.classList.contains("oculta")) return;
+        const cajaResolver = botonResolver.getBoundingClientRect();
+        const dentroResolver = evento.clientX >= cajaResolver.left && evento.clientX <= cajaResolver.right &&
+            evento.clientY >= cajaResolver.top && evento.clientY <= cajaResolver.bottom;
+        if (dentroResolver) {
+            evento.preventDefault();
+            evento.stopPropagation();
+            confirmar();
+            return;
+        }
+
+        const botonSiguiente = elemento("btn-siguiente") as HTMLButtonElement;
+        if (botonSiguiente.disabled || botonSiguiente.classList.contains("oculta")) return;
+        const cajaSiguiente = botonSiguiente.getBoundingClientRect();
+        const dentroSiguiente = evento.clientX >= cajaSiguiente.left && evento.clientX <= cajaSiguiente.right &&
+            evento.clientY >= cajaSiguiente.top && evento.clientY <= cajaSiguiente.bottom;
+        if (dentroSiguiente) {
+            evento.preventDefault();
+            evento.stopPropagation();
+            siguiente();
+        }
+    }, { capture: true });
 }
 /**
  * El jugador declara PAR o IMPAR. Esta decisión abre después la selección

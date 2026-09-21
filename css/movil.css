@@ -2155,6 +2155,11 @@
    visible. En dispositivos táctiles se eleva únicamente la declaración para
    que su franja inferior nunca invada el título ni las cinco cartas. */
 @media (orientation: landscape) and (min-width: 1051px) and (max-width: 1400px) and (pointer: coarse) {
+  /* iPad/Safari tambien amplia la pagina si el campo efectivo baja de 16px. */
+  #pantalla-configuracion #nombre-jugador {
+    font-size: 16px !important;
+  }
+
   #pantalla-juego {
     height: 100dvh !important;
     min-height: 0 !important;

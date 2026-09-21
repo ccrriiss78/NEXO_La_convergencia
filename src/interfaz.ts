@@ -1140,6 +1140,9 @@ export function mostrarEvento(idEvento: string, nombre: string, descripcion: str
     imagen.alt = "Ilustración del evento " + nombreSeguro;
     const superposicion = elemento("superposicion-evento");
     superposicion.hidden = false;
+    superposicion.removeAttribute("inert");
+    superposicion.style.removeProperty("display");
+    superposicion.style.removeProperty("pointer-events");
     superposicion.setAttribute("aria-hidden", "false");
     superposicion.classList.remove("oculta");
     elemento("btn-cerrar-evento").focus();
@@ -1154,9 +1157,19 @@ function rutaImagenEvento(idEvento) {
 }
 export function ocultarEvento() {
     const superposicion = elemento("superposicion-evento");
+    const elementoActivo = document.activeElement;
+    if (elementoActivo instanceof HTMLElement && superposicion.contains(elementoActivo)) {
+        elementoActivo.blur();
+    }
     superposicion.classList.add("oculta");
     superposicion.hidden = true;
+    superposicion.setAttribute("inert", "");
+    superposicion.style.setProperty("display", "none", "important");
+    superposicion.style.setProperty("pointer-events", "none", "important");
     superposicion.setAttribute("aria-hidden", "true");
+    // Safari/iPad conserva a veces el plano táctil de un modal ya oculto. La
+    // lectura de layout fuerza a descartarlo antes de volver a PAR/IMPAR.
+    void superposicion.offsetWidth;
 }
 // ---- Pantallas de inicio y final --------------------------------------------
 /** Enseña en la pantalla de inicio la mejor marca guardada, si existe. */
