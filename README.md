@@ -1,95 +1,86 @@
 # NEXO — La Convergencia
 
-Videojuego de cartas Humano vs IA basado en la mecánica PAR / IMPAR de la Morra y ambientado en una crisis ecológica global.
+Videojuego de cartas Humano vs IA inspirado en la mecánica PAR / IMPAR de la Morra y ambientado en una crisis ecológica global.
 
-## Estado actual del proyecto
+Este documento describe el comportamiento actual del juego. El historial detallado de cambios se conserva en Git; el README se centra en cómo funciona hoy el proyecto.
 
-Este README documenta el comportamiento del juego integrado hasta **V22.37**. Sustituye las descripciones funcionales de versiones anteriores cuando exista alguna diferencia.
+## Estado actual
 
-La versión actual incluye:
+NEXO incluye:
 
-- pantalla de suspense interactiva previa a la portada, con desbloqueo del audio ambiente;
+- pantalla de suspense interactiva para habilitar el audio en navegadores móviles;
 - portada e introducción narrativa en cuatro bloques;
-- configuración de nombre, avatar Humano, avatar IA y duración de partida;
+- configuración de jugador, avatares y duración de partida;
 - partidas de 8, 12 o 16 rondas y modo libre;
-- declaración previa PAR / IMPAR de la IA;
-- resultados de **Convergencia, Rivalidad y Fracaso**;
+- rondas con declaración PAR / IMPAR, elección de carta y resolución;
+- resultados de **Convergencia**, **Rivalidad** y **Fracaso**;
 - Crisis del Planeta y evolución reversible de Humano e IA;
-- cuatro estados visuales de evolución para cada avatar;
-- cinco cartas/modificadores de crisis y cinco eventos especiales;
-- ocho fortalezas conquistables con activaciones contextuales;
-- Manual / Cómo jugar accesible durante la experiencia;
-- avisos visuales diferenciados para modificadores positivos, negativos y mixtos;
-- desenlaces y perfiles finales;
-- persistencia local de jugadores y preferencias;
-- música de fondo propia durante la partida, compatible con todos los efectos;
-- pruebas automáticas con `npm test`.
+- cartas modificadoras, eventos especiales y ocho fortalezas conquistables;
+- cambios visuales del planeta y de los avatares según su evolución;
+- manual accesible durante la experiencia;
+- desenlaces visuales y sonoros según la Crisis final;
+- perfiles, mejores marcas y preferencias guardados en el navegador;
+- diseño adaptado a PC, tablet/iPad y móvil, en vertical y horizontal;
+- pruebas automáticas de lógica, persistencia, eventos, sonido e integridad.
 
-## Historia
+## Historia y objetivo
 
-Los primeros años del siglo XXII están marcados por sucesivas crisis ecológicas que amenazan la supervivencia del planeta y, con ella, la existencia de la humanidad y de la Inteligencia Artificial.
+Los primeros años del siglo XXII están marcados por sucesivas crisis ecológicas. La tecnología y la IA han mejorado profundamente la vida humana, pero también han incrementado la demanda de energía, agua, minerales e infraestructuras.
 
-La integración de la tecnología y la IA ha mejorado profundamente la vida humana, pero también ha incrementado la demanda de energía, agua, minerales e infraestructuras. Esa presión creciente sobre los recursos ha contribuido al deterioro del planeta.
+La humanidad conserva creatividad, intuición, empatía y adaptación. La IA aporta memoria, precisión, análisis y velocidad. Ninguna dispone por sí sola de todo lo necesario para evitar el colapso. De esa dependencia y tensión nace el **Protocolo NEXO**.
 
-La humanidad desarrolla una IA capaz de analizar enormes cantidades de datos, anticipar escenarios y encontrar soluciones imposibles para una sola mente humana. Sin embargo, carece de capacidades como creatividad, intuición, empatía y adaptación humana. La humanidad conserva esas fortalezas, pero necesita la memoria, precisión, análisis y velocidad de procesamiento de la IA.
+El objetivo es mantener al planeta con vida mientras Humano e IA evolucionan y deciden qué relación construir:
 
-Ninguna dispone por sí sola de todo lo necesario. Humano e IA deberán encontrar una solución capaz de frenar la crisis antes de que alcance un punto irreversible. Pueden converger y combinar sus capacidades o rivalizar y conquistar las fortalezas del contrario. De esa tensión nace el **Protocolo NEXO**.
-
-## Objetivo
-
-El objetivo es mantener al planeta con vida mientras Humano e IA evolucionan y deciden qué relación construir.
-
-- **Convergencia:** ambos aciertan la paridad de la suma y la Crisis del Planeta mejora según las reglas de la ronda.
+- **Convergencia:** ambos aciertan la paridad de la suma y reducen la Crisis según la ronda.
 - **Rivalidad:** solo uno acierta; el vencedor evoluciona y puede conquistar una fortaleza del contrario.
-- **Fracaso:** ninguno acierta; la Crisis del Planeta empeora.
+- **Fracaso:** ninguno acierta y la Crisis aumenta.
 
-La evolución individual puede proporcionar ventajas, pero no sirve de nada si el planeta colapsa.
+La evolución individual proporciona ventajas, pero la partida se pierde si el planeta colapsa.
 
 ## Configuración de partida
 
-Antes de comenzar se puede elegir:
+Antes de comenzar se eligen:
 
 - nombre del jugador;
 - avatar Humano;
 - avatar de la IA;
-- duración de 8, 12 o 16 rondas;
-- modo libre (`∞`).
+- duración de 8, 12 o 16 rondas, o modo libre (`∞`).
 
-La selección predeterminada es de 12 rondas.
+La duración predeterminada es de 12 rondas. Los jugadores guardados pueden reutilizarse desde el mismo navegador.
 
 ## Flujo de una ronda
 
 1. Se presenta una crisis ecológica.
-2. Puede aparecer una carta de crisis que modifica las reglas de esa ronda.
+2. Puede aparecer una carta que modifica las reglas de esa ronda.
 3. Cada cuatro rondas puede activarse un evento especial.
-4. La IA selecciona su carta y declara primero PAR o IMPAR.
-5. El jugador ve esa declaración y elige su apuesta y carta.
-6. Las fortalezas disponibles pueden aportar información o alterar la decisión cuando cumplen su condición de activación.
+4. La IA selecciona su carta y declara PAR o IMPAR.
+5. El jugador ve la declaración de la IA, declara su apuesta y elige carta.
+6. Las fortalezas disponibles intervienen cuando se cumplen sus condiciones.
 7. Se revelan las cartas y se calcula la suma.
 8. Se resuelve Convergencia, Rivalidad o Fracaso.
-9. Se actualizan Crisis del Planeta, evolución y fortalezas conquistadas.
-10. Se muestra el panel de resolución y se avanza a la siguiente ronda.
+9. Se actualizan Crisis, evolución y fortalezas conquistadas.
+10. El panel de resolución permite avanzar a la ronda siguiente.
 
-La mano contiene cartas del 1 al 5. Las cartas usadas se descartan y se recuperan al comenzar un nuevo ciclo de mano.
+Cada mano contiene las cartas del 1 al 5. Las cartas usadas se descartan y se recuperan al comenzar un nuevo ciclo de mano. Humano e IA administran sus manos de forma independiente.
 
-## Resolución base
+### Resolución base
 
 | Resultado | Condición | Efecto base |
 |---|---|---|
-| **Convergencia** | Humano e IA aciertan la paridad | La Crisis del Planeta se reduce según la suma de las cartas, salvo que un modificador indique otra cosa. |
-| **Rivalidad humana** | Solo acierta el Humano | El Humano evoluciona, la IA retrocede y el Humano puede conquistar la siguiente fortaleza IA disponible. |
-| **Rivalidad IA** | Solo acierta la IA | La IA evoluciona, el Humano retrocede y la IA puede conquistar la siguiente fortaleza humana disponible. |
-| **Fracaso** | Ninguno acierta | La Crisis del Planeta aumenta 3 puntos, salvo modificadores o eventos. |
+| **Convergencia** | Humano e IA aciertan la paridad | La Crisis se reduce según la suma de las cartas, salvo que un modificador indique otra cosa. |
+| **Rivalidad humana** | Solo acierta el Humano | El Humano evoluciona, la IA retrocede y el Humano puede conquistar la siguiente fortaleza IA. |
+| **Rivalidad IA** | Solo acierta la IA | La IA evoluciona, el Humano retrocede y la IA puede conquistar la siguiente fortaleza humana. |
+| **Fracaso** | Ninguno acierta | La Crisis aumenta 3 puntos, salvo que un modificador o evento cambie el efecto. |
 
-Los porcentajes se mantienen dentro de sus límites válidos.
+Todos los porcentajes permanecen dentro del intervalo de 0 a 100.
 
 ## Crisis del Planeta
 
-El juego conserva internamente la salud del planeta y la interfaz la presenta como **Crisis del Planeta**:
+Internamente el juego conserva la salud del planeta; la interfaz muestra su valor inverso como **Crisis del Planeta**:
 
-- salud 100 = crisis 0 %;
-- salud 50 = crisis 50 %;
-- salud 0 = crisis 100 % y colapso.
+- salud 100 = Crisis 0 %;
+- salud 50 = Crisis 50 %;
+- salud 0 = Crisis 100 % y colapso.
 
 Las ocho crisis narrativas son:
 
@@ -102,54 +93,32 @@ Las ocho crisis narrativas son:
 - Calentamiento global
 - Escasez energética
 
-### Evolución visual del planeta
+La pantalla de partida utiliza fondos completos y reversibles para los tramos 0–24 %, 25–49 %, 50–74 %, 75–99 % y 100 % de Crisis. El 0 % exacto dispone además de un escenario propio de recuperación total.
 
-La pantalla de partida utiliza un fondo completo por cada tramo de Crisis. Así, el deterioro del planeta se entiende de forma inmediata y no depende de superponer capas visuales.
+Los assets se encuentran en:
 
-La partida y la pantalla final usan **dos series deliberadamente distintas** porque cumplen funciones visuales diferentes:
+- `assets/images/partida/fondos-planeta/`
+- `assets/images/final/fondos/`
 
-- durante la partida se conserva la **esfera/núcleo NEXO integrada en el escenario**, ya que desde su centro nace el feedback visual de Convergencia;
-- en la pantalla final se emplean composiciones más abiertas, sin una esfera flotante protagonista, para que el paisaje y el estado del mundo sean el cierre emocional.
+Los fondos de partida conservan el núcleo NEXO para el feedback de las rondas. Los fondos finales utilizan composiciones más abiertas para dar prioridad al desenlace.
 
-Assets de partida:
+## Cartas de crisis y modificadores
 
-- `assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp`
-- `assets/images/partida/fondos-planeta/partida-planeta-25-49-equilibrio-fragil.webp`
-- `assets/images/partida/fondos-planeta/partida-planeta-50-74-equilibrio-critico.webp`
-- `assets/images/partida/fondos-planeta/partida-planeta-75-99-colapso-inminente.webp`
-- `assets/images/partida/fondos-planeta/partida-planeta-100-crisis-catastrofica.webp`
-
-La evolución usa **un fondo completo por estado**, nunca capas superpuestas ni filtros de color que intenten simular el deterioro. La degradación está dibujada en los propios assets y el cambio es reversible al subir o bajar la Crisis.
-
-Los cinco estados visuales del planeta se precargan al abrir la página para evitar interrupciones durante los cambios de Crisis. Durante la partida, el fondo principal mantiene la imagen anterior hasta que el nuevo asset termina de cargar, evitando huecos negros al cruzar de un estado visual a otro.
-
-## Cartas de crisis / modificadores
-
-Una carta de crisis puede aparecer antes de que el jugador tome su decisión:
-
-| Carta | Tipo | Efecto ejecutable |
+| Carta | Tipo | Efecto |
 |---|---|---|
 | **Energía Renovable** | Positiva | Duplica la reducción de Crisis obtenida por Convergencia. |
-| **Economía Circular** | Positiva | Añade 3 puntos extra a la reducción de Crisis por Convergencia. |
-| **Incendio Forestal** | Negativa | Si no hay Convergencia, la Crisis aumenta 3 puntos adicionales. |
+| **Economía Circular** | Positiva | Añade 3 puntos a la reducción de Crisis por Convergencia. |
+| **Incendio Forestal** | Negativa | Si no hay Convergencia, añade 3 puntos al aumento de Crisis. |
 | **Sequía** | Negativa | La suma de las cartas aumenta la Crisis incluso si hay Convergencia. |
 | **Punto de Inflexión** | Mixta | Duplica cualquier cambio de Crisis e impide conquistar fortalezas esa ronda. |
 
-### Aviso visual de modificadores — V22.37
-
-El panel **IMPACTO EN ESTA RONDA** cambia de jerarquía visual según el tipo de modificador:
-
-- **Negativo:** borde y halo rojo, con varios pulsos de entrada para atraer la atención.
-- **Positivo:** halo verde/cian más suave.
-- **Mixto:** halo ámbar/naranja.
-
-El efecto de entrada no es continuo y respeta `prefers-reduced-motion`.
+El panel **IMPACTO EN ESTA RONDA** diferencia visualmente los modificadores positivos, negativos y mixtos. En pantallas pequeñas el contenido puede crecer con el documento para que el texto permanezca completo y legible.
 
 ## Eventos especiales
 
 Los eventos aparecen cada cuatro rondas y afectan a una sola ronda:
 
-| Evento | Efecto ejecutable |
+| Evento | Efecto |
 |---|---|
 | **Tormenta solar** | Desactiva temporalmente las fortalezas conquistadas. |
 | **Cumbre de emergencia** | Duplica la reducción de Crisis obtenida por Convergencia. |
@@ -157,52 +126,25 @@ Los eventos aparecen cada cuatro rondas y afectan a una sola ronda:
 | **Chispa creativa** | Revela la carta de la IA antes de apostar. |
 | **Punto sin retorno** | Un Fracaso aumenta la Crisis 6 puntos en lugar de 3. |
 
+La presentación inicial del evento se cierra con **CONTINUAR**. Si el evento necesita permanecer visible durante la ronda, su resumen se integra en una zona propia y no cubre las declaraciones ni las cartas.
+
 ## Fortalezas conquistables
 
-Las fortalezas se conquistan en orden durante una Rivalidad. No se seleccionan manualmente.
-
-### Regla de interfaz: ADQUIRIDA ≠ ACTIVA
-
-Una fortaleza conquistada permanece disponible durante la partida, pero **el aviso grande de activación solo debe aparecer cuando esa fortaleza está interviniendo realmente en la ronda**.
-
-Los laterales utilizan títulos inequívocos:
-
-- panel Humano: **CONQUISTADAS POR EL HUMANO**;
-- panel IA: **CONQUISTADAS POR LA IA**.
-
-Los avisos contextuales aparecen en el lateral del jugador que posee actualmente la fortaleza, aunque la información obtenida se refiera al rival. Las fortalezas que requieren una decisión directa del jugador, como Precisión, pueden utilizar además un panel central de interacción.
+Las fortalezas se conquistan en orden durante una Rivalidad. No se seleccionan manualmente. Una fortaleza adquirida permanece disponible, pero el aviso de activación solo aparece cuando interviene realmente.
 
 ### Fortalezas IA que puede conquistar el Humano
 
-1. **Memoria**  
-   Conserva un registro de las últimas jugadas de la IA y permite consultar sus apuestas y cartas recientes. El registro puede permanecer disponible, pero no se presenta permanentemente como una activación nueva.
-
-2. **Precisión**  
-   Una vez por ciclo de mano, después de confirmar la jugada, revela **la carta real de la IA**, no su apuesta PAR/IMPAR. La carta IA queda fijada para esa resolución y el jugador puede:
-   - mantener su carta original;
-   - corregirla antes de resolver.
-
-3. **Análisis predictivo**  
-   Analiza las cartas que todavía puede jugar la IA y recomienda una opción para buscar Convergencia y otra para buscar Rivalidad. El dato mostrado representa **combinaciones posibles**, no una probabilidad estadística sobre la conducta futura de la IA.
-
-4. **Velocidad**  
-   Permite seleccionar **dos cartas**. NEXO compara los resultados que producirían ambas opciones y aplica automáticamente la más beneficiosa para el Humano teniendo en cuenta los cambios reales de evolución y Crisis de la ronda. Las dos cartas seleccionadas se descartan.
-
-   Por ese coste, el Humano puede mostrar menos cartas disponibles que la IA: ambas manos llevan ciclos independientes y la IA solo gasta una carta por ronda. Cuando una mano queda vacía, sus cinco cartas se recuperan al preparar la ronda siguiente.
+1. **Memoria:** conserva el registro de las últimas apuestas y cartas de la IA.
+2. **Precisión:** una vez por ciclo de mano revela la carta real de la IA y permite mantener o corregir la carta humana antes de resolver.
+3. **Análisis predictivo:** estudia las cartas disponibles de la IA y recomienda opciones para buscar Convergencia o Rivalidad.
+4. **Velocidad:** permite seleccionar dos cartas; NEXO compara sus resultados y aplica la más favorable. Ambas cartas se descartan.
 
 ### Fortalezas humanas que puede conquistar la IA
 
-1. **Creatividad**  
-   Tras **dos derrotas consecutivas frente al Humano**, la IA rompe su patrón y cambia su apuesta respecto a la anterior. Un Fracaso no cuenta como derrota frente al Humano.
-
-2. **Intuición**  
-   Aproximadamente cada tres rondas, la IA utiliza la elección humana como pista. Si existe una carta disponible que mejora el ajuste a la apuesta que ya había declarado, puede sustituir su carta. El aviso aparece solo si realmente se produce el ajuste.
-
-3. **Empatía**  
-   Cuando el planeta entra en una situación crítica, la IA revela su carta para favorecer que el Humano pueda buscar una posible Convergencia. No fuerza automáticamente la Convergencia.
-
-4. **Adaptación**  
-   Si dispone de ella, la IA recupera y reutiliza una carta con la que anteriormente consiguió una victoria, aprovechando una opción que ya funcionó.
+1. **Creatividad:** después de dos derrotas consecutivas frente al Humano, la IA cambia su patrón de apuesta.
+2. **Intuición:** aproximadamente cada tres rondas puede ajustar su carta usando la elección humana como pista.
+3. **Empatía:** cuando el planeta está en situación crítica, la IA revela su carta para facilitar una posible Convergencia.
+4. **Adaptación:** permite a la IA recuperar una carta con la que anteriormente consiguió una victoria.
 
 ## Evolución visual de los avatares
 
@@ -213,124 +155,65 @@ Existen cuatro personajes base:
 - IA femenina → Humano
 - IA masculina → Humano
 
-Cada personaje tiene cuatro estados visuales reversibles:
+Cada personaje dispone de cinco imágenes reversibles:
 
 - 0–24 %
 - 25–49 %
 - 50–74 %
-- 75–100 %
+- 75–99 %
+- 100 %
 
-La evolución representa **hibridación**, no sustitución completa de identidad: incluso en 75–100 %, Humano e IA conservan rasgos reconocibles de su origen. En la IA femenina, los estados 25–49 % y 50–74 % se han diferenciado visualmente para que el primer tramo siga siendo claramente artificial y el segundo muestre una convergencia humano–IA más avanzada.
-
-La evolución se representa mediante assets WebP específicos; no depende de filtros, halos o transformaciones CSS para simular el cambio del personaje.
-
-Los 16 retratos se encuentran en:
-
-`assets/images/partida/avatares-evolucion/`
-
-Cuando la barra sube o baja y cruza un umbral, se muestra el asset correspondiente al tramo actual.
-
-## Manual / Cómo jugar
-
-El juego incorpora un manual independiente para evitar sobrecargar la introducción narrativa. Puede consultarse desde la experiencia y explica:
-
-- objetivo general;
-- flujo de ronda;
-- PAR / IMPAR;
-- Convergencia, Rivalidad y Fracaso;
-- ocho fortalezas;
-- cartas de crisis;
-- eventos especiales;
-- condiciones de final de partida.
+En total hay 20 retratos evolutivos en `assets/images/partida/avatares-evolucion/`. El cambio de imagen ocurre al cruzar cada umbral y conserva la identidad reconocible del personaje.
 
 ## Final de partida
 
-Una partida termina cuando ocurre alguna de estas condiciones:
+El número de rondas elegido es la duración máxima. La partida termina cuando:
 
-El número de rondas elegido representa la **duración máxima**, no una obligación de llegar hasta la última ronda.
+- la Crisis alcanza el 0 % y el planeta se recupera completamente;
+- la Crisis alcanza el 100 % y el planeta colapsa;
+- se completa la duración elegida;
+- el jugador abandona.
 
-- **Crisis 100%:** el planeta colapsa y la derrota es inmediata;
-- **Crisis 0%:** el planeta alcanza la recuperación completa y la partida termina de forma anticipada en cualquier modalidad;
-- si ninguno de esos extremos ocurre, finaliza al agotarse el número de rondas elegido;
-- en modo libre se continúa hasta recuperación completa, colapso o abandono;
-- el jugador abandona la partida.
+En modo libre se continúa hasta recuperación, colapso o abandono.
 
-Cuando la Crisis llega a 0%, la resolución se convierte en un momento de cierre: aparece **PLANETA RECUPERADO** y el botón **DESCUBRIR EL DESENLACE**. El desenlace posterior sigue valorando el equilibrio de evolución entre Humano e IA: recuperar el planeta no implica necesariamente que ambos hayan evolucionado de forma equilibrada.
+El estado principal del mundo se clasifica así:
 
-La pantalla final se ha rediseñado para que el planeta tenga la mayor jerarquía narrativa. El título principal describe el estado final del mundo y el desenlace Humano/IA aparece como resultado secundario:
+| Crisis final | Estado del planeta |
+|---|---|
+| 0 % | Planeta recuperado |
+| 1–24 % | Equilibrio restablecido |
+| 25–49 % | Equilibrio frágil |
+| 50–74 % | Equilibrio crítico |
+| 75–99 % | Colapso inminente |
+| 100 % | Colapso planetario |
 
-- **0% Crisis:** `PLANETA RECUPERADO` + `OBJETIVO DEL PROTOCOLO NEXO ALCANZADO`;
-- **1–24% Crisis:** `EQUILIBRIO RESTABLECIDO`;
-- **25–49% Crisis:** `EQUILIBRIO FRÁGIL`;
-- **50–74% Crisis:** `EQUILIBRIO CRÍTICO`;
-- **75–99% Crisis:** `COLAPSO INMINENTE`;
-- **100% Crisis:** `COLAPSO PLANETARIO`.
+El resultado secundario describe la relación evolutiva entre Humano e IA: Colapso, Convergencia Total, Supremacía Humana, Supremacía IA o Equilibrio inestable.
 
-La pantalla final usa una **serie propia de cinco fondos** preparada para el epílogo. No reutiliza los fondos de partida porque en el cierre la esfera central resultaba repetitiva y competía con el mensaje final. La progresión visual sigue el mismo orden de Crisis —verde/azul limpio → pérdida de vitalidad → gris/ocre y humo → tonos cálidos de colapso → rojo/fuego en la catástrofe—, pero con composiciones más abiertas y emocionales.
+## Sonido
 
-Assets de la pantalla final:
+El sistema utiliza objetos `Audio` reutilizables y no depende de Web Audio API.
 
-- `assets/images/final/fondos/final-planeta-0-24-equilibrio-saludable.webp`
-- `assets/images/final/fondos/final-planeta-25-49-equilibrio-fragil.webp`
-- `assets/images/final/fondos/final-planeta-50-74-equilibrio-critico.webp`
-- `assets/images/final/fondos/final-planeta-75-99-colapso-inminente.webp`
-- `assets/images/final/fondos/final-planeta-100-crisis-catastrofica.webp`
+- Suspense y portada: `assets/audio/inicio/ambos-nexo.mp3`
+- Introducción y configuración: `assets/audio/musica/introduccion-configuracion.mp3`
+- Partida: `assets/audio/musica/nexo-partida.mp3`
+- Efectos: `assets/audio/sfx/`
 
-Los paneles finales son holográficos y translúcidos, con esquinas técnicas y líneas de luz, de manera que el escenario siga siendo protagonista. El resumen numérico se presenta como una sola franja de lectura y las capacidades dejan de comportarse como tarjetas de dashboard independientes.
+La primera interacción real prepara las pistas para cumplir las restricciones de reproducción de Safari móvil. Cada pantalla controla su propia música y detiene las pistas que ya no corresponden. El interruptor y el volumen generales afectan a músicas y efectos.
 
-El logo de la pantalla final reutiliza el asset oficial de portada `nexo-logo-completo-x-estatica-v7.webp`. El nombre del jugador se muestra de forma explícita junto al perfil alcanzado. Las capacidades conquistadas, el balance Humano/IA, las rondas y la Crisis final se mantienen, pero se presentan mediante paneles y líneas holográficas translúcidas, dejando visible el mundo final y evitando el antiguo bloque tipo dashboard.
+Todos los desenlaces reproducen primero los tres segundos principales de `assets/audio/sfx/transiciones/desenlace.mp3`. Después se detiene su cola tenue y comienza, sin solapamiento, la música larga correspondiente:
 
-Los desenlaces secundarios contemplan:
+| Crisis final | Música |
+|---|---|
+| 0 % | `assets/audio/final/planeta-restaurado.mp3` |
+| 1–40 % | `assets/audio/final/equilibrio-restablecido.mp3` |
+| 41–99 % | `assets/audio/final/rivalidad-final.mp3` |
+| 100 % | `assets/audio/final/planeta-colapso.mp3` |
 
-1. **Colapso**
-2. **Convergencia Total**
-3. **Supremacía Humana**
-4. **Supremacía IA**
-5. **Equilibrio inestable**
+El inventario sonoro completo está documentado en `MAPA_SONORO_NEXO.md`.
 
-La pantalla final muestra también un perfil de evolución relacionado con fortalezas conquistadas y estado del planeta.
+## Persistencia
 
-## Persistencia y sonido
-
-La portada utiliza `assets/audio/inicio/ambos-nexo.mp3` mediante un objeto `Audio` normal. En V24.38 se sustituyó únicamente el contenido de esa pista por la segunda mezcla entregada, manteniendo su duración aproximada de 22 segundos. En V24.39 se han medido de nuevo sus tiempos: la X reproduce el doble golpe del corazón con un ciclo de `1,009272 s`, cuyo golpe principal cae cerca del 19,3% y el segundo cerca del 53%; los nodos usan un reloj independiente de `11,101995 s` y destellan con las descargas situadas aproximadamente en `0,980`, `3,780`, `4,540` y `7,040 s`. La pista comienza después de pulsar la pantalla de suspense, se repite mientras permanece visible `#pantalla-inicio` y reduce gradualmente su volumen con `setInterval` al pulsar **JUGAR**. Al iniciarse el audio, dos variables CSS fijan la fase y una clase temporal reinicia la animación durante un solo fotograma; así no hereda el tiempo transcurrido mientras la portada estaba oculta y también vuelve sincronizada después de **VOLVER A JUGAR**. Esta integración no utiliza Web Audio API ni añade clases de TypeScript.
-
-La composición de la pantalla final se compacta únicamente entre `821` y `980 px` de alto. En ese tramo se reserva margen inferior, se reduce de forma ligera la altura del logo, las tarjetas y el cierre, y el contenido se alinea desde arriba. De este modo **VOLVER A JUGAR** queda completo dentro de la pantalla sin necesitar desplazamiento vertical, manteniendo intacto el diseño amplio en resoluciones mayores.
-
-El desenlace **PLANETA RECUPERADO** utiliza `assets/audio/final/planeta-restaurado.mp3` exclusivamente cuando la Crisis llega al 0%. Entre el 1% y el 40% de Crisis se utiliza `assets/audio/final/equilibrio-restablecido.mp3`; entre el 41% y el 99%, `assets/audio/final/rivalidad-final.mp3`; y al 100%, `assets/audio/final/planeta-colapso.mp3`. En todos los casos suena primero, una sola vez, la parte principal de `assets/audio/sfx/transiciones/desenlace.mp3`. A los tres segundos se detiene su cola tenue y solo entonces comienza la música larga, sin solapamiento. La música se repite mientras el jugador permanece en la pantalla final y se detiene y rebobina al pulsar **VOLVER A JUGAR**. El interruptor y el volumen generales también la controlan.
-
-Desde V24.41, el peor desenlace **COLAPSO PLANETARIO** utiliza `assets/audio/final/planeta-colapso.mp3` con el mismo comportamiento seguro: solo comienza al alcanzar el 100% de Crisis, se repite mientras el jugador permanece en esa pantalla final y se pausa o detiene con los controles generales y **VOLVER A JUGAR**. Elegir un jugador ya registrado reproduce además un único clic corto y constante, reutilizando un efecto existente para no duplicar assets.
-
-Desde V24.42, Introducción y Configuración comparten `assets/audio/musica/introduccion-configuracion.mp3`. La pista empieza al pulsar **JUGAR**, usa un único objeto `Audio` y no se reinicia al cambiar entre esas dos pantallas. Se mantiene en bucle hasta que una configuración válida permite pulsar **INICIAR PROTOCOLO**; entonces se detiene y comienza la música de partida.
-
-V24.43 corrige el criterio de la música `assets/audio/final/rivalidad-final.mp3`: al agotarse las rondas, se activa cuando el desenlace completo es **SUPREMACÍA HUMANA** o **SUPREMACÍA IA**, con independencia del resultado aislado de la última ronda. Se repite hasta **VOLVER A JUGAR**, respeta silencio y volumen, no se usa al abandonar y no sustituye las músicas prioritarias de recuperación total o colapso.
-
-V24.44 mejora únicamente la mezcla entre pantallas. La pista de la portada recibe un refuerzo moderado de volumen. La música compartida de Introducción y Configuración comienza desde el segundo 2 del MP3 y sube gradualmente durante 900 ms. Al pulsar **INICIAR PROTOCOLO**, esa música baja durante el mismo intervalo mientras la música de partida entra progresivamente. Los fundidos utilizan `setInterval` y la propiedad `volume` de objetos `Audio`; no emplean Web Audio API ni modifican los archivos MP3.
-
-V24.47 prepara las pistas durante el primer gesto real de la pantalla de suspense para que Safari móvil permita reproducirlas más adelante. La preparación es silenciosa y funciona aunque el sonido estuviera desactivado. El clic de acceso se reproduce con prioridad y la pista de portada espera en silencio los 700 ms de transición antes de empezar desde el principio, evitando que ambos sonidos se solapen. No incorpora Web Audio API, librerías ni clases adicionales.
-
-V24.48 hace perceptible antes la música compartida de Introducción y Configuración: comienza en el segundo 4 de la pista, alcanza su nivel en 225 ms y recibe un refuerzo moderado. El fundido de salida hacia la partida conserva los 900 ms anteriores. Este cambio no modifica el pulso de la portada ni la sincronización de su X.
-
-V24.49 corrige la partida en móvil y tablet sin cambiar el tablero de PC amplio. Al iniciar el protocolo se vuelve al principio de la pantalla; Humano e IA aparecen en una misma fila simétrica antes de la decisión; sus avatares conservan la misma distancia respecto a los márgenes exteriores; y las cinco cartas se reducen cuando es necesario para permanecer completas y centradas.
-
-V24.50 prioriza la jugada en móvil, tablet e iPad: declaración, cartas y «RESOLVER RONDA» aparecen antes que las fichas de Humano e IA. La zona activa se compacta en móvil, el botón queda inmediatamente debajo de las cartas y el resultado se abre centrado con «SIGUIENTE RONDA» visible. PC conserva su composición anterior.
-
-V24.51 ordena el contador de la partida: en móvil, tablet e iPad muestra «RONDA» y debajo el valor completo «1 / 12»; en PC permanece en una sola línea. También elimina el temblor de toda la interfaz al producirse un fracaso: continúan el destello y la reacción del núcleo, pero los paneles, cartas y botones ya no se desplazan.
-
-V24.52 centra la información de todos los eventos especiales: sobrelínea, título, explicación y botón «CONTINUAR» comparten un mismo eje visual en móvil, tablet/iPad y PC. En móvil, la imagen ocupa todo su marco proporcional y ya no deja una franja vacía debajo.
-
-La mezcla V24.41 corrige el nivel excesivamente bajo de las versiones anteriores. El 28% general se estaba multiplicando por volúmenes internos ya reducidos; ahora una función común refuerza la mezcla y la limita a `1`, el máximo admitido por el objeto `Audio`. Se conservan las proporciones entre efectos y músicas, el control de volumen continúa funcionando y el silencio sigue dejando todo a cero.
-
-Los efectos breves de interfaz y partida se organizan en `assets/audio/sfx/` y se controlan desde `src/sonidos.ts`. Este módulo contiene únicamente objetos, funciones, listeners y objetos `Audio`: no añade una quinta clase ni utiliza Web Audio API. Cada acción —avatar, rondas, PAR/IMPAR, carta, panel o confirmación— conserva un único sonido reconocible. Los objetos `Audio` se preparan una vez y se reutilizan para que el primer clic y los siguientes respondan de la misma forma. Evento y carta de crisis se ordenan si coinciden; y las transiciones de planeta o avatares solo suenan al cruzar 25%, 50%, 75% o 100%. El volumen y el silencio siguen usando `nexo-volumen` y `nexo-sonido`. La selección completa y los archivos de origen se documentan en `MAPA_SONORO_NEXO.md`.
-
-Desde V24.36, todos los eventos especiales comparten una señal fija y todas las cartas/modificadores de crisis comparten otra señal distinta. Velocidad mantiene siempre dos cartas cuando se sustituye una elección, permite desmarcarlas y muestra el progreso `0/2`, `1/2` o `2/2`, evitando que el botón de resolución parezca bloqueado sin explicación.
-
-Desde V24.37, `assets/audio/musica/nexo-partida.mp3` acompaña únicamente la pantalla de partida. Utiliza un objeto `Audio` independiente y `loop = true`, por lo que los sonidos de botones, eventos, fortalezas, resultados y transiciones pueden reproducirse a la vez sin cortar la música. El interruptor y el volumen generales siguen controlándolo todo; al silenciar se pausa la pista y al abandonar o llegar al desenlace se detiene y vuelve al inicio.
-
-La limpieza V24.40 retira `heartbeat.wav`, sustituido definitivamente por la mezcla de portada, y el efecto positivo que había quedado sin ninguna llamada ejecutable. Los demás efectos y músicas se conservan sin cambios.
-
-La limpieza V24.41 retira 21 gráficos heredados V15/V16 que ya no tenían ninguna referencia y habían sido sustituidos por los botones limpios, los fondos evolutivos y el núcleo actuales. Las diez cartas numeradas se conservan: aunque su ruta completa no aparece escrita literalmente, TypeScript la construye con el valor de cada carta. El icono del navegador reutiliza la X vigente de NEXO para evitar la petición rota de `favicon.ico`.
-
-El navegador utiliza `localStorage` para conservar información local como:
+El navegador utiliza `localStorage` para conservar:
 
 - jugadores creados;
 - mejor marca de cada jugador;
@@ -338,11 +221,26 @@ El navegador utiliza `localStorage` para conservar información local como:
 - estado del sonido;
 - volumen.
 
-Los datos permanecen en el navegador y no se envían a ningún servidor.
+Los datos permanecen en el navegador y no se envían a ningún servidor. Existe una migración para guardados anteriores y los identificadores internos son independientes del nombre visible.
 
-La estructura actual incluye una migración para guardados anteriores y mantiene identificadores internos independientes del nombre visible del jugador.
+## Diseño responsive y compatibilidad
 
-## Estructura principal del proyecto
+La interfaz mantiene composiciones específicas para:
+
+- PC;
+- tablet e iPad en vertical y horizontal;
+- móvil en vertical y horizontal;
+- ventanas divididas y alturas útiles reducidas por las barras del navegador.
+
+En móvil horizontal, la zona de decisión aparece primero y el documento permite desplazarse después hasta los paneles de Humano e IA, sus evoluciones, fortalezas y cartas disponibles. Los eventos persistentes y modificadores ocupan zonas propias para no tapar PAR / IMPAR, las cartas ni **RESOLVER RONDA**.
+
+En dispositivos táctiles se refuerzan los controles de PAR / IMPAR, **RESOLVER RONDA**, **SIGUIENTE RONDA** y **CONTINUAR** para evitar mapas táctiles obsoletos de Safari al cambiar de ronda u orientación.
+
+El campo del nombre mantiene un tamaño efectivo mínimo de 16 px en los formatos móviles necesarios para evitar el zoom automático de Safari sin desactivar el zoom global. La configuración puede desplazarse cuando la barra inferior reduce el área visible, por lo que **INICIAR PROTOCOLO** permanece accesible y completo.
+
+La página se mantiene oculta hasta que los cuatro estilos principales han terminado de cargar, evitando que aparezca durante unos instantes contenido sin formato sobre fondo blanco.
+
+## Estructura principal
 
 ```text
 NEXO_La_convergencia_cris/
@@ -350,71 +248,93 @@ NEXO_La_convergencia_cris/
 ├── css/
 │   ├── style.css
 │   ├── partida.css
-│   └── suspense.css
+│   ├── suspense.css
+│   └── movil.css
 ├── src/
+│   ├── almacenamiento.ts
 │   ├── Carta.ts
-│   ├── Jugador.ts
-│   ├── Partida.ts
+│   ├── datos.ts
+│   ├── Evento.ts
 │   ├── ia.ts
-│   ├── tipos.ts
+│   ├── interfaz.ts
+│   ├── Jugador.ts
 │   ├── main.ts
+│   ├── Partida.ts
+│   ├── sonidos.ts
 │   ├── suspense.ts
+│   ├── tipos.ts
 │   └── efecto-energia-esfera.js
 ├── dist/
-│   ├── main.js
-│   ├── Carta.js
-│   ├── Jugador.js
-│   ├── Partida.js
-│   ├── ia.js
-│   ├── tipos.js
-│   ├── suspense.js
-│   ├── Evento.js
-│   ├── interfaz.js
-│   ├── datos.js
-│   └── almacenamiento.js
+│   └── módulos JavaScript generados desde src/
 ├── tests/
 │   ├── functional.mjs
 │   ├── fortalezas.mjs
+│   ├── eventos.mjs
+│   ├── stress-partidas.mjs
 │   ├── player-storage.mjs
-│   └── player-migration.mjs
+│   ├── player-migration.mjs
+│   ├── mejor-marca.mjs
+│   └── sonidos.mjs
 ├── assets/
 │   ├── audio/
 │   └── images/
+├── scripts/
 ├── package.json
 ├── package-lock.json
 └── tsconfig.json
 ```
 
-`dist/` contiene los módulos JavaScript que ejecuta actualmente el navegador. Parte de la arquitectura mantiene archivos fuente TypeScript en `src/`, por lo que los cambios funcionales deben mantener sincronizados los archivos correspondientes cuando proceda.
+`src/` es la fuente mantenible y `dist/` contiene los módulos JavaScript ejecutados por el navegador. `src/efecto-energia-esfera.js` es una excepción intencionada: se carga directamente desde `index.html`.
 
 ## Ejecución local
 
-Puede abrirse con **Live Server** desde VS Code, que es el flujo de trabajo utilizado en el proyecto.
+El juego debe servirse por HTTP porque utiliza módulos ES. Desde la raíz del proyecto puede usarse un servidor estático sencillo:
 
-## Pruebas
-
-### Guardián de archivos
-
-Ejecutar `npm run audit` para comprobar el inventario de archivos esenciales, todos los assets protegidos, las referencias a recursos y la correspondencia entre `src/` y `dist/`. `npm test` ejecuta automáticamente esta auditoría antes de las pruebas funcionales.
-
-Dentro de un repositorio Git, ejecutar una sola vez `npm run guardian:install`. Esto activa el hook incluido en `.githooks/pre-commit` y bloquea commits cuando la auditoría detecta pérdidas o referencias rotas.
-
-Las reglas para Codex están en `AGENTS.md`; Claude dispone de las instrucciones equivalentes en `CLAUDE.md`.
-
-Ejecutar:
-
-```bash
-npm test
+```powershell
+py -m http.server 8080 --bind 0.0.0.0
 ```
 
-Actualmente se ejecutan cuatro grupos de pruebas:
+Después:
 
-1. `tests/functional.mjs` — comprobaciones funcionales principales.
-2. `tests/fortalezas.mjs` — lógica y coherencia de las ocho fortalezas.
-3. `tests/player-storage.mjs` — progreso independiente de jugadores.
-4. `tests/player-migration.mjs` — migración de guardados anteriores.
+- en el mismo ordenador: `http://127.0.0.1:8080/`
+- desde otro dispositivo de la misma red: `http://IP_DEL_ORDENADOR:8080/`
 
-Antes de realizar un commit importante conviene ejecutar `npm test` y comprobar manualmente en navegador los cambios visuales o de interacción.
+Para pruebas en iPhone o iPad se recomienda este servidor estable. Live Server puede inyectar recarga automática y provocar reinicios aparentes de la partida si detecta cambios.
+
+## Desarrollo y pruebas
+
+Instalar dependencias una vez:
+
+```bash
+npm install
+```
+
+Flujo recomendado:
+
+1. `npm run audit` — comprueba archivos esenciales, assets, referencias y correspondencia entre `src/` y `dist/`.
+2. `npm run build:check` — compila en `dist-comprobacion/` sin sobrescribir el juego activo.
+3. `npm test` — ejecuta las ocho suites funcionales.
+4. Revisar manualmente los cambios visuales e interactivos en los dispositivos afectados.
+5. `npm run build` — actualiza `dist/` cuando todo lo anterior es correcto.
+
+Las suites actuales verifican:
+
+1. funcionamiento principal;
+2. fortalezas;
+3. eventos;
+4. 900 partidas completas de estrés;
+5. almacenamiento independiente por jugador;
+6. migración de guardados;
+7. mejor marca;
+8. sonidos y músicas finales.
+
+El hook de protección puede instalarse con:
+
+```bash
+npm run guardian:install
+```
+
+Las reglas de mantenimiento para agentes están en `AGENTS.md` y `CLAUDE.md`.
 
 ## Tecnologías
 
@@ -423,36 +343,4 @@ Antes de realizar un commit importante conviene ejecutar `npm test` y comprobar 
 - TypeScript
 - JavaScript ES Modules
 - Web Storage (`localStorage`)
-- Node.js únicamente para scripts de prueba/desarrollo
-
-## Estado de trabajo tras V22.37
-
-La versión documentada incorpora las mejoras acumuladas de avatares evolutivos, fortalezas, manual, Precisión, Velocidad, organización de avisos por propietario y alertas visuales de modificadores.
-
-Los próximos cambios artísticos del planeta pueden desarrollarse como una fase independiente para poder versionarlos en Git mediante commits específicos sin mezclar de nuevo lógica, interfaz y assets.
-
-### Corrección de interacción — Resolver ronda
-
-Se ha reforzado el botón `RESOLVER RONDA` para que una jugada completa no pueda quedar en un estado visual habilitado sin respuesta. `Precisión` ya no sustituye el texto ni la función del botón principal: si la fortaleza está disponible, al pulsar `RESOLVER RONDA` se abre automáticamente su panel informativo para elegir entre mantener o corregir la carta antes del resultado. También se ha elevado la prioridad de interacción del botón para evitar que una capa visual de cartas intercepte el clic.
-
-### Sistema tipográfico de partida (V24.2)
-La pantalla de partida usa una única familia tipográfica de interfaz (`Inter`, con `Segoe UI`/Arial como respaldo) y diferencia jerarquías mediante peso, tamaño y espaciado. La revisión V24.2 no modifica la geometría de los paneles; consolida además el CSS de la fortaleza Precisión para evitar reglas redundantes.
-
-## Fuentes TypeScript y compilación (V24.15)
-
-La carpeta `src/` vuelve a contener una fuente TypeScript para cada módulo JavaScript de `dist/`. El navegador continúa ejecutando `dist/main.js`, pero ese archivo y sus dependencias pueden reconstruirse desde las fuentes.
-
-Después de instalar las dependencias con `npm install`, están disponibles estos comandos:
-
-- `npm run build:check`: compila en `dist-comprobacion/` sin sobrescribir el juego activo. Se recomienda durante el desarrollo.
-- `npm run build`: genera la versión ejecutable en `dist/` cuando la compilación de comprobación y las pruebas hayan terminado correctamente.
-- `npm test`: ejecuta las comprobaciones funcionales, de fortalezas y de persistencia.
-
-Flujo recomendado para evitar pérdidas:
-
-1. Ejecutar `npm run build:check`.
-2. Ejecutar `npm test`.
-3. Comprobar en el navegador los cambios visuales o de interacción.
-4. Ejecutar `npm run build` únicamente cuando todo lo anterior sea correcto.
-
-`src/efecto-energia-esfera.js` es una excepción intencionada: es un efecto visual independiente cargado directamente por `index.html` y no forma parte de la lógica compilada de la partida.
+- Node.js para compilación, auditoría y pruebas
