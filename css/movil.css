@@ -3720,6 +3720,29 @@
   }
 }
 
+/* Configuracion en telefono apaisado: Safari no amplia los campos de 16px y
+   la rueda ocupa un carril propio en la fila inferior, fuera de los avatares. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) and (hover: none) and (pointer: coarse) {
+  #pantalla-configuracion #nombre-jugador {
+    font-size: 16px !important;
+  }
+
+  #pantalla-configuracion .configuracion-inferior {
+    padding-right: calc(42px + env(safe-area-inset-right)) !important;
+    box-sizing: border-box !important;
+  }
+
+  #pantalla-configuracion.activa ~ .boton-ajustes-global {
+    top: auto !important;
+    right: max(8px, env(safe-area-inset-right)) !important;
+    bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+  }
+}
+
 /* V29.9 · Precisión completa y sin scroll en móvil horizontal. */
 @media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
   #pantalla-juego.precision-decision-activa #panel-precision:not(.oculta) {
@@ -4155,5 +4178,151 @@
     white-space: nowrap !important;
     -webkit-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
+  }
+}
+
+/* Evento persistente en telefono apaisado. Se muestra en una franja propia
+   debajo de RESOLVER RONDA y solo se reserva espacio cuando el evento existe. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) and (hover: none) and (pointer: coarse) {
+  #pantalla-juego #marcadores {
+    overflow: visible !important;
+  }
+
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) #tablero,
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) .tablero-cinematico {
+    bottom: calc(32px + env(safe-area-inset-bottom)) !important;
+  }
+
+  #pantalla-juego #evento-activo-resumen:not(.oculta) {
+    position: absolute !important;
+    inset: calc(100dvh - 57px - max(3px, env(safe-area-inset-bottom))) 0 auto 0 !important;
+    box-sizing: border-box !important;
+    width: auto !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    padding: 3px 9px !important;
+    display: grid !important;
+    grid-template-columns: auto auto minmax(0, 1fr) !important;
+    gap: 7px !important;
+    align-items: center !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(220, 174, 255, .42) !important;
+    border-radius: 7px !important;
+    background: linear-gradient(90deg, rgba(28, 10, 35, .94), rgba(5, 17, 23, .94), rgba(26, 11, 34, .92)) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .42) !important;
+    z-index: 85 !important;
+  }
+
+  #pantalla-juego #evento-activo-resumen span { font-size: 7px !important; white-space: nowrap !important; }
+  #pantalla-juego #evento-activo-resumen strong { font-size: 9px !important; white-space: nowrap !important; }
+  #pantalla-juego #evento-activo-resumen p { min-width: 0 !important; font-size: 8px !important; }
+}
+
+/* En los iPhone de menor altura no cabe una cuarta fila. El evento comparte
+   la ultima linea con el boton, sin cubrir cartas ni declaraciones. */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 350px) and (hover: none) and (pointer: coarse) {
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) #tablero,
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) .tablero-cinematico {
+    bottom: max(3px, env(safe-area-inset-bottom)) !important;
+  }
+
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) #acciones,
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) .acciones-partida {
+    justify-content: flex-start !important;
+  }
+
+  #pantalla-juego:has(#evento-activo-resumen:not(.oculta)) #btn-confirmar-jugada {
+    width: 48vw !important;
+  }
+
+  #pantalla-juego #evento-activo-resumen:not(.oculta) {
+    top: calc(100dvh - 67px - max(3px, env(safe-area-inset-bottom))) !important;
+    right: 0 !important;
+    left: auto !important;
+    width: 46vw !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    padding: 3px 6px !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    grid-template-rows: 12px 14px !important;
+    gap: 1px 5px !important;
+  }
+
+  #pantalla-juego #evento-activo-resumen p {
+    grid-column: 1 / -1 !important;
+    line-height: 14px !important;
+  }
+}
+
+/* Chispa creativa en telefono vertical: el aviso ocupa todo el panel y la
+   declaracion queda centrada debajo, sin una columna derecha vacia. */
+@media (orientation: portrait) and (max-width: 640px) and (hover: none) and (pointer: coarse) {
+  #pantalla-juego #zona-declaraciones.chispa-activa,
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa {
+    box-sizing: border-box !important;
+    width: min(94%, 520px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    padding: 11px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    gap: 10px !important;
+    align-items: start !important;
+    justify-items: stretch !important;
+    overflow: visible !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .pista-chispa-nexo {
+    box-sizing: border-box !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 126px !important;
+    margin: 0 !important;
+    padding: 10px 14px !important;
+    display: grid !important;
+    grid-template-columns: 76px minmax(0, 1fr) !important;
+    gap: 14px !important;
+    align-items: center !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .pista-chispa-nexo img {
+    grid-column: 1 !important;
+    width: 70px !important;
+    height: 106px !important;
+    margin: 0 auto !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa {
+    grid-column: 2 !important;
+    min-width: 0 !important;
+    text-align: left !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa strong {
+    font-size: clamp(17px, 5.4vw, 21px) !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .texto-pista-chispa p {
+    font-size: clamp(10px, 3.3vw, 12px) !important;
+  }
+
+  #pantalla-juego .zona-declaraciones-nexo.chispa-activa .declaracion-humano {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    justify-self: center !important;
+    box-sizing: border-box !important;
+    width: min(100%, 380px) !important;
+    min-width: 0 !important;
+    max-width: 380px !important;
+    margin: 0 auto !important;
   }
 }
