@@ -6,15 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO — La Convergencia</title>
   <link rel="icon" type="image/webp" href="./assets/images/portada/logo/nexo_x_estatica_centrada_sin_limite.webp">
-  <link rel="stylesheet" href="./css/style.css?v=ui-v24-63-texto-intro">
+    <link rel="stylesheet" href="./css/style.css?v=portada-pulso-sincrono-v29j">
   <!-- Pantalla de partida aislada para que su diseño sea fácil de estudiar/modificar -->
   <link rel="stylesheet" href="./css/partida.css?v=eventos-centrados-v25u">
   <!-- Pantalla de suspense previa a INICIO: pulso interactivo + desbloqueo de audio -->
-  <link rel="stylesheet" href="./css/suspense.css?v=suspense-v1">
+  <link rel="stylesheet" href="./css/suspense.css?v=esquinas-iphone-v29a">
   <!-- Adaptacion a movil: se carga la ultima para poder corregir las anteriores. -->
-  <link rel="stylesheet" href="./css/movil.css?v=eventos-centrados-v25u-audio-v24-62">
+    <link rel="stylesheet" href="./css/movil.css?v=movil-horizontal-ordenado-v29j">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-0-24-equilibrio-saludable.webp">
+  <link rel="preload" as="image" href="./assets/images/portada/fondos/fondo-inicio-nexo.webp">
+  <link rel="preload" as="image" href="./assets/images/portada/logo/nexo_logo_base_tipografia_original_hd.webp">
+  <link rel="preload" as="image" href="./assets/images/portada/logo/nexo_x_estatica_centrada_sin_limite.webp">
+  <link rel="preload" as="image" href="./assets/images/portada/botones/boton-jugar-prismatico-transparente.webp">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-25-49-equilibrio-fragil.webp">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-50-74-equilibrio-critico.webp">
   <link rel="preload" as="image" href="./assets/images/partida/fondos-planeta/partida-planeta-75-99-colapso-inminente.webp">
@@ -28,7 +32,7 @@
        El clic desbloquea el audio y abre la portada existente.
   ============================================================ -->
   <section id="pantalla-suspense" class="pantalla activa" aria-label="Acceso a NEXO">
-    <svg id="svg-suspense" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg id="svg-suspense" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
       <defs>
         <radialGradient id="masaGrad" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
@@ -930,6 +934,6 @@
 
   <!-- NEXO V5 · efecto visual aislado de la lógica del juego -->
   <script type="module" src="./src/efecto-energia-esfera.js?v=config-v10-esfera-alineada"></script>
-  <script type="module" src="./dist/main.js?v=responsive-hud-v25t-audio-v24-48"></script>
+  <script type="module" src="./dist/main.js?v=ipad-apuesta-tactil-v29l"></script>
 </body>
 </html>

@@ -131,13 +131,23 @@ const SONIDOS: { [nombre: string]: ConfiguracionSonido } = {
   }
 };
 
-// INTRODUCCIÓN + CONFIGURACIÓN · V24.44
-// Un único objeto Audio continúa sonando al pasar de una pantalla a la otra.
+// CANALES COMPARTIDOS · V24.63
+// Safari de iPhone conserva con mucha más fiabilidad dos reproductores que
+// una colección de elementos Audio nuevos: uno para todas las músicas largas
+// y otro para los efectos breves. Cambiamos únicamente su archivo `src`.
+const musicaGlobal = new Audio();
+musicaGlobal.loop = true;
+musicaGlobal.preload = "auto";
+
+const audioEfectos = new Audio();
+audioEfectos.preload = "auto";
+
+// INTRODUCCIÓN + CONFIGURACIÓN
+// El mismo canal continúa sonando al pasar de una pantalla a la otra.
 // Solo se detiene cuando el jugador inicia el protocolo.
 const VOLUMEN_BASE_MUSICA_INTRO_CONFIG = 0.22;
-const musicaIntroduccionConfiguracion = new Audio("./assets/audio/musica/introduccion-configuracion.mp3");
-musicaIntroduccionConfiguracion.loop = true;
-musicaIntroduccionConfiguracion.preload = "auto";
+const RUTA_MUSICA_INTRO_CONFIG = "./assets/audio/musica/introduccion-configuracion.mp3";
+const musicaIntroduccionConfiguracion = musicaGlobal;
 
 // La pista entregada tiene un comienzo muy tenue. Empezamos en el segundo 4
 // y usamos una entrada breve para que se escuche desde el primer momento.
@@ -148,14 +158,13 @@ const INTERVALO_FUNDIDO_MUSICA = 45;
 let temporizadorMusicaIntroConfig: number | null = null;
 let volumenObjetivoMusicaIntroConfig = 0;
 
-// MÚSICA DE PARTIDA · FUNDIDO DE ENTRADA V24.44
-// Es un Audio independiente de los efectos: por eso un clic o un evento
-// puede sonar sin cortar la música de fondo. No se añade ninguna clase ni
-// se utiliza Web Audio API.
+// MÚSICA DE PARTIDA · FUNDIDO DE ENTRADA
+// Usa el canal musical, separado del canal de efectos: un clic o un evento
+// puede sonar sin cortar la música de fondo. No se utiliza Web Audio API.
 const VOLUMEN_BASE_MUSICA_PARTIDA = 0.18;
-const musicaPartida = new Audio("./assets/audio/musica/nexo-partida.mp3");
-musicaPartida.loop = true;
-musicaPartida.preload = "auto";
+const RUTA_MUSICA_PARTIDA = "./assets/audio/musica/nexo-partida.mp3";
+const RUTA_MUSICA_RIVALIDAD_FINAL = "./assets/audio/final/rivalidad-final.mp3";
+const musicaPartida = musicaGlobal;
 let temporizadorMusicaPartida: number | null = null;
 let volumenObjetivoMusicaPartida = 0;
 
@@ -166,33 +175,27 @@ let volumenObjetivoMusicaPartida = 0;
 const VOLUMEN_BASE_PLANETA_RESTAURADO = 0.22;
 const CRISIS_MINIMA_PLANETA_RESTAURADO = 1;
 const CRISIS_MAXIMA_PLANETA_RESTAURADO = 40;
-const musicaPlanetaRestaurado = new Audio("./assets/audio/final/planeta-restaurado.mp3");
-musicaPlanetaRestaurado.loop = true;
-musicaPlanetaRestaurado.preload = "auto";
+const RUTA_MUSICA_PLANETA_RESTAURADO = "./assets/audio/final/planeta-restaurado.mp3";
+const musicaPlanetaRestaurado = musicaGlobal;
 
 // EQUILIBRIO RESTABLECIDO · V24.46
 // Es la música exclusiva del mejor estado planetario: 0% de Crisis.
 // Su nivel se mantiene alineado con la pista de recuperación parcial.
 const VOLUMEN_BASE_EQUILIBRIO_RESTABLECIDO = 0.22;
-const musicaEquilibrioRestablecido = new Audio("./assets/audio/final/equilibrio-restablecido.mp3");
-musicaEquilibrioRestablecido.loop = true;
-musicaEquilibrioRestablecido.preload = "auto";
+const RUTA_MUSICA_EQUILIBRIO_RESTABLECIDO = "./assets/audio/final/equilibrio-restablecido.mp3";
+const musicaEquilibrioRestablecido = musicaGlobal;
 
-// COLAPSO PLANETARIO · V24.41
-// Esta tercera música larga solo se utiliza cuando la Crisis llega al 100%.
-// Tiene su propio Audio para poder repetirse sin cortar los efectos breves.
+// COLAPSO PLANETARIO
+// Esta música larga solo se utiliza cuando la Crisis llega al 100%.
 const VOLUMEN_BASE_PLANETA_COLAPSO = 0.18;
-const musicaPlanetaColapso = new Audio("./assets/audio/final/planeta-colapso.mp3");
-musicaPlanetaColapso.loop = true;
-musicaPlanetaColapso.preload = "auto";
+const RUTA_MUSICA_PLANETA_COLAPSO = "./assets/audio/final/planeta-colapso.mp3";
+const musicaPlanetaColapso = musicaGlobal;
 
-// FINAL DE RIVALIDAD · V24.43
-// Acompaña a una partida de duración fija que concluye con supremacía Humana
-// o IA. Permanece en bucle hasta volver a jugar o silenciar el proyecto.
+// FINAL DE RIVALIDAD · V27.5
+// Es el único audio del tramo 41–99%. Reutiliza el canal que ya suena durante
+// la partida para evitar bloqueos de reproductores secundarios en Safari.
 const VOLUMEN_BASE_RIVALIDAD_FINAL = 0.18;
-const musicaRivalidadFinal = new Audio("./assets/audio/final/rivalidad-final.mp3");
-musicaRivalidadFinal.loop = true;
-musicaRivalidadFinal.preload = "auto";
+const musicaRivalidadFinal = musicaPartida;
 
 const canalesActivos: { [canal: string]: CanalActivo } = {};
 const audiosPreparados: { [nombre: string]: HTMLAudioElement } = {};
@@ -209,45 +212,51 @@ function volumenElegido(): number {
   return Math.max(0, Math.min(100, guardado));
 }
 
-function obtenerAudio(nombre: string, configuracion: ConfiguracionSonido): HTMLAudioElement {
-  let audio = audiosPreparados[nombre];
-  if (audio === undefined) {
-    audio = new Audio(configuracion.ruta);
-    audio.preload = "auto";
-    audio.load();
-    audiosPreparados[nombre] = audio;
+function conectarCanal(audio: HTMLAudioElement, id: string): void {
+  if (audio.isConnected) return;
+  audio.id = id;
+  audio.hidden = true;
+  audio.setAttribute("aria-hidden", "true");
+  document.body.appendChild(audio);
+}
+
+/** Conserva un único reproductor y cambia solo la pista que debe sonar. */
+function prepararMusica(ruta: string): void {
+  if (musicaGlobal.getAttribute("src") !== ruta) {
+    musicaGlobal.pause();
+    musicaGlobal.src = ruta;
+    musicaGlobal.load();
+    musicaGlobal.currentTime = 0;
   }
-  return audio;
+  musicaGlobal.loop = true;
+  musicaGlobal.preload = "auto";
+}
+
+function obtenerAudio(nombre: string, configuracion: ConfiguracionSonido): HTMLAudioElement {
+  if (audioEfectos.getAttribute("src") !== configuracion.ruta) {
+    audioEfectos.pause();
+    audioEfectos.src = configuracion.ruta;
+    audioEfectos.load();
+    audioEfectos.currentTime = 0;
+  }
+  audiosPreparados[nombre] = audioEfectos;
+  return audioEfectos;
 }
 
 /**
- * Desbloquea todos los elementos de audio durante el primer gesto real.
- * Safari móvil autoriza la reproducción por elemento, no solo por página;
- * por eso preparar únicamente la pista de portada no basta para la música
- * de introducción, partida, desenlace y los efectos posteriores.
+ * Prepara los dos canales compartidos durante el primer gesto real. No se
+ * intenta arrancar veinte elementos distintos: Safari solo tiene que recordar
+ * el permiso del canal musical y del canal de efectos.
  */
 export function desbloquearAudioMovil(): void {
   if (audioMovilDesbloqueado) return;
   audioMovilDesbloqueado = true;
 
-  const pistas: HTMLAudioElement[] = [
-    musicaIntroduccionConfiguracion,
-    musicaPartida,
-    musicaPlanetaRestaurado,
-    musicaEquilibrioRestablecido,
-    musicaPlanetaColapso,
-    musicaRivalidadFinal
-  ];
-
-  const nombres = Object.keys(SONIDOS);
-  for (let i = 0; i < nombres.length; i += 1) {
-    const nombre = nombres[i];
-    // El clic de acceso reproduce "confirmar" de verdad justo después.
-    // No lo incluimos aquí para que el final del desbloqueo no lo pause.
-    if (nombre !== "confirmar") {
-      pistas.push(obtenerAudio(nombre, SONIDOS[nombre]));
-    }
-  }
+  conectarCanal(musicaGlobal, "audio-musica-nexo");
+  conectarCanal(audioEfectos, "audio-efectos-nexo");
+  prepararMusica(RUTA_MUSICA_INTRO_CONFIG);
+  obtenerAudio("interfaz", SONIDOS.interfaz);
+  const pistas: HTMLAudioElement[] = [musicaGlobal, audioEfectos];
 
   for (let i = 0; i < pistas.length; i += 1) {
     const pista = pistas[i];
@@ -257,13 +266,18 @@ export function desbloquearAudioMovil(): void {
     const intento = pista.play();
     if (intento !== undefined) {
       intento.then(function () {
+        // Si entre pointerdown y click una pantalla ha empezado a usar esta
+        // pista, ya estará sin silencio. En ese caso no se interrumpe.
+        if (!pista.muted) return;
         pista.pause();
         pista.currentTime = 0;
         pista.volume = volumenAnterior;
         pista.muted = false;
       }).catch(function () {
-        pista.volume = volumenAnterior;
-        pista.muted = false;
+        if (pista.muted) {
+          pista.volume = volumenAnterior;
+          pista.muted = false;
+        }
       });
     }
     else {
@@ -280,10 +294,11 @@ export function reproducirSonido(nombre: string): void {
   const configuracion = SONIDOS[nombre];
   if (!sonidoPermitido() || configuracion === undefined) return;
 
-  const anterior = canalesActivos[configuracion.canal];
-  if (anterior !== undefined) {
-    anterior.audio.pause();
-    anterior.audio.currentTime = 0;
+  // Hay un solo canal de efectos: el sonido nuevo sustituye al anterior y
+  // nunca se acumulan clics, alertas o golpes sobre la música.
+  const canalesAnteriores = Object.keys(canalesActivos);
+  for (let i = 0; i < canalesAnteriores.length; i += 1) {
+    delete canalesActivos[canalesAnteriores[i]];
   }
 
   const audio = obtenerAudio(nombre, configuracion);
@@ -326,10 +341,12 @@ export function reproducirMusicaIntroduccionConfiguracion(porcentaje: number): v
     temporizadorMusicaIntroConfig = null;
   }
 
+  prepararMusica(RUTA_MUSICA_INTRO_CONFIG);
   volumenObjetivoMusicaIntroConfig = calcularVolumenMezclado(VOLUMEN_BASE_MUSICA_INTRO_CONFIG, porcentaje);
   if (musicaIntroduccionConfiguracion.currentTime < 0.1) {
     musicaIntroduccionConfiguracion.currentTime = INICIO_MUSICA_INTRO_CONFIG;
   }
+  musicaIntroduccionConfiguracion.muted = false;
   musicaIntroduccionConfiguracion.volume = 0;
   musicaIntroduccionConfiguracion.play().catch(function (error: DOMException) {
     if (error.name !== "AbortError") {
@@ -400,6 +417,9 @@ export function reproducirMusicaPartida(porcentaje: number): void {
     temporizadorMusicaPartida = null;
   }
 
+  prepararMusica(RUTA_MUSICA_PARTIDA);
+  musicaPartida.loop = true;
+  musicaPartida.muted = false;
   volumenObjetivoMusicaPartida = calcularVolumenMezclado(VOLUMEN_BASE_MUSICA_PARTIDA, porcentaje);
   const empiezaDesdeElPrincipio = musicaPartida.currentTime < 0.1;
   musicaPartida.volume = empiezaDesdeElPrincipio ? 0 : volumenObjetivoMusicaPartida;
@@ -444,6 +464,8 @@ export function pausarMusicaPartida(reiniciar = false): void {
 /** Inicia o reanuda la música exclusiva del planeta recuperado. */
 export function reproducirMusicaPlanetaRestaurado(porcentaje: number): void {
   if (!sonidoPermitido()) return;
+  prepararMusica(RUTA_MUSICA_PLANETA_RESTAURADO);
+  musicaPlanetaRestaurado.muted = false;
   actualizarVolumenMusicaPlanetaRestaurado(porcentaje);
   musicaPlanetaRestaurado.play().catch(function (error: DOMException) {
     if (error.name !== "AbortError") {
@@ -473,6 +495,8 @@ export function correspondeMusicaPlanetaRestaurado(saludPlaneta: number): boolea
 /** Inicia o reanuda la música del desenlace con equilibrio restablecido. */
 export function reproducirMusicaEquilibrioRestablecido(porcentaje: number): void {
   if (!sonidoPermitido()) return;
+  prepararMusica(RUTA_MUSICA_EQUILIBRIO_RESTABLECIDO);
+  musicaEquilibrioRestablecido.muted = false;
   actualizarVolumenMusicaEquilibrioRestablecido(porcentaje);
   musicaEquilibrioRestablecido.play().catch(function (error: DOMException) {
     if (error.name !== "AbortError") {
@@ -495,6 +519,8 @@ export function pausarMusicaEquilibrioRestablecido(reiniciar = false): void {
 /** Inicia o reanuda la música exclusiva del colapso planetario. */
 export function reproducirMusicaPlanetaColapso(porcentaje: number): void {
   if (!sonidoPermitido()) return;
+  prepararMusica(RUTA_MUSICA_PLANETA_COLAPSO);
+  musicaPlanetaColapso.muted = false;
   actualizarVolumenMusicaPlanetaColapso(porcentaje);
   musicaPlanetaColapso.play().catch(function (error: DOMException) {
     if (error.name !== "AbortError") {
@@ -517,14 +543,35 @@ export function pausarMusicaPlanetaColapso(reiniciar = false): void {
 /** Inicia o reanuda la música del final alcanzado por Rivalidad. */
 export function reproducirMusicaRivalidadFinal(porcentaje: number): void {
   if (!sonidoPermitido()) return;
+  prepararMusica(RUTA_MUSICA_RIVALIDAD_FINAL);
+  musicaRivalidadFinal.loop = true;
   actualizarVolumenMusicaRivalidadFinal(porcentaje);
-  musicaRivalidadFinal.play().catch(function (error: DOMException) {
-    if (error.name !== "AbortError") {
-      console.warn("NEXO: el navegador no ha podido reproducir la música final de Rivalidad.", error.message);
-    }
-  });
+  musicaRivalidadFinal.muted = false;
+  musicaRivalidadFinal.currentTime = 0;
+
+  const intentarReproduccion = function (): void {
+    musicaRivalidadFinal.play().then(function () {
+      document.removeEventListener("pointerdown", intentarReproduccion, true);
+      document.removeEventListener("touchend", intentarReproduccion, true);
+    }).catch(function (error: DOMException) {
+      if (typeof document === "undefined"
+        || !sonidoPermitido()
+        || !document.getElementById("pantalla-final")?.classList.contains("activa")) {
+        return;
+      }
+
+      document.addEventListener("pointerdown", intentarReproduccion, { capture: true, once: true });
+      document.addEventListener("touchend", intentarReproduccion, { capture: true, once: true });
+      if (error.name !== "AbortError" && error.name !== "NotAllowedError") {
+        console.warn("NEXO: el navegador no ha podido reproducir la música final de Rivalidad.", error.message);
+      }
+    });
+  };
+
+  intentarReproduccion();
 }
 
+/** Mantiene autorizada la pista 41–99% sin hacerla audible durante la partida. */
 /** Aplica a la música final de Rivalidad el porcentaje de Ajustes. */
 export function actualizarVolumenMusicaRivalidadFinal(porcentaje: number): void {
   musicaRivalidadFinal.volume = calcularVolumenMezclado(VOLUMEN_BASE_RIVALIDAD_FINAL, porcentaje);
@@ -567,16 +614,10 @@ function programarSonido(nombre: string, retraso: number): void {
 
 /** Pide al navegador que prepare los archivos sin reproducirlos. */
 export function precargarEfectos(): void {
-  const nombres = Object.keys(SONIDOS);
-  for (let i = 0; i < nombres.length; i += 1) {
-    obtenerAudio(nombres[i], SONIDOS[nombres[i]]);
-  }
-  musicaPartida.load();
-  musicaIntroduccionConfiguracion.load();
-  musicaPlanetaRestaurado.load();
-  musicaEquilibrioRestablecido.load();
-  musicaPlanetaColapso.load();
-  musicaRivalidadFinal.load();
+  conectarCanal(musicaGlobal, "audio-musica-nexo");
+  conectarCanal(audioEfectos, "audio-efectos-nexo");
+  prepararMusica(RUTA_MUSICA_INTRO_CONFIG);
+  obtenerAudio("interfaz", SONIDOS.interfaz);
 }
 
 function esBotonPrincipal(id: string): boolean {
@@ -637,7 +678,14 @@ export function conectarSonidosInterfaz(): void {
     const boton = objetivo?.closest<HTMLButtonElement>("button");
 
     if (boton !== undefined && boton !== null) {
-      if (boton.classList.contains("carta-mano")) {
+      // Estos tres botones cambian una música larga. En Safari/iPhone el gesto
+      // debe quedar reservado a esa pista; un efecto corto capturado antes
+      // puede apropiarse de la autorización multimedia.
+      if (boton.id === "btn-jugar"
+        || boton.id === "btn-iniciar-partida"
+        || boton.id === "btn-volver-jugar") {
+        return;
+      } else if (boton.classList.contains("carta-mano")) {
         reproducirSonido("carta");
       } else if (boton.classList.contains("boton-opcion")) {
         reproducirSonido("rondas");

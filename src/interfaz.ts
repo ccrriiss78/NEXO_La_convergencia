@@ -68,8 +68,21 @@ export function mostrar(id) {
 export function ocultar(id) {
     elemento(id).classList.add("oculta");
 }
+
+/** Ajusta el ciclo visible de la X al segundo real de la pista de portada. */
+export function ajustarFaseAnimacionPortada(tiempoAudioPortada: number): void {
+    const logoPortada = document.querySelector<HTMLElement>("#pantalla-inicio .logo-nexo-animado");
+    if (logoPortada === null) return;
+
+    const tiempoValido = Number.isFinite(tiempoAudioPortada) ? Math.max(0, tiempoAudioPortada) : 0;
+    const fasePulso = tiempoValido % 1.009272;
+    const faseDescargas = tiempoValido % 11.101995;
+    logoPortada.style.setProperty("--desfase-pulso-audio", `-${fasePulso.toFixed(6)}s`);
+    logoPortada.style.setProperty("--desfase-descarga-audio", `-${faseDescargas.toFixed(6)}s`);
+}
+
 /** Enseña una pantalla y esconde todas las demás. */
-export function mostrarPantalla(idPantalla) {
+export function mostrarPantalla(idPantalla, tiempoAudioPortada = 0) {
     const pantallas = [
         "pantalla-suspense",
         "pantalla-inicio",
@@ -83,6 +96,22 @@ export function mostrarPantalla(idPantalla) {
         const esActiva = pantallas[i] === idPantalla;
         pantalla.classList.toggle("activa", esActiva);
         pantalla.classList.toggle("oculta", !esActiva);
+    }
+    // La portada inicia su animación exactamente cuando se vuelve visible.
+    // Es síncrono y no depende del audio ni de requestAnimationFrame: Safari
+    // de iPad no puede aplazar el latido hasta el ciclo siguiente de la pista.
+    if (idPantalla === "pantalla-inicio") {
+        const logoPortada = document.querySelector<HTMLElement>("#pantalla-inicio .logo-nexo-animado");
+        if (logoPortada !== null) {
+            // El audio se inicia durante el gesto y la portada aparece tras el
+            // fundido. Aplicamos ese tiempo ya transcurrido como fase negativa:
+            // la X empieza a moverse al instante, pero en el mismo latido que
+            // realmente está sonando en Safari de iPad.
+            ajustarFaseAnimacionPortada(tiempoAudioPortada);
+            logoPortada.classList.remove("animacion-portada-activa");
+            void logoPortada.offsetWidth;
+            logoPortada.classList.add("animacion-portada-activa");
+        }
     }
     // Fuera de la partida siempre existe acceso al sonido. En la partida se
     // mantiene el botón integrado en su cabecera para no duplicar controles.
