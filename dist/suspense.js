@@ -138,32 +138,6 @@ export function pausarAudioInicio() {
     audioInicio.pause();
     audioInicio.muted = false;
 }
-/**
- * Reduce el volumen poco a poco antes de abandonar la portada.
- * Utiliza setInterval y operaciones sencillas, sin Web Audio API.
- */
-export function apagarAudioInicioSuavemente() {
-    if (temporizadorAudioInicio !== null) {
-        window.clearInterval(temporizadorAudioInicio);
-    }
-    if (audioInicio.paused)
-        return;
-    const volumenInicial = audioInicio.volume;
-    const numeroPasos = 14;
-    let pasoActual = 0;
-    temporizadorAudioInicio = window.setInterval(function () {
-        pasoActual++;
-        audioInicio.volume = Math.max(0, volumenInicial * (1 - pasoActual / numeroPasos));
-        if (pasoActual >= numeroPasos) {
-            if (temporizadorAudioInicio !== null) {
-                window.clearInterval(temporizadorAudioInicio);
-                temporizadorAudioInicio = null;
-            }
-            audioInicio.pause();
-            audioInicio.currentTime = 0;
-        }
-    }, 50);
-}
 const pantallaSuspense = elemento("pantalla-suspense");
 const svg = elemento("svg-suspense");
 const lineaHumano1 = elemento("linea-humano-1");
